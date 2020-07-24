@@ -1,9 +1,9 @@
 #version 460
 
+in vec3 vertexColor;
+
 out vec4 color;
 
-uniform vec4 ourColor;
-
 void main () {
-    color = ourColor;
+    color = vec4(vertexColor, 1.0f);
 }

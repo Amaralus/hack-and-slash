@@ -39,6 +39,7 @@ public class Application {
 
         } catch (Exception e) {
             glfwSetErrorCallback(null);
+            log.error("Непредвиденная ошибка", e);
         } finally {
             glfwFreeCallbacks(windowHandle);
             glfwDestroyWindow(windowHandle);
@@ -124,10 +125,10 @@ public class Application {
 
     private float[] vertices() {
         return new float[]{
-                0.5f, 0.5f, 0.0f,  // Верхний правый угол
-                0.5f, -0.5f, 0.0f,  // Нижний правый угол
-                -0.5f, -0.5f, 0.0f,  // Нижний левый угол
-                -0.5f, 0.5f, 0.0f   // Верхний левый угол
+                0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Верхний правый угол
+                0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Нижний правый угол
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Нижний левый угол
+                -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f // Верхний левый угол
         };
     }
 
@@ -147,8 +148,11 @@ public class Application {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0L);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0L);
         glEnableVertexAttribArray(0);
+
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, (3 * Float.BYTES));
+        glEnableVertexAttribArray(1);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
@@ -160,7 +164,7 @@ public class Application {
         for (int shader : shaders) glAttachShader(program, shader);
         glLinkProgram(program);
 
-        String linkLog = glGetProgramInfoLog(program);
+        var linkLog = glGetProgramInfoLog(program);
         log.debug("Результат линковки программы шейдеров: {}", linkLog.isEmpty() ? "successful" : linkLog);
 
         for (int shader : shaders) glDeleteShader(shader);
@@ -169,13 +173,13 @@ public class Application {
     }
 
     private int loadShader(int type, String name) {
-        String fileName = "shaders/" + name + ".glsl";
+        var fileName = "shaders/" + name + ".glsl";
         int shader = glCreateShader(type);
 
         glShaderSource(shader, fileService.loadFileAsStringFromResources(fileName));
         glCompileShader(shader);
 
-        String compileLog = glGetShaderInfoLog(shader);
+        var compileLog = glGetShaderInfoLog(shader);
         log.debug("Результат компиляции шейдера {}: {}", name, compileLog.isEmpty() ? "compilation successful" : compileLog);
 
         return shader;
