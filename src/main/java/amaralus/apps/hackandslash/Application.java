@@ -99,24 +99,36 @@ public class Application {
         glDeleteShader(fragmentShader);
 
         float[] vertices = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f
+                0.5f, 0.5f, 0.0f,  // Верхний правый угол
+                0.5f, -0.5f, 0.0f,  // Нижний правый угол
+                -0.5f, -0.5f, 0.0f,  // Нижний левый угол
+                -0.5f, 0.5f, 0.0f   // Верхний левый угол
+        };
+
+        int[] indices = {
+                0, 1, 3,   // Первый треугольник
+                1, 2, 3    // Второй треугольник
         };
 
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
+        int ebo = glGenBuffers();
 
         glBindVertexArray(vao);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
 
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
+
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0L);
         glEnableVertexAttribArray(0);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+
+        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
@@ -127,7 +139,7 @@ public class Application {
             glUseProgram(shaderProgram);
 
             glBindVertexArray(vao);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
 
             glfwSwapBuffers(windowHandle);
@@ -135,6 +147,7 @@ public class Application {
 
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
+        glDeleteBuffers(ebo);
     }
 
     private int loadShader(int type, String name) {
