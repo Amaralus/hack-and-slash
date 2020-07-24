@@ -123,7 +123,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>amaralus.apps.hackandslash.MainApplication</mainClass>
+                            <mainClass>amaralus.apps.hackandslash.Application</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
