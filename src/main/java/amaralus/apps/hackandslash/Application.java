@@ -53,7 +53,7 @@ public class Application {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        windowHandle = glfwCreateWindow(600, 400, "Hack and Slash", NULL, NULL);
+        windowHandle = glfwCreateWindow(800, 600, "Hack and Slash", NULL, NULL);
         if (windowHandle == NULL)
             throw new RuntimeException("Ошибка создания GLFW окна");
 
@@ -85,50 +85,18 @@ public class Application {
     private void loop() {
         GL.createCapabilities();
 
-        int vertexShader = loadShader(GL_VERTEX_SHADER, "vertex");
-        int fragmentShader = loadShader(GL_FRAGMENT_SHADER, "fragment");
-
-        int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-
-        log.debug("shader program log: {}", glGetProgramInfoLog(shaderProgram));
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-
-        float[] vertices = {
-                0.5f, 0.5f, 0.0f,  // Верхний правый угол
-                0.5f, -0.5f, 0.0f,  // Нижний правый угол
-                -0.5f, -0.5f, 0.0f,  // Нижний левый угол
-                -0.5f, 0.5f, 0.0f   // Верхний левый угол
-        };
-
-        int[] indices = {
-                0, 1, 3,   // Первый треугольник
-                1, 2, 3    // Второй треугольник
-        };
+        int shaderProgram = createShaderProgram(new int[]{
+                loadShader(GL_VERTEX_SHADER, "vertex"),
+                loadShader(GL_FRAGMENT_SHADER, "fragment")
+        });
 
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
         int ebo = glGenBuffers();
 
-        glBindVertexArray(vao);
+        bindVao(vao, vbo, ebo);
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
-        glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
@@ -137,6 +105,10 @@ public class Application {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             glUseProgram(shaderProgram);
+
+            double greenValue = (Math.sin(glfwGetTime()) / 2) + 0.5;
+            int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+            glUniform4f(vertexColorLocation, 0.0f, (float) greenValue, 0.0f, 1.0f);
 
             glBindVertexArray(vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -148,6 +120,52 @@ public class Application {
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
         glDeleteBuffers(ebo);
+    }
+
+    private float[] vertices() {
+        return new float[]{
+                0.5f, 0.5f, 0.0f,  // Верхний правый угол
+                0.5f, -0.5f, 0.0f,  // Нижний правый угол
+                -0.5f, -0.5f, 0.0f,  // Нижний левый угол
+                -0.5f, 0.5f, 0.0f   // Верхний левый угол
+        };
+    }
+
+    private int[] indices() {
+        return new int[]{
+                0, 1, 3,   // Первый треугольник
+                1, 2, 3    // Второй треугольник
+        };
+    }
+
+    private void bindVao(int vao, int vbo, int ebo) {
+        glBindVertexArray(vao);
+
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices(), GL_STATIC_DRAW);
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices(), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0L);
+        glEnableVertexAttribArray(0);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
+    private int createShaderProgram(int[] shaders) {
+        int program = glCreateProgram();
+
+        for (int shader : shaders) glAttachShader(program, shader);
+        glLinkProgram(program);
+
+        String linkLog = glGetProgramInfoLog(program);
+        log.debug("Результат линковки программы шейдеров: {}", linkLog.isEmpty() ? "successful" : linkLog);
+
+        for (int shader : shaders) glDeleteShader(shader);
+
+        return program;
     }
 
     private int loadShader(int type, String name) {
