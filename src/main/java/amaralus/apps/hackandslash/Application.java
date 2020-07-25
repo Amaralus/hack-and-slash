@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.services.io.FileService;
+import amaralus.apps.hackandslash.io.FileLoadService;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -23,7 +23,7 @@ public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     private long windowHandle;
-    private FileService fileService = new FileService();
+    private FileLoadService fileLoadService = new FileLoadService();
 
     public static void main(String[] args) {
         new Application().run();
@@ -39,6 +39,7 @@ public class Application {
 
         } catch (Exception e) {
             glfwSetErrorCallback(null);
+            log.error("Непредвиденная ошибка", e);
         } finally {
             glfwFreeCallbacks(windowHandle);
             glfwDestroyWindow(windowHandle);
@@ -53,7 +54,7 @@ public class Application {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        windowHandle = glfwCreateWindow(600, 400, "Hack and Slash", NULL, NULL);
+        windowHandle = glfwCreateWindow(800, 600, "Hack and Slash", NULL, NULL);
         if (windowHandle == NULL)
             throw new RuntimeException("Ошибка создания GLFW окна");
 
@@ -85,38 +86,16 @@ public class Application {
     private void loop() {
         GL.createCapabilities();
 
-        int vertexShader = loadShader(GL_VERTEX_SHADER, "vertex");
-        int fragmentShader = loadShader(GL_FRAGMENT_SHADER, "fragment");
-
-        int shaderProgram = glCreateProgram();
-        glAttachShader(shaderProgram, vertexShader);
-        glAttachShader(shaderProgram, fragmentShader);
-        glLinkProgram(shaderProgram);
-
-        log.debug("shader program log: {}", glGetProgramInfoLog(shaderProgram));
-
-        glDeleteShader(vertexShader);
-        glDeleteShader(fragmentShader);
-
-        float[] vertices = {
-                -0.5f, -0.5f, 0.0f,
-                0.5f, -0.5f, 0.0f,
-                0.0f,  0.5f, 0.0f
-        };
+        var shader = new Shader("vertex", "fragment");
 
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
+        int ebo = glGenBuffers();
 
-        glBindVertexArray(vao);
+        setUpVertexData(vao, vbo, ebo);
+        int texture = loadTexture();
 
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 3 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
@@ -124,10 +103,12 @@ public class Application {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glUseProgram(shaderProgram);
+            glBindTexture(GL_TEXTURE_2D, texture);
+
+            shader.use();
 
             glBindVertexArray(vao);
-            glDrawArrays(GL_TRIANGLES, 0, 3);
+            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
             glBindVertexArray(0);
 
             glfwSwapBuffers(windowHandle);
@@ -135,18 +116,60 @@ public class Application {
 
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
+        glDeleteBuffers(ebo);
     }
 
-    private int loadShader(int type, String name) {
-        String fileName = "shaders/" + name + ".glsl";
-        int shader = glCreateShader(type);
+    private float[] vertices() {
+        return new float[]{
+                // координаты     цвета             координаты текстуры
+                0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Верхний правый угол
+                0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Нижний правый угол
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Нижний левый угол
+                -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // Верхний левый угол
+        };
+    }
 
-        glShaderSource(shader, fileService.loadFileAsStringFromResources(fileName));
-        glCompileShader(shader);
+    private int[] indices() {
+        return new int[]{
+                0, 1, 3,   // Первый треугольник
+                1, 2, 3    // Второй треугольник
+        };
+    }
 
-        String compileLog = glGetShaderInfoLog(shader);
-        log.debug("Результат компиляции шейдера {}: {}", name, compileLog.isEmpty() ? "compilation successful" : compileLog);
+    private void setUpVertexData(int vao, int vbo, int ebo) {
+        glBindVertexArray(vao);
 
-        return shader;
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, vertices(), GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices(), GL_STATIC_DRAW);
+
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * Float.BYTES, 0L);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * Float.BYTES, (3 * Float.BYTES));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * Float.BYTES, (6 * Float.BYTES));
+        glEnableVertexAttribArray(2);
+
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+    }
+
+    private int loadTexture() {
+        int texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        var imageData = fileLoadService.loadImageData("textures/angryAsFuck.png");
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageData.getWidth(), imageData.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.getImageBytes());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        return texture;
     }
 }
