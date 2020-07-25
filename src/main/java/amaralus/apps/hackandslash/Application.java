@@ -86,10 +86,7 @@ public class Application {
     private void loop() {
         GL.createCapabilities();
 
-        int shaderProgram = createShaderProgram(new int[]{
-                loadShader(GL_VERTEX_SHADER, "vertex"),
-                loadShader(GL_FRAGMENT_SHADER, "fragment")
-        });
+        var shader = new Shader("vertex", "fragment");
 
         int vao = glGenVertexArrays();
         int vbo = glGenBuffers();
@@ -105,10 +102,10 @@ public class Application {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glUseProgram(shaderProgram);
+            shader.use();
 
             double greenValue = (Math.sin(glfwGetTime()) / 2) + 0.5;
-            int vertexColorLocation = glGetUniformLocation(shaderProgram, "ourColor");
+            int vertexColorLocation = shader.getUniformLocation("ourColor");
             glUniform4f(vertexColorLocation, 0.0f, (float) greenValue, 0.0f, 1.0f);
 
             glBindVertexArray(vao);
@@ -156,32 +153,5 @@ public class Application {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-    }
-
-    private int createShaderProgram(int[] shaders) {
-        int program = glCreateProgram();
-
-        for (int shader : shaders) glAttachShader(program, shader);
-        glLinkProgram(program);
-
-        var linkLog = glGetProgramInfoLog(program);
-        log.debug("Результат линковки программы шейдеров: {}", linkLog.isEmpty() ? "successful" : linkLog);
-
-        for (int shader : shaders) glDeleteShader(shader);
-
-        return program;
-    }
-
-    private int loadShader(int type, String name) {
-        var fileName = "shaders/" + name + ".glsl";
-        int shader = glCreateShader(type);
-
-        glShaderSource(shader, fileLoadService.loadFileAsString(fileName));
-        glCompileShader(shader);
-
-        var compileLog = glGetShaderInfoLog(shader);
-        log.debug("Результат компиляции шейдера {}: {}", name, compileLog.isEmpty() ? "successful" : compileLog);
-
-        return shader;
     }
 }
