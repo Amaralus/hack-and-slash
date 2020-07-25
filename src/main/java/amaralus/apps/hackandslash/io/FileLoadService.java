@@ -46,7 +46,8 @@ public class FileLoadService {
 
             var buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
 
-            for (int y = 0; y < image.getHeight(); y++)
+            // проход по Y инвертирован из-за особенности восприятия координатор в opengl
+            for (int y = image.getHeight() - 1; y >= 0; y--)
                 for (int x = 0; x < image.getWidth(); x++) {
                     int pixel = pixels[y * image.getWidth() + x];
 

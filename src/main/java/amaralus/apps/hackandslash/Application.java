@@ -92,7 +92,8 @@ public class Application {
         int vbo = glGenBuffers();
         int ebo = glGenBuffers();
 
-        bindVao(vao, vbo, ebo);
+        setUpVertexData(vao, vbo, ebo);
+        int texture = loadTexture();
 
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
@@ -102,11 +103,9 @@ public class Application {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            shader.use();
+            glBindTexture(GL_TEXTURE_2D, texture);
 
-            double greenValue = (Math.sin(glfwGetTime()) / 2) + 0.5;
-            int vertexColorLocation = shader.getUniformLocation("ourColor");
-            glUniform4f(vertexColorLocation, 0.0f, (float) greenValue, 0.0f, 1.0f);
+            shader.use();
 
             glBindVertexArray(vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
@@ -122,10 +121,11 @@ public class Application {
 
     private float[] vertices() {
         return new float[]{
-                0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, // Верхний правый угол
-                0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, // Нижний правый угол
-                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, // Нижний левый угол
-                -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f // Верхний левый угол
+                // координаты     цвета             координаты текстуры
+                0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Верхний правый угол
+                0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Нижний правый угол
+                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Нижний левый угол
+                -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // Верхний левый угол
         };
     }
 
@@ -136,22 +136,40 @@ public class Application {
         };
     }
 
-    private void bindVao(int vao, int vbo, int ebo) {
+    private void setUpVertexData(int vao, int vbo, int ebo) {
         glBindVertexArray(vao);
 
         glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices(), GL_STATIC_DRAW);
-
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 6 * Float.BYTES, 0L);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * Float.BYTES, 0L);
         glEnableVertexAttribArray(0);
-
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 6 * Float.BYTES, (3 * Float.BYTES));
+        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * Float.BYTES, (3 * Float.BYTES));
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * Float.BYTES, (6 * Float.BYTES));
+        glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+    }
+
+    private int loadTexture() {
+        int texture = glGenTextures();
+        glBindTexture(GL_TEXTURE_2D, texture);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        var imageData = fileLoadService.loadImageData("textures/angryAsFuck.png");
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageData.getWidth(), imageData.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.getImageBytes());
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        return texture;
     }
 }
