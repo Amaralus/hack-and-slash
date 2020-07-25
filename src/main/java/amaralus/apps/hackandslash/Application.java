@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.services.io.FileService;
+import amaralus.apps.hackandslash.io.FileLoadService;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -23,7 +23,7 @@ public class Application {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     private long windowHandle;
-    private FileService fileService = new FileService();
+    private FileLoadService fileLoadService = new FileLoadService();
 
     public static void main(String[] args) {
         new Application().run();
@@ -176,11 +176,11 @@ public class Application {
         var fileName = "shaders/" + name + ".glsl";
         int shader = glCreateShader(type);
 
-        glShaderSource(shader, fileService.loadFileAsStringFromResources(fileName));
+        glShaderSource(shader, fileLoadService.loadFileAsString(fileName));
         glCompileShader(shader);
 
         var compileLog = glGetShaderInfoLog(shader);
-        log.debug("Результат компиляции шейдера {}: {}", name, compileLog.isEmpty() ? "compilation successful" : compileLog);
+        log.debug("Результат компиляции шейдера {}: {}", name, compileLog.isEmpty() ? "successful" : compileLog);
 
         return shader;
     }

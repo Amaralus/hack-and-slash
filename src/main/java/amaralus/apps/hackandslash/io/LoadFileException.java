@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.services.io;
+package amaralus.apps.hackandslash.io;
 
 public class LoadFileException extends RuntimeException {
 
