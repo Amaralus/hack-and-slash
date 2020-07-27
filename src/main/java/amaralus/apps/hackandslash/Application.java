@@ -1,6 +1,8 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -105,7 +107,13 @@ public class Application {
 
             glBindTexture(GL_TEXTURE_2D, texture);
 
+            var trans = new Matrix4f()
+                    .translate(0.5f, -0.5f, 0.0f)
+                    .rotate((float) (glfwGetTime() * Math.toRadians(90)), new Vector3f(0.0f, 0.0f, 1.0f));
+
             shader.use();
+            int transLoc = shader.getUniformLocation("transform");
+            glUniformMatrix4fv(transLoc, false, trans.get(new float[16]));
 
             glBindVertexArray(vao);
             glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
