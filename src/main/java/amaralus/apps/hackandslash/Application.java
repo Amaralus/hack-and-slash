@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
+import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -12,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.*;
 
+import static org.joml.Math.toRadians;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -23,6 +25,9 @@ import static org.lwjgl.system.MemoryUtil.NULL;
 public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
+
+    private float width = 800;
+    private float height = 600;
 
     private long windowHandle;
     private FileLoadService fileLoadService = new FileLoadService();
@@ -97,8 +102,24 @@ public class Application {
         setUpVertexData(vao, vbo, ebo);
         int texture = loadTexture();
 
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+        var view = new Matrix4f().translate(0.0f, 0.0f, -3.0f);
+        var projection = new Matrix4f().perspective(toRadians(45f), width / height, 0.1f, 100.0f);
 
+        Vector3f[] cubesPositions = {
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                new Vector3f(2.0f, 5.0f, -15.0f),
+                new Vector3f(-1.5f, -2.2f, -2.5f),
+                new Vector3f(-3.8f, -2.0f, -12.3f),
+                new Vector3f(2.4f, -0.4f, -3.5f),
+                new Vector3f(-1.7f, 3.0f, -7.5f),
+                new Vector3f(1.3f, -2.0f, -2.5f),
+                new Vector3f(1.5f, 2.0f, -2.5f),
+                new Vector3f(1.5f, 0.2f, -1.5f),
+                new Vector3f(-1.3f, 1.0f, -1.5f)
+        };
+
+        glEnable(GL_DEPTH_TEST);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
 
@@ -107,16 +128,19 @@ public class Application {
 
             glBindTexture(GL_TEXTURE_2D, texture);
 
-            var trans = new Matrix4f()
-                    .translate(0.5f, -0.5f, 0.0f)
-                    .rotate((float) (glfwGetTime() * Math.toRadians(90)), new Vector3f(0.0f, 0.0f, 1.0f));
-
             shader.use();
-            int transLoc = shader.getUniformLocation("transform");
-            glUniformMatrix4fv(transLoc, false, trans.get(new float[16]));
+
+            glUniformMatrix4fv(shader.getUniformLocation("view"), false, view.get(new float[16]));
+            glUniformMatrix4fv(shader.getUniformLocation("projection"), false, projection.get(new float[16]));
 
             glBindVertexArray(vao);
-            glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            for (int i = 0; i < 10; i++) {
+                var model = new Matrix4f()
+                        .translate(cubesPositions[i])
+                        .rotate((Math.toRadians(i % 3 == 0 || i == 1 ? (float) (glfwGetTime() * 50) : 20f * i)), 1f, 0.3f, 0.5f);
+                glUniformMatrix4fv(shader.getUniformLocation("model"), false, model.get(new float[16]));
+                glDrawArrays(GL_TRIANGLES, 0, 36);
+            }
             glBindVertexArray(0);
 
             glfwSwapBuffers(windowHandle);
@@ -129,11 +153,47 @@ public class Application {
 
     private float[] vertices() {
         return new float[]{
-                // координаты     цвета             координаты текстуры
-                0.5f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f, 1.0f, 1.0f, // Верхний правый угол
-                0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Нижний правый угол
-                -0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // Нижний левый угол
-                -0.5f, 0.5f, 0.0f, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f // Верхний левый угол
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+                0.5f, -0.5f, -0.5f, 1.0f, 0.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f, 0.0f, 0.0f,
+
+                -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 1.0f,
+                -0.5f, 0.5f, 0.5f, 0.0f, 1.0f,
+                -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+
+                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+                -0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+                -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+                -0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+                0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+                0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+                0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+
+                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+                0.5f, -0.5f, -0.5f, 1.0f, 1.0f,
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+                0.5f, -0.5f, 0.5f, 1.0f, 0.0f,
+                -0.5f, -0.5f, 0.5f, 0.0f, 0.0f,
+                -0.5f, -0.5f, -0.5f, 0.0f, 1.0f,
+
+                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f,
+                0.5f, 0.5f, -0.5f, 1.0f, 1.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+                0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+                -0.5f, 0.5f, 0.5f, 0.0f, 0.0f,
+                -0.5f, 0.5f, -0.5f, 0.0f, 1.0f
         };
     }
 
@@ -152,11 +212,9 @@ public class Application {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices(), GL_STATIC_DRAW);
 
-        glVertexAttribPointer(0, 3, GL_FLOAT, false, 8 * Float.BYTES, 0L);
+        glVertexAttribPointer(0, 3, GL_FLOAT, false, 5 * Float.BYTES, 0L);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, false, 8 * Float.BYTES, (3 * Float.BYTES));
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 2, GL_FLOAT, false, 8 * Float.BYTES, (6 * Float.BYTES));
+        glVertexAttribPointer(2, 2, GL_FLOAT, false, 5 * Float.BYTES, (3 * Float.BYTES));
         glEnableVertexAttribArray(2);
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
