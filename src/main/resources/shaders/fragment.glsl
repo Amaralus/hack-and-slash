@@ -1,6 +1,5 @@
 #version 460
 
-in vec3 vertexColor;
 in vec2 texCoord;
 
 out vec4 color;
