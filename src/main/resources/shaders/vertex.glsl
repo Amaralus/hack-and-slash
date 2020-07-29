@@ -6,10 +6,9 @@ layout (location = 2) in vec2 textureCoord;
 out vec2 texCoord;
 
 uniform mat4 model;
-uniform mat4 view;
-uniform mat4 projection;
+uniform mat4 viewProjection;
 
 void main() {
-    gl_Position = gl_Position = projection * view * model * vec4(position, 1.0f);
+    gl_Position = gl_Position = viewProjection * model * vec4(position, 1.0f);
     texCoord = textureCoord;
 }

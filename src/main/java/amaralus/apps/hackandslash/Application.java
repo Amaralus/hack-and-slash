@@ -17,6 +17,7 @@ import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
@@ -28,9 +29,7 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    private Vector3f cameraPos = new Vector3f(0f, 0f, 3f);
-    private Vector3f cameraFront = new Vector3f(0f, 0f, -1f);
-    private Vector3f cameraUp = new Vector3f(0f, 1f, 0f);
+    Camera camera = new Camera(width, height, 0f, 0f, 3);
 
     private boolean[] keys = new boolean[1024];
 
@@ -39,13 +38,8 @@ public class Application {
 
     private boolean firstMouse = true;
 
-    private float fov = 45;
-
     private double lastX = 400;
     private double lastY = 300;
-
-    private float yaw = -90.0f;
-    private float pitch = 0.0f;
 
     private long windowHandle;
     private FileLoadService fileLoadService = new FileLoadService();
@@ -145,14 +139,7 @@ public class Application {
 
             shader.use();
 
-            var view = new Matrix4f().lookAt(
-                    cameraPos,
-                    new Vector3f(cameraPos).add(cameraFront),
-                    cameraUp);
-
-            var projection = new Matrix4f().perspective(toRadians(fov), width / height, 0.1f, 100.0f);
-            glUniformMatrix4fv(shader.getUniformLocation("view"), false, view.get(new float[16]));
-            glUniformMatrix4fv(shader.getUniformLocation("projection"), false, projection.get(new float[16]));
+            glUniformMatrix4fv(shader.getUniformLocation("viewProjection"), false, camera.viewMatrixBuffer());
 
             glBindVertexArray(vao);
             for (int i = 0; i < 10; i++) {
@@ -176,10 +163,10 @@ public class Application {
         float camSpeed = (float) (5.0d * deltaTime);
 
         if (keys[GLFW_KEY_ESCAPE]) glfwSetWindowShouldClose(windowHandle, true);
-        if (keys[GLFW_KEY_W]) cameraPos.add(new Vector3f(cameraFront).mul(camSpeed));
-        if (keys[GLFW_KEY_S]) cameraPos.sub(new Vector3f(cameraFront).mul(camSpeed));
-        if (keys[GLFW_KEY_A]) cameraPos.sub(new Vector3f(cameraFront).cross(new Vector3f(cameraUp)).normalize().mul(camSpeed));
-        if (keys[GLFW_KEY_D]) cameraPos.add(new Vector3f(cameraFront).cross(new Vector3f(cameraUp)).normalize().mul(camSpeed));
+        if (keys[GLFW_KEY_W]) camera.moveForward(camSpeed);
+        if (keys[GLFW_KEY_S]) camera.moveBackward(camSpeed);
+        if (keys[GLFW_KEY_A]) camera.moveLeft(camSpeed);
+        if (keys[GLFW_KEY_D]) camera.moveRight(camSpeed);
     }
 
     private void handleMouse(long window, double xpos, double ypos) {
@@ -189,8 +176,8 @@ public class Application {
             firstMouse = false;
         }
 
-        double xoffset = xpos - lastX;
-        double yoffset = lastY - ypos;
+        float xoffset = (float) (xpos - lastX);
+        float yoffset = (float) (lastY - ypos);
         lastX = xpos;
         lastY = ypos;
 
@@ -198,26 +185,15 @@ public class Application {
         xoffset *= sensitivity;
         yoffset *= sensitivity;
 
-        yaw += xoffset;
-        pitch += yoffset;
-
-        if (pitch > 89.0f) pitch = 89.0f;
-        if (pitch < -89.0f) pitch = -89.0f;
-
-        cameraFront = new Vector3f(
-                cos(toRadians(pitch)) * cos(toRadians(yaw)),
-                sin(toRadians(pitch)),
-                cos(toRadians(pitch)) * sin(toRadians(yaw)))
-                .normalize();
+       camera.rotate(xoffset, yoffset);
     }
 
     private void handleScroll(long window, double xoffset, double yoffset) {
-        if(fov >= 1.0f && fov <= 45.0f)
-            fov -= yoffset;
-        if(fov <= 1.0f)
-            fov = 1.0f;
-        if(fov >= 45.0f)
-            fov = 45.0f;
+        var fov = camera.fov();
+        if (fov >= 1.0f && fov <= 45.0f) fov -= yoffset;
+        if (fov <= 1.0f) fov = 1.0f;
+        if (fov >= 45.0f) fov = 45.0f;
+        camera.fov(fov);
     }
 
     private float[] vertices() {
