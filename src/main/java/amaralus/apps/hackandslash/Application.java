@@ -1,7 +1,6 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
-import org.joml.Math;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -13,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.*;
 
-import static org.joml.Math.toRadians;
+import static org.joml.Math.*;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -28,6 +27,25 @@ public class Application {
 
     private float width = 800;
     private float height = 600;
+
+    private Vector3f cameraPos = new Vector3f(0f, 0f, 3f);
+    private Vector3f cameraFront = new Vector3f(0f, 0f, -1f);
+    private Vector3f cameraUp = new Vector3f(0f, 1f, 0f);
+
+    private boolean[] keys = new boolean[1024];
+
+    private double deltaTime = 0.0d;
+    private double lastFrame = 0.0d;
+
+    private boolean firstMouse = true;
+
+    private float fov = 45;
+
+    private double lastX = 400;
+    private double lastY = 300;
+
+    private float yaw = -90.0f;
+    private float pitch = 0.0f;
 
     private long windowHandle;
     private FileLoadService fileLoadService = new FileLoadService();
@@ -61,13 +79,19 @@ public class Application {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
 
-        windowHandle = glfwCreateWindow(800, 600, "Hack and Slash", NULL, NULL);
+        windowHandle = glfwCreateWindow((int) width, (int) height, "Hack and Slash", NULL, NULL);
         if (windowHandle == NULL)
             throw new RuntimeException("Ошибка создания GLFW окна");
 
+        glfwSetInputMode(windowHandle, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        glfwSetCursorPosCallback(windowHandle, this::handleMouse);
+        glfwSetScrollCallback(windowHandle, this::handleScroll);
+
         glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
-            if (key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE)
-                glfwSetWindowShouldClose(window, true);
+            if (action == GLFW_PRESS)
+                keys[key] = true;
+            if (action == GLFW_RELEASE)
+                keys[key] = false;
         });
 
         try (MemoryStack stack = stackPush()) {
@@ -102,26 +126,17 @@ public class Application {
         setUpVertexData(vao, vbo, ebo);
         int texture = loadTexture();
 
-        var view = new Matrix4f().translate(0.0f, 0.0f, -3.0f);
-        var projection = new Matrix4f().perspective(toRadians(45f), width / height, 0.1f, 100.0f);
-
-        Vector3f[] cubesPositions = {
-                new Vector3f(0.0f, 0.0f, 0.0f),
-                new Vector3f(2.0f, 5.0f, -15.0f),
-                new Vector3f(-1.5f, -2.2f, -2.5f),
-                new Vector3f(-3.8f, -2.0f, -12.3f),
-                new Vector3f(2.4f, -0.4f, -3.5f),
-                new Vector3f(-1.7f, 3.0f, -7.5f),
-                new Vector3f(1.3f, -2.0f, -2.5f),
-                new Vector3f(1.5f, 2.0f, -2.5f),
-                new Vector3f(1.5f, 0.2f, -1.5f),
-                new Vector3f(-1.3f, 1.0f, -1.5f)
-        };
+        Vector3f[] cubesPositions = cubesPositions();
 
         glEnable(GL_DEPTH_TEST);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         while (!glfwWindowShouldClose(windowHandle)) {
+            double currentFrame = glfwGetTime();
+            deltaTime = currentFrame - lastFrame;
+            lastFrame = currentFrame;
+
             glfwPollEvents();
+            handleKeyActions();
 
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -130,6 +145,12 @@ public class Application {
 
             shader.use();
 
+            var view = new Matrix4f().lookAt(
+                    cameraPos,
+                    new Vector3f(cameraPos).add(cameraFront),
+                    cameraUp);
+
+            var projection = new Matrix4f().perspective(toRadians(fov), width / height, 0.1f, 100.0f);
             glUniformMatrix4fv(shader.getUniformLocation("view"), false, view.get(new float[16]));
             glUniformMatrix4fv(shader.getUniformLocation("projection"), false, projection.get(new float[16]));
 
@@ -137,7 +158,7 @@ public class Application {
             for (int i = 0; i < 10; i++) {
                 var model = new Matrix4f()
                         .translate(cubesPositions[i])
-                        .rotate((Math.toRadians(i % 3 == 0 || i == 1 ? (float) (glfwGetTime() * 50) : 20f * i)), 1f, 0.3f, 0.5f);
+                        .rotate((toRadians(i % 3 == 0 || i == 1 ? (float) (glfwGetTime() * 50) : 20f * i)), 1f, 0.3f, 0.5f);
                 glUniformMatrix4fv(shader.getUniformLocation("model"), false, model.get(new float[16]));
                 glDrawArrays(GL_TRIANGLES, 0, 36);
             }
@@ -149,6 +170,54 @@ public class Application {
         glDeleteVertexArrays(vao);
         glDeleteBuffers(vbo);
         glDeleteBuffers(ebo);
+    }
+
+    private void handleKeyActions() {
+        float camSpeed = (float) (5.0d * deltaTime);
+
+        if (keys[GLFW_KEY_ESCAPE]) glfwSetWindowShouldClose(windowHandle, true);
+        if (keys[GLFW_KEY_W]) cameraPos.add(new Vector3f(cameraFront).mul(camSpeed));
+        if (keys[GLFW_KEY_S]) cameraPos.sub(new Vector3f(cameraFront).mul(camSpeed));
+        if (keys[GLFW_KEY_A]) cameraPos.sub(new Vector3f(cameraFront).cross(new Vector3f(cameraUp)).normalize().mul(camSpeed));
+        if (keys[GLFW_KEY_D]) cameraPos.add(new Vector3f(cameraFront).cross(new Vector3f(cameraUp)).normalize().mul(camSpeed));
+    }
+
+    private void handleMouse(long window, double xpos, double ypos) {
+        if (firstMouse) {
+            lastX = xpos;
+            lastY = ypos;
+            firstMouse = false;
+        }
+
+        double xoffset = xpos - lastX;
+        double yoffset = lastY - ypos;
+        lastX = xpos;
+        lastY = ypos;
+
+        double sensitivity = 0.05f;
+        xoffset *= sensitivity;
+        yoffset *= sensitivity;
+
+        yaw += xoffset;
+        pitch += yoffset;
+
+        if (pitch > 89.0f) pitch = 89.0f;
+        if (pitch < -89.0f) pitch = -89.0f;
+
+        cameraFront = new Vector3f(
+                cos(toRadians(pitch)) * cos(toRadians(yaw)),
+                sin(toRadians(pitch)),
+                cos(toRadians(pitch)) * sin(toRadians(yaw)))
+                .normalize();
+    }
+
+    private void handleScroll(long window, double xoffset, double yoffset) {
+        if(fov >= 1.0f && fov <= 45.0f)
+            fov -= yoffset;
+        if(fov <= 1.0f)
+            fov = 1.0f;
+        if(fov >= 45.0f)
+            fov = 45.0f;
     }
 
     private float[] vertices() {
@@ -201,6 +270,21 @@ public class Application {
         return new int[]{
                 0, 1, 3,   // Первый треугольник
                 1, 2, 3    // Второй треугольник
+        };
+    }
+
+    private Vector3f[] cubesPositions() {
+        return new Vector3f[]{
+                new Vector3f(0.0f, 0.0f, 0.0f),
+                new Vector3f(2.0f, 5.0f, -15.0f),
+                new Vector3f(-1.5f, -2.2f, -2.5f),
+                new Vector3f(-3.8f, -2.0f, -12.3f),
+                new Vector3f(2.4f, -0.4f, -3.5f),
+                new Vector3f(-1.7f, 3.0f, -7.5f),
+                new Vector3f(1.3f, -2.0f, -2.5f),
+                new Vector3f(1.5f, 2.0f, -2.5f),
+                new Vector3f(1.5f, 0.2f, -1.5f),
+                new Vector3f(-1.3f, 1.0f, -1.5f)
         };
     }
 
