@@ -167,6 +167,8 @@ public class Application {
         if (keys[GLFW_KEY_S]) camera.moveBackward(camSpeed);
         if (keys[GLFW_KEY_A]) camera.moveLeft(camSpeed);
         if (keys[GLFW_KEY_D]) camera.moveRight(camSpeed);
+        if (keys[GLFW_KEY_SPACE]) camera.moveUp(camSpeed);
+        if (keys[GLFW_KEY_LEFT_CONTROL]) camera.moveDown(camSpeed);
     }
 
     private void handleMouse(long window, double xpos, double ypos) {

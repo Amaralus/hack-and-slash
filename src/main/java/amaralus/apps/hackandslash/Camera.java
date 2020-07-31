@@ -48,6 +48,14 @@ public class Camera {
         position.add(cameraFront().cross(cameraUp()).normalize().mul(distance));
     }
 
+    public void moveUp(float distance) {
+        position.add(cameraUp().mul(distance));
+    }
+
+    public void moveDown(float distance) {
+        position.sub(cameraUp().mul(distance));
+    }
+
     public void rotate(float xAngle, float yAngle) {
         yaw += xAngle;
         pitch += yAngle;
