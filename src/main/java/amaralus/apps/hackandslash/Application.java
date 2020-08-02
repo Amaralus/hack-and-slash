@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.io.FileLoadService;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
@@ -42,7 +41,6 @@ public class Application {
     private double lastY = 300;
 
     private long windowHandle;
-    private FileLoadService fileLoadService = new FileLoadService();
 
     public static void main(String[] args) {
         new Application().run();
@@ -118,11 +116,13 @@ public class Application {
         int ebo = glGenBuffers();
 
         setUpVertexData(vao, vbo, ebo);
-        int texture = loadTexture();
+        var texture = new Texture("inosuke2");
 
         Vector3f[] cubesPositions = cubesPositions();
 
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         while (!glfwWindowShouldClose(windowHandle)) {
             double currentFrame = glfwGetTime();
@@ -135,8 +135,7 @@ public class Application {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            glBindTexture(GL_TEXTURE_2D, texture);
-
+            texture.bind();
             shader.use();
 
             glUniformMatrix4fv(shader.getUniformLocation("viewProjection"), false, camera.viewMatrixBuffer());
@@ -281,23 +280,5 @@ public class Application {
 
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
-    }
-
-    private int loadTexture() {
-        int texture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, texture);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        var imageData = fileLoadService.loadImageData("textures/angryAsFuck.png");
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, imageData.getWidth(), imageData.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.getImageBytes());
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glBindTexture(GL_TEXTURE_2D, 0);
-
-        return texture;
     }
 }
