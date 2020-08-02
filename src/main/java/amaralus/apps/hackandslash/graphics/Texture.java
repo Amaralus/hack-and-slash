@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;

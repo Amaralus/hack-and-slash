@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -50,8 +47,7 @@ public class FileLoadService {
 
             var buffer = BufferUtils.createByteBuffer(image.getWidth() * image.getHeight() * 4);
 
-            // проход по Y инвертирован из-за особенности восприятия координатор в opengl
-            for (int y = image.getHeight() - 1; y >= 0; y--)
+            for (int y = 0; y < image.getHeight(); y++)
                 for (int x = 0; x < image.getWidth(); x++) {
                     int pixel = pixels[y * image.getWidth() + x];
 
@@ -75,8 +71,13 @@ public class FileLoadService {
         }
     }
 
-    protected InputStream loadResourceAsStream(String path) {
+    protected InputStream loadResourceAsStream(String path) throws FileNotFoundException {
         log.debug("Загрузка файла: {}", path);
-        return ClassLoader.getSystemResourceAsStream(path);
+        InputStream stream = ClassLoader.getSystemResourceAsStream(path);
+
+        if (stream == null)
+            throw new FileNotFoundException(path);
+
+        return stream;
     }
 }

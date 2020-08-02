@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.graphics;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
