@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.graphics.Camera;
 import amaralus.apps.hackandslash.graphics.Shader;
 import amaralus.apps.hackandslash.graphics.Texture;
 import org.joml.Matrix4f;
@@ -15,7 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.*;
 
-import static org.joml.Math.*;
+import static amaralus.apps.hackandslash.VectMatrUtil.copy;
+import static org.joml.Math.toRadians;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
@@ -31,7 +31,8 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    Camera camera = new Camera(width, height, 0f, 0f, 3);
+    private Vector2f cameraWorldPos = new Vector2f(0f, 0f);
+    private Vector2f entityWorldPos = new Vector2f(0f, 0f);
 
     private boolean[] keys = new boolean[1024];
 
@@ -127,11 +128,10 @@ public class Application {
 
             shader.use();
 
-            var position = new Vector2f(200.0f, 200.0f);
             var size = new Vector2f(300.0f, 400.0f);
 
             var model = new Matrix4f()
-                    .translate(new Vector3f(position, 1f))
+                    .translate(new Vector3f(getEntityCamPos(entityWorldPos), 1f))
                     .translate(new Vector3f(0.5f * size.x, 0.5f * size.y, 0f))
                     .rotate(toRadians(45f), new Vector3f(0f, 0f, 1f))
                     .translate(new Vector3f(-0.5f * size.x, -0.5f * size.y, 0f))
@@ -154,8 +154,18 @@ public class Application {
         glDeleteBuffers(ebo);
     }
 
+    private Vector2f getEntityCamPos(Vector2f entityPos) {
+        var camZero = copy(cameraWorldPos).sub(new Vector2f(width * 0.5f, height * 0.5f));
+        return copy(entityPos).sub(camZero);
+    }
+
     private void handleKeyActions() {
+        float speed = 5;
         if (keys[GLFW_KEY_ESCAPE]) glfwSetWindowShouldClose(windowHandle, true);
+        if (keys[GLFW_KEY_W]) entityWorldPos.y -= speed;
+        if (keys[GLFW_KEY_S]) entityWorldPos.y += speed;
+        if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;
+        if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
     }
 
     private float[] vertices() {
