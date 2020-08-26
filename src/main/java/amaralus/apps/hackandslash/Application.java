@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash;
 
+import amaralus.apps.hackandslash.graphics.OrthoCamera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
 import amaralus.apps.hackandslash.graphics.Texture;
 import org.joml.Vector2f;
@@ -26,8 +27,8 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    private Vector2f cameraWorldPos = vec2(0f, 0f);
     private Vector2f entityWorldPos = vec2(-200f, -100f);
+    private OrthoCamera camera;
 
     private boolean[] keys = new boolean[1024];
 
@@ -100,8 +101,11 @@ public class Application {
     private void loop() {
         GL.createCapabilities();
 
-        var spriteRenderer = new SpriteRenderer(width, height);
+        camera = new OrthoCamera(width, height, vec2(0f, 0f));
+        var spriteRenderer = new SpriteRenderer();
+
         var texture = new Texture("inosuke2");
+        var texture2 = new Texture("illumicati2");
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
@@ -117,7 +121,8 @@ public class Application {
 
             var size = vec2(300.0f, 400.0f);
 
-            spriteRenderer.draw(texture, getEntityCamPos(entityWorldPos), size, 0f);
+            spriteRenderer.draw(camera, texture, entityWorldPos, size, 0f);
+            spriteRenderer.draw(camera, texture2, vec2(150, -100), size, 0f);
 
             glfwSwapBuffers(windowHandle);
         }
@@ -125,17 +130,18 @@ public class Application {
         spriteRenderer.destroy();
     }
 
-    private Vector2f getEntityCamPos(Vector2f entityPos) {
-        var camZero = copy(cameraWorldPos).sub(vec2(width * 0.5f, height * 0.5f));
-        return copy(entityPos).sub(camZero);
-    }
-
     private void handleKeyActions() {
         float speed = 5;
         if (keys[GLFW_KEY_ESCAPE]) glfwSetWindowShouldClose(windowHandle, true);
+
         if (keys[GLFW_KEY_W]) entityWorldPos.y -= speed;
         if (keys[GLFW_KEY_S]) entityWorldPos.y += speed;
         if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;
         if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
+
+        if(keys[GLFW_KEY_I]) camera.moveUp(speed);
+        if(keys[GLFW_KEY_K]) camera.moveDown(speed);
+        if(keys[GLFW_KEY_J]) camera.moveLeft(speed);
+        if(keys[GLFW_KEY_L]) camera.moveRight(speed);
     }
 }
