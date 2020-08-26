@@ -2,8 +2,7 @@ package amaralus.apps.hackandslash.graphics;
 
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.mat4;
-import static amaralus.apps.hackandslash.VectMatrUtil.vec3;
+import static amaralus.apps.hackandslash.VectMatrUtil.*;
 import static org.joml.Math.toRadians;
 import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
@@ -32,15 +31,16 @@ public class SpriteRenderer {
         setUpVertexData();
     }
 
-    public void draw(OrthoCamera camera, Texture texture, Vector2f entityPos, Vector2f entitySize, float rotateAngle) {
+    public void draw(OrthoCamera camera, Texture texture, Vector2f entityPos, float rotateAngle) {
         textureShader.use();
+        var textureSize = vec2(texture.getWidth() * camera.getScale(), texture.getHeight() * camera.getScale());
 
         var model = mat4()
-                .translate(vec3(camera.getEntityCamPos(entityPos), 1f))
-                .translate(vec3(0.5f * entitySize.x, 0.5f * entitySize.y, 0f))
+                .translate(vec3(camera.getEntityCamPos(entityPos, textureSize), 1f))
+                .translate(vec3(0.5f * textureSize.x, 0.5f * textureSize.y, 0f))
                 .rotate(toRadians(rotateAngle), vec3(0f, 0f, 1f))
-                .translate(vec3(-0.5f * entitySize.x, -0.5f * entitySize.y, 0f))
-                .scale(vec3(entitySize, 1f));
+                .translate(vec3(-0.5f * textureSize.x, -0.5f * textureSize.y, 0f))
+                .scale(vec3(textureSize, 1f));
 
         textureShader.setMatrix4("model", model);
         textureShader.setMatrix4("projection", camera.getProjection());

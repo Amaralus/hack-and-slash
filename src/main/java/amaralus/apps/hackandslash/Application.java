@@ -27,7 +27,7 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    private Vector2f entityWorldPos = vec2(-200f, -100f);
+    private Vector2f entityWorldPos = vec2(0f, -0f);
     private OrthoCamera camera;
 
     private boolean[] keys = new boolean[1024];
@@ -106,6 +106,7 @@ public class Application {
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         camera = new OrthoCamera(width, height, vec2(0f, 0f));
+        camera.setScale(4.5f);
         var spriteRenderer = new SpriteRenderer();
 
         var texture = new Texture("inosuke2");
@@ -118,10 +119,8 @@ public class Application {
             glClearColor(0f,0f,0f,1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            var size = vec2(300.0f, 400.0f);
-
-            spriteRenderer.draw(camera, texture, entityWorldPos, size, 0f);
-            spriteRenderer.draw(camera, texture2, vec2(0, -100), size, 0f);
+            spriteRenderer.draw(camera, texture, entityWorldPos, 0f);
+            spriteRenderer.draw(camera, texture2, vec2(0f, 0f), 0f);
 
             glfwSwapBuffers(windowHandle);
         }

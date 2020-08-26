@@ -9,6 +9,7 @@ public class OrthoCamera {
 
     private final float width;
     private final float height;
+    private float scale = 1f;
 
     private final Vector2f position;
     private final Vector2f leftTopPosition;
@@ -23,8 +24,10 @@ public class OrthoCamera {
         projection = mat4().ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     }
 
-    public Vector2f getEntityCamPos(Vector2f entityPos) {
-        return copy(entityPos).sub(leftTopPosition);
+    public Vector2f getEntityCamPos(Vector2f entityPos, Vector2f textureSize) {
+        return copy(entityPos)
+                .sub(copy(textureSize).mul(0.5f))
+                .sub(leftTopPosition);
     }
 
     public void moveLeft(float distance) {
@@ -65,5 +68,13 @@ public class OrthoCamera {
 
     public Matrix4f getProjection() {
         return projection;
+    }
+
+    public float getScale() {
+        return scale;
+    }
+
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 }
