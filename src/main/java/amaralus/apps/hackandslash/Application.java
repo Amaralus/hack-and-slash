@@ -1,10 +1,8 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.graphics.Shader;
+import amaralus.apps.hackandslash.graphics.SpriteRenderer;
 import amaralus.apps.hackandslash.graphics.Texture;
-import org.joml.Matrix4f;
 import org.joml.Vector2f;
-import org.joml.Vector3f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -14,13 +12,10 @@ import org.slf4j.LoggerFactory;
 
 import java.nio.*;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.copy;
-import static org.joml.Math.toRadians;
+import static amaralus.apps.hackandslash.VectMatrUtil.*;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -31,8 +26,8 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    private Vector2f cameraWorldPos = new Vector2f(0f, 0f);
-    private Vector2f entityWorldPos = new Vector2f(0f, 0f);
+    private Vector2f cameraWorldPos = vec2(0f, 0f);
+    private Vector2f entityWorldPos = vec2(-200f, -100f);
 
     private boolean[] keys = new boolean[1024];
 
@@ -105,20 +100,14 @@ public class Application {
     private void loop() {
         GL.createCapabilities();
 
-        var shader = new Shader("vertex", "fragment");
-
-        int vao = glGenVertexArrays();
-        int vbo = glGenBuffers();
-        int ebo = glGenBuffers();
-
-        setUpVertexData(vao, vbo, ebo);
+        var spriteRenderer = new SpriteRenderer(width, height);
         var texture = new Texture("inosuke2");
-        var projection = new Matrix4f().ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
 
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
             handleKeyActions();
@@ -126,36 +115,18 @@ public class Application {
             glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            shader.use();
+            var size = vec2(300.0f, 400.0f);
 
-            var size = new Vector2f(300.0f, 400.0f);
-
-            var model = new Matrix4f()
-                    .translate(new Vector3f(getEntityCamPos(entityWorldPos), 1f))
-                    .translate(new Vector3f(0.5f * size.x, 0.5f * size.y, 0f))
-                    .rotate(toRadians(45f), new Vector3f(0f, 0f, 1f))
-                    .translate(new Vector3f(-0.5f * size.x, -0.5f * size.y, 0f))
-                    .scale(new Vector3f(size, 1f));
-
-            shader.setMatrix4("model", model);
-            shader.setMatrix4("projection", projection);
-
-            texture.bind();
-
-            glBindVertexArray(vao);
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-            glBindVertexArray(0);
+            spriteRenderer.draw(texture, getEntityCamPos(entityWorldPos), size, 0f);
 
             glfwSwapBuffers(windowHandle);
         }
 
-        glDeleteVertexArrays(vao);
-        glDeleteBuffers(vbo);
-        glDeleteBuffers(ebo);
+        spriteRenderer.destroy();
     }
 
     private Vector2f getEntityCamPos(Vector2f entityPos) {
-        var camZero = copy(cameraWorldPos).sub(new Vector2f(width * 0.5f, height * 0.5f));
+        var camZero = copy(cameraWorldPos).sub(vec2(width * 0.5f, height * 0.5f));
         return copy(entityPos).sub(camZero);
     }
 
@@ -166,39 +137,5 @@ public class Application {
         if (keys[GLFW_KEY_S]) entityWorldPos.y += speed;
         if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;
         if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
-    }
-
-    private float[] vertices() {
-        return new float[]{
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f,
-                0.0f, 0.0f, 0.0f, 0.0f,
-
-                0.0f, 1.0f, 0.0f, 1.0f,
-                1.0f, 1.0f, 1.0f, 1.0f,
-                1.0f, 0.0f, 1.0f, 0.0f
-        };
-    }
-
-    private int[] indices() {
-        return new int[]{
-                0, 1, 3,   // Первый треугольник
-                1, 2, 3    // Второй треугольник
-        };
-    }
-
-    private void setUpVertexData(int vao, int vbo, int ebo) {
-        glBindVertexArray(vao);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices(), GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices(), GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 4, GL_FLOAT, false, 4 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(0);
-
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
     }
 }
