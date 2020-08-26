@@ -100,6 +100,10 @@ public class Application {
 
     private void loop() {
         GL.createCapabilities();
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         camera = new OrthoCamera(width, height, vec2(0f, 0f));
         var spriteRenderer = new SpriteRenderer();
@@ -107,22 +111,17 @@ public class Application {
         var texture = new Texture("inosuke2");
         var texture2 = new Texture("illumicati2");
 
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
             handleKeyActions();
 
-            glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+            glClearColor(0f,0f,0f,1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             var size = vec2(300.0f, 400.0f);
 
             spriteRenderer.draw(camera, texture, entityWorldPos, size, 0f);
-            spriteRenderer.draw(camera, texture2, vec2(150, -100), size, 0f);
+            spriteRenderer.draw(camera, texture2, vec2(0, -100), size, 0f);
 
             glfwSwapBuffers(windowHandle);
         }
