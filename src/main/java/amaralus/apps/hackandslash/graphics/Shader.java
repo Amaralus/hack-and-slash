@@ -1,10 +1,13 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.lwjgl.opengl.GL20.*;
+import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 public class Shader {
 
@@ -32,6 +35,14 @@ public class Shader {
 
     public void use() {
         glUseProgram(program);
+    }
+
+    public void setMatrix4(String parameter, Matrix4f matrix) {
+        glUniformMatrix4fv(getUniformLocation(parameter), false, matrix.get(BufferUtils.createFloatBuffer(16)));
+    }
+
+    public void setInteger(String parameter, int i) {
+        glUniform1i(getUniformLocation(parameter), i);
     }
 
     public int getUniformLocation(String name) {

@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.graphics;
 
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -6,6 +6,7 @@ import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
 
+import static amaralus.apps.hackandslash.VectMatrUtil.*;
 import static org.joml.Math.*;
 
 public class Camera {
@@ -14,8 +15,8 @@ public class Camera {
     private final float height;
 
     private final Vector3f position;
-    private final Vector3f cameraUp = new Vector3f(0f, 1f, 0f);
-    private Vector3f cameraFront = new Vector3f(0f, 0f, -1f);
+    private final Vector3f cameraUp = vec3(0f, 1f, 0f);
+    private Vector3f cameraFront = vec3(0f, 0f, -1f);
 
     private float fov = 45f;
 
@@ -23,7 +24,7 @@ public class Camera {
     private float pitch = 0.0f;
 
     public Camera(float width, float height, float x, float y, float z) {
-        this(width, height, new Vector3f(x, y, z));
+        this(width, height, vec3(x, y, z));
     }
 
     public Camera(float width, float height, Vector3f position) {
@@ -71,7 +72,7 @@ public class Camera {
     }
 
     public Matrix4f viewMatrix() {
-        return new Matrix4f()
+        return mat4()
                 .perspective(toRadians(fov), width / height, 0.1f, 100.0f)
                 .lookAt(position(), position().add(cameraFront()), cameraUp());
     }
@@ -81,15 +82,15 @@ public class Camera {
     }
 
     public Vector3f position() {
-        return new Vector3f(position);
+        return copy(position);
     }
 
     public Vector3f cameraFront() {
-        return new Vector3f(cameraFront);
+        return copy(cameraFront);
     }
 
     public Vector3f cameraUp() {
-        return new Vector3f(cameraUp);
+        return copy(cameraUp);
     }
 
     public float fov() {

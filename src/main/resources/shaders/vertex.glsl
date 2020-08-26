@@ -1,14 +1,13 @@
-#version 460
+#version 410
 
-layout (location = 0) in vec3 position;
-layout (location = 2) in vec2 textureCoord;
+layout (location = 0) in vec4 vertex;
 
 out vec2 texCoord;
 
 uniform mat4 model;
-uniform mat4 viewProjection;
+uniform mat4 projection;
 
 void main() {
-    gl_Position = gl_Position = viewProjection * model * vec4(position, 1.0f);
-    texCoord = textureCoord;
+    gl_Position = gl_Position = projection * model * vec4(vertex.xy, 0.0, 1.0);
+    texCoord = vertex.zw;
 }
