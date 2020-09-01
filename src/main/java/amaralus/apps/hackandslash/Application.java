@@ -1,8 +1,8 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.graphics.OrthoCamera;
+import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
-import amaralus.apps.hackandslash.graphics.Texture;
+import amaralus.apps.hackandslash.graphics.data.Texture;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;

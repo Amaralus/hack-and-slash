@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics;
+package amaralus.apps.hackandslash.graphics.data;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;
@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public class Texture {
+public class Texture implements Bindable {
 
     private static final Logger log = LoggerFactory.getLogger(Texture.class);
 
@@ -32,11 +32,22 @@ public class Texture {
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.getImageBytes());
         glGenerateMipmap(GL_TEXTURE_2D);
 
+        unbind();
+    }
+
+    @Override
+    public void bind() {
+        glBindTexture(GL_TEXTURE_2D, id);
+    }
+
+    @Override
+    public void unbind() {
         glBindTexture(GL_TEXTURE_2D, 0);
     }
 
-    public void bind() {
-        glBindTexture(GL_TEXTURE_2D, id);
+    @Override
+    public int id() {
+        return id;
     }
 
     public int getWidth() {
@@ -45,9 +56,5 @@ public class Texture {
 
     public int getHeight() {
         return height;
-    }
-
-    public int getId() {
-        return id;
     }
 }

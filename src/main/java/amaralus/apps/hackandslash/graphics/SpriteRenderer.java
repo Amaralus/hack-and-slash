@@ -1,33 +1,25 @@
 package amaralus.apps.hackandslash.graphics;
 
+import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
+import amaralus.apps.hackandslash.graphics.data.Texture;
+import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.data.VertexBufferObject;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.VectMatrUtil.*;
 import static org.joml.Math.toRadians;
-import static org.lwjgl.opengl.GL11.GL_FLOAT;
 import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
-import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.opengl.GL30.glBindVertexArray;
 
 public class SpriteRenderer {
 
-    private final int vao;
-    private final int vbo;
-    private final int ebo;
-
     private final Shader textureShader;
+    VertexArraysObject vao;
 
     private final int[] vertexIndices = {0, 1, 3, 1, 2, 3};
 
     public SpriteRenderer() {
         textureShader = new Shader("vertex", "fragment");
-
-        vao = glGenVertexArrays();
-        vbo = glGenBuffers();
-        ebo = glGenBuffers();
         setUpVertexData();
     }
 
@@ -49,15 +41,13 @@ public class SpriteRenderer {
 
         texture.bind();
 
-        glBindVertexArray(vao);
+        vao.bind();
         glDrawElements(GL_TRIANGLES, vertexIndices.length, GL_UNSIGNED_INT, 0);
-        glBindVertexArray(0);
+        vao.unbind();
     }
 
     public void destroy() {
-        glDeleteVertexArrays(vao);
-        glDeleteBuffers(vbo);
-        glDeleteBuffers(ebo);
+        vao.destroy();
     }
 
     private float calcOffset(float textureLength, float frameLength, float frameNum) {
@@ -70,17 +60,9 @@ public class SpriteRenderer {
 
         float[] vertices = {0f, yPos, 0f, 0f, xPos, 0f, xPos, yPos};
 
-        glBindVertexArray(vao);
-
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexIndices, GL_STATIC_DRAW);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(0);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
+        vao = new VertexArraysObject(
+                new VertexBufferObject(GL_ARRAY_BUFFER, vertices),
+                new VertexBufferObject(GL_ELEMENT_ARRAY_BUFFER, vertexIndices)
+        );
     }
 }
