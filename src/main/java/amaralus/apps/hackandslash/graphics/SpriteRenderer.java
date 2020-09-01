@@ -15,8 +15,7 @@ import static org.lwjgl.opengl.GL30.glBindVertexArray;
 public class SpriteRenderer {
 
     private final int vao;
-    private final int verticesVbo;
-    private final int textureCoordsVbo;
+    private final int vbo;
     private final int ebo;
 
     private final Shader textureShader;
@@ -27,8 +26,7 @@ public class SpriteRenderer {
         textureShader = new Shader("vertex", "fragment");
 
         vao = glGenVertexArrays();
-        verticesVbo = glGenBuffers();
-        textureCoordsVbo = glGenBuffers();
+        vbo = glGenBuffers();
         ebo = glGenBuffers();
         setUpVertexData();
     }
@@ -58,7 +56,7 @@ public class SpriteRenderer {
 
     public void destroy() {
         glDeleteVertexArrays(vao);
-        glDeleteBuffers(verticesVbo);
+        glDeleteBuffers(vbo);
         glDeleteBuffers(ebo);
     }
 
@@ -70,23 +68,18 @@ public class SpriteRenderer {
         float xPos = 16f / 64f;
         float yPos = 24f / 72f;
 
-        float[] vertices = {0f, 1f, 0f, 0f, 1f, 0f, 1f, 1f,};
-        float[] textureCoords = {0f, yPos, 0f, 0f, xPos, 0f, xPos, yPos};
+        float[] vertices = {0f, yPos, 0f, 0f, xPos, 0f, xPos, yPos};
 
         glBindVertexArray(vao);
 
-        glBindBuffer(GL_ARRAY_BUFFER, verticesVbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
         glBufferData(GL_ARRAY_BUFFER, vertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, textureCoordsVbo);
-        glBufferData(GL_ARRAY_BUFFER, textureCoords, GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertexIndices, GL_STATIC_DRAW);
 
         glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0L);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 2 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(1);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
     }
