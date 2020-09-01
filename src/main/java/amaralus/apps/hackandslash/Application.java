@@ -109,8 +109,7 @@ public class Application {
         camera.setScale(4.5f);
         var spriteRenderer = new SpriteRenderer();
 
-        var texture = new Texture("inosuke2");
-        var texture2 = new Texture("illumicati2");
+        var texture3 = new Texture("testTextureSheet");
 
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
@@ -119,8 +118,7 @@ public class Application {
             glClearColor(0f,0f,0f,1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            spriteRenderer.draw(camera, texture, entityWorldPos, 0f);
-            spriteRenderer.draw(camera, texture2, vec2(0f, 0f), 0f);
+            spriteRenderer.draw(camera, texture3, entityWorldPos, 0f);
 
             glfwSwapBuffers(windowHandle);
         }

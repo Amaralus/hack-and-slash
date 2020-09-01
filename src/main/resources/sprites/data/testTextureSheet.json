@@ -1,5 +1,5 @@
 {
-  "textureWidth": 64,
-  "textureHeight": 72,
-  "texturesCount": [2,3,4]
+  "frameWidth": 16,
+  "frameHeight": 24,
+  "framesCount": [2,3,4]
 }
