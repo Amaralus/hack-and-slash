@@ -33,6 +33,7 @@ public class Application {
 
     private Vector2f entityWorldPos = vec2(0f, 0f);
     private OrthoCamera camera;
+    private SpriteSheet sprite;
 
     private boolean[] keys = new boolean[1024];
 
@@ -114,17 +115,26 @@ public class Application {
         var spriteRenderer = new SpriteRenderer();
 
         var spriteSheetData = new FileLoadService().loadFromJson("sprites/data/testTextureSheet.json", SpriteSheetData.class);
-        var sprite = new SpriteSheet(new Texture("testTextureSheet"), spriteSheetData);
-        sprite.setCurrentXFrame(2);
-        sprite.setCurrentYFrame(2);
+        sprite = new SpriteSheet(new Texture("testTextureSheet"), spriteSheetData);
         var sprite2 = new SimpleSprite(new Texture("inosuke2"));
 
+        int current = 0;
+        long lastMillis = System.currentTimeMillis();
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
             handleKeyActions();
 
             glClearColor(0f,0f,0f,1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+            var millis = System.currentTimeMillis();
+
+            if (lastMillis + 300 < millis) {
+                lastMillis = millis;
+                sprite.setCurrentXFrame(++current);
+                if (current == sprite.getCurrentYFrame() + 1)
+                    current = 0;
+            }
 
             spriteRenderer.draw(camera, sprite, entityWorldPos, 0f);
             spriteRenderer.draw(camera, sprite2, vec2(0f, 0f), 0f);
@@ -149,5 +159,9 @@ public class Application {
         if(keys[GLFW_KEY_K]) camera.moveDown(speed);
         if(keys[GLFW_KEY_J]) camera.moveLeft(speed);
         if(keys[GLFW_KEY_L]) camera.moveRight(speed);
+
+        if(keys[GLFW_KEY_1]) sprite.setCurrentYFrame(1);
+        if(keys[GLFW_KEY_2]) sprite.setCurrentYFrame(2);
+        if(keys[GLFW_KEY_3]) sprite.setCurrentYFrame(3);
     }
 }
