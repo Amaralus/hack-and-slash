@@ -4,46 +4,37 @@ import java.util.List;
 
 public class SpriteSheetData {
 
-    private int textureWidth;
-    private int textureHeight;
-    private List<Integer> texturesCount;
+    private int frameWidth;
+    private int frameHeight;
+    private List<Integer> framesCount;
 
-    public SpriteSheetData(int textureWidth, int textureHeight, List<Integer> texturesCount) {
-        this.textureWidth = textureWidth;
-        this.textureHeight = textureHeight;
-        this.texturesCount = texturesCount;
+    public SpriteSheetData(int frameWidth, int frameHeight, List<Integer> framesCount) {
+        this.frameWidth = frameWidth;
+        this.frameHeight = frameHeight;
+        this.framesCount = framesCount;
     }
 
-    public int getTextureWidth() {
-        return textureWidth;
+    public int getFrameWidth() {
+        return frameWidth;
     }
 
-    public void setTextureWidth(int textureWidth) {
-        this.textureWidth = textureWidth;
+    public void setFrameWidth(int frameWidth) {
+        this.frameWidth = frameWidth;
     }
 
-    public int getTextureHeight() {
-        return textureHeight;
+    public int getFrameHeight() {
+        return frameHeight;
     }
 
-    public void setTextureHeight(int textureHeight) {
-        this.textureHeight = textureHeight;
+    public void setFrameHeight(int frameHeight) {
+        this.frameHeight = frameHeight;
     }
 
-    public List<Integer> getTexturesCount() {
-        return texturesCount;
+    public List<Integer> getFramesCount() {
+        return framesCount;
     }
 
-    public void setTexturesCount(List<Integer> texturesCount) {
-        this.texturesCount = texturesCount;
-    }
-
-    @Override
-    public String toString() {
-        return "SpriteSheetData{" +
-                "textureWidth=" + textureWidth +
-                ", textureHeight=" + textureHeight +
-                ", texturesCount=" + texturesCount +
-                '}';
+    public void setFramesCount(List<Integer> framesCount) {
+        this.framesCount = framesCount;
     }
 }

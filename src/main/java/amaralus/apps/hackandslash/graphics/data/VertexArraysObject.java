@@ -49,6 +49,7 @@ public class VertexArraysObject implements Bindable, Destroyable {
 
     @Override
     public void destroy() {
+        buffers.forEach(Destroyable::destroy);
         glDeleteVertexArrays(id);
     }
 

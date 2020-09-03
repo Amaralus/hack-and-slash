@@ -2,7 +2,11 @@ package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
+import amaralus.apps.hackandslash.graphics.data.SimpleSprite;
+import amaralus.apps.hackandslash.graphics.data.SpriteSheet;
 import amaralus.apps.hackandslash.graphics.data.Texture;
+import amaralus.apps.hackandslash.io.FileLoadService;
+import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -27,7 +31,7 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    private Vector2f entityWorldPos = vec2(0f, -0f);
+    private Vector2f entityWorldPos = vec2(0f, 0f);
     private OrthoCamera camera;
 
     private boolean[] keys = new boolean[1024];
@@ -109,7 +113,11 @@ public class Application {
         camera.setScale(4.5f);
         var spriteRenderer = new SpriteRenderer();
 
-        var texture3 = new Texture("testTextureSheet");
+        var spriteSheetData = new FileLoadService().loadFromJson("sprites/data/testTextureSheet.json", SpriteSheetData.class);
+        var sprite = new SpriteSheet(new Texture("testTextureSheet"), spriteSheetData);
+        sprite.setCurrentXFrame(2);
+        sprite.setCurrentYFrame(2);
+        var sprite2 = new SimpleSprite(new Texture("inosuke2"));
 
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
@@ -118,12 +126,14 @@ public class Application {
             glClearColor(0f,0f,0f,1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            spriteRenderer.draw(camera, texture3, entityWorldPos, 0f);
+            spriteRenderer.draw(camera, sprite, entityWorldPos, 0f);
+            spriteRenderer.draw(camera, sprite2, vec2(0f, 0f), 0f);
 
             glfwSwapBuffers(windowHandle);
         }
 
-        spriteRenderer.destroy();
+        sprite.destroy();
+        sprite2.destroy();
     }
 
     private void handleKeyActions() {

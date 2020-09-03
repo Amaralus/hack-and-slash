@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.graphics.camera;
 
+import amaralus.apps.hackandslash.graphics.data.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -28,6 +29,10 @@ public class OrthoCamera {
         return copy(entityPos)
                 .sub(copy(textureSize).mul(0.5f))
                 .sub(leftTopPosition);
+    }
+
+    public Vector2f getSpriteScaleOfCam(Sprite sprite) {
+        return vec2(sprite.getWidth() * scale, sprite.getHeight() * scale);
     }
 
     public void moveLeft(float distance) {
