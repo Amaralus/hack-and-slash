@@ -14,4 +14,6 @@ public interface Sprite extends Destroyable {
     float getWidth();
 
     float getHeight();
+
+    Vector2f getOffsetToSpriteCenter();
 }

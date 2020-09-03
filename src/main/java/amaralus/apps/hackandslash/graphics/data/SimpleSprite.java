@@ -10,6 +10,7 @@ public class SimpleSprite implements Sprite {
 
     private final Texture texture;
     private final VertexArraysObject vao;
+    private final Vector2f offsetToSpriteCenter = vec2(0.5f, 0.5f);
 
     public SimpleSprite(Texture texture) {
         this(texture, 1f, 1f);
@@ -50,6 +51,11 @@ public class SimpleSprite implements Sprite {
     @Override
     public float getHeight() {
         return texture.getHeight();
+    }
+
+    @Override
+    public Vector2f getOffsetToSpriteCenter() {
+        return offsetToSpriteCenter;
     }
 
     @Override

@@ -25,9 +25,9 @@ public class OrthoCamera {
         projection = mat4().ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     }
 
-    public Vector2f getEntityCamPos(Vector2f entityPos, Vector2f textureSize) {
+    public Vector2f getEntityCamPos(Vector2f entityPos, Vector2f spriteSizeOfCam, Vector2f offsetToSpriteCenter) {
         return copy(entityPos)
-                .sub(copy(textureSize).mul(0.5f))
+                .sub(copy(spriteSizeOfCam).mul(offsetToSpriteCenter))
                 .sub(leftTopPosition);
     }
 

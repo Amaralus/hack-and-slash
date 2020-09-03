@@ -19,7 +19,7 @@ public class SpriteRenderer {
 
     public void draw(OrthoCamera camera, Sprite sprite, Vector2f entityPos, float rotateAngle) {
         var textureSize = camera.getSpriteScaleOfCam(sprite);
-        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize);
+        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());
 
         textureShader.use();
         textureShader.setVec2("offset", sprite.getTextureOffset());
