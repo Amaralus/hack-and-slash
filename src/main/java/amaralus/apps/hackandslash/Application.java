@@ -1,8 +1,12 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.graphics.OrthoCamera;
+import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
-import amaralus.apps.hackandslash.graphics.Texture;
+import amaralus.apps.hackandslash.graphics.data.sprites.SimpleSprite;
+import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
+import amaralus.apps.hackandslash.graphics.data.Texture;
+import amaralus.apps.hackandslash.io.FileLoadService;
+import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.lwjgl.glfw.GLFWVidMode;
@@ -27,8 +31,9 @@ public class Application {
     private float width = 800;
     private float height = 600;
 
-    private Vector2f entityWorldPos = vec2(0f, -0f);
+    private Vector2f entityWorldPos = vec2(0f, 0f);
     private OrthoCamera camera;
+    private SpriteSheet sprite;
 
     private boolean[] keys = new boolean[1024];
 
@@ -105,13 +110,15 @@ public class Application {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        camera = new OrthoCamera(width, height, vec2(0f, 0f));
+        camera = new OrthoCamera(width, height);
         camera.setScale(4.5f);
         var spriteRenderer = new SpriteRenderer();
 
-        var texture = new Texture("inosuke2");
-        var texture2 = new Texture("illumicati2");
+        var spriteSheetData = new FileLoadService().loadFromJson("sprites/data/testTextureSheet.json", SpriteSheetData.class);
+        sprite = new SpriteSheet(new Texture("testTextureSheet"), spriteSheetData);
+        var sprite2 = new SimpleSprite(new Texture("inosuke2"));
 
+        long lastMillis = System.currentTimeMillis();
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
             handleKeyActions();
@@ -119,13 +126,21 @@ public class Application {
             glClearColor(0f,0f,0f,1f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            spriteRenderer.draw(camera, texture, entityWorldPos, 0f);
-            spriteRenderer.draw(camera, texture2, vec2(0f, 0f), 0f);
+            var millis = System.currentTimeMillis();
+
+            if (lastMillis + 300 < millis) {
+                lastMillis = millis;
+                sprite.getActiveSprite().nextFrame();
+            }
+
+            spriteRenderer.draw(camera, sprite, entityWorldPos, 0f);
+            spriteRenderer.draw(camera, sprite2, vec2(0f, 0f), 0f);
 
             glfwSwapBuffers(windowHandle);
         }
 
-        spriteRenderer.destroy();
+        sprite.destroy();
+        sprite2.destroy();
     }
 
     private void handleKeyActions() {
@@ -141,5 +156,9 @@ public class Application {
         if(keys[GLFW_KEY_K]) camera.moveDown(speed);
         if(keys[GLFW_KEY_J]) camera.moveLeft(speed);
         if(keys[GLFW_KEY_L]) camera.moveRight(speed);
+
+        if(keys[GLFW_KEY_1]) sprite.setActiveSprite(0);
+        if(keys[GLFW_KEY_2]) sprite.setActiveSprite(1);
+        if(keys[GLFW_KEY_3]) sprite.setActiveSprite(2);
     }
 }

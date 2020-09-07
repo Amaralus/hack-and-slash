@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.io;
 
 import amaralus.apps.hackandslash.io.entities.ImageData;
+import com.google.gson.Gson;
 import org.lwjgl.BufferUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,6 +58,14 @@ public class FileLoadService {
                     buffer.put((byte) ((pixel >> 24) & 0xFF));
                 }
             return new ImageData(image.getWidth(), image.getHeight(), buffer.flip());
+        } catch (Exception e) {
+            throw new LoadFileException(e);
+        }
+    }
+
+    public <D> D loadFromJson(String path, Class<D> clazz) {
+        try {
+            return new Gson().fromJson(new InputStreamReader(loadResourceAsStream(path)), clazz);
         } catch (Exception e) {
             throw new LoadFileException(e);
         }

@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.joml.Matrix4f;
+import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,14 +38,6 @@ public class Shader {
         glUseProgram(program);
     }
 
-    public void setMatrix4(String parameter, Matrix4f matrix) {
-        glUniformMatrix4fv(getUniformLocation(parameter), false, matrix.get(BufferUtils.createFloatBuffer(16)));
-    }
-
-    public void setInteger(String parameter, int i) {
-        glUniform1i(getUniformLocation(parameter), i);
-    }
-
     public int getUniformLocation(String name) {
         return glGetUniformLocation(program, name);
     }
@@ -68,5 +61,17 @@ public class Shader {
 
     public int getProgram() {
         return program;
+    }
+
+    public void setVec2(String parameter, Vector2f vector) {
+        glUniform2f(getUniformLocation(parameter), vector.x, vector.y);
+    }
+
+    public void setMat4(String parameter, Matrix4f matrix) {
+        glUniformMatrix4fv(getUniformLocation(parameter), false, matrix.get(BufferUtils.createFloatBuffer(16)));
+    }
+
+    public void setInt(String parameter, int i) {
+        glUniform1i(getUniformLocation(parameter), i);
     }
 }
