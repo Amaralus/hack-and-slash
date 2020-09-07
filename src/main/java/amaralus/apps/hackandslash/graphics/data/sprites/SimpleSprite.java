@@ -1,5 +1,8 @@
-package amaralus.apps.hackandslash.graphics.data;
+package amaralus.apps.hackandslash.graphics.data.sprites;
 
+import amaralus.apps.hackandslash.graphics.data.Texture;
+import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.data.VertexBufferObject;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.VectMatrUtil.vec2;
@@ -16,10 +19,14 @@ public class SimpleSprite implements Sprite {
         this(texture, 1f, 1f);
     }
 
-    public SimpleSprite(Texture texture, float xPos, float yPos) {
+    public SimpleSprite(Texture texture, Vector2f texturePosition) {
+        this(texture, texturePosition.x, texturePosition.y);
+    }
+
+    public SimpleSprite(Texture texture, float textureXPosition, float textureYPosition) {
         this.texture = texture;
 
-        float[] vertices = {0f, yPos, 0f, 0f, xPos, 0f, xPos, yPos};
+        float[] vertices = {0f, textureYPosition, 0f, 0f, textureXPosition, 0f, textureXPosition, textureYPosition};
         int[] vertexIndices = {0, 1, 3, 1, 2, 3};
 
         vao = new VertexArraysObject(

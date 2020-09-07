@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
-import amaralus.apps.hackandslash.graphics.data.Sprite;
+import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 

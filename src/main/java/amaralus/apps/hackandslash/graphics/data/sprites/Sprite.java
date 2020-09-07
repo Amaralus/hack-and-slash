@@ -1,6 +1,8 @@
-package amaralus.apps.hackandslash.graphics.data;
+package amaralus.apps.hackandslash.graphics.data.sprites;
 
 import amaralus.apps.hackandslash.Destroyable;
+import amaralus.apps.hackandslash.graphics.data.Texture;
+import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
 import org.joml.Vector2f;
 
 public interface Sprite extends Destroyable {

@@ -2,8 +2,8 @@ package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
-import amaralus.apps.hackandslash.graphics.data.SimpleSprite;
-import amaralus.apps.hackandslash.graphics.data.SpriteSheet;
+import amaralus.apps.hackandslash.graphics.data.sprites.SimpleSprite;
+import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
 import amaralus.apps.hackandslash.graphics.data.Texture;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
@@ -110,7 +110,7 @@ public class Application {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        camera = new OrthoCamera(width, height, vec2(0f, 0f));
+        camera = new OrthoCamera(width, height);
         camera.setScale(4.5f);
         var spriteRenderer = new SpriteRenderer();
 
@@ -118,7 +118,6 @@ public class Application {
         sprite = new SpriteSheet(new Texture("testTextureSheet"), spriteSheetData);
         var sprite2 = new SimpleSprite(new Texture("inosuke2"));
 
-        int current = 0;
         long lastMillis = System.currentTimeMillis();
         while (!glfwWindowShouldClose(windowHandle)) {
             glfwPollEvents();
@@ -131,9 +130,7 @@ public class Application {
 
             if (lastMillis + 300 < millis) {
                 lastMillis = millis;
-                sprite.setCurrentXFrame(++current);
-                if (current == sprite.getCurrentYFrame() + 1)
-                    current = 0;
+                sprite.getActiveSprite().nextFrame();
             }
 
             spriteRenderer.draw(camera, sprite, entityWorldPos, 0f);
@@ -160,8 +157,8 @@ public class Application {
         if(keys[GLFW_KEY_J]) camera.moveLeft(speed);
         if(keys[GLFW_KEY_L]) camera.moveRight(speed);
 
-        if(keys[GLFW_KEY_1]) sprite.setCurrentYFrame(1);
-        if(keys[GLFW_KEY_2]) sprite.setCurrentYFrame(2);
-        if(keys[GLFW_KEY_3]) sprite.setCurrentYFrame(3);
+        if(keys[GLFW_KEY_1]) sprite.setActiveSprite(0);
+        if(keys[GLFW_KEY_2]) sprite.setActiveSprite(1);
+        if(keys[GLFW_KEY_3]) sprite.setActiveSprite(2);
     }
 }
