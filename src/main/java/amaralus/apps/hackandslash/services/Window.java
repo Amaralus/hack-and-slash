@@ -1,5 +1,6 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.services;
 
+import amaralus.apps.hackandslash.Destroyable;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.system.MemoryStack;
@@ -22,6 +23,14 @@ public class Window implements Destroyable {
     public Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
+
+        glfwDefaultWindowHints();
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+        glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
 
         windowHandle = glfwCreateWindow(width, height, title, NULL, NULL);
         if (windowHandle == NULL)

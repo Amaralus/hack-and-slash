@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.services.GameController;
+import amaralus.apps.hackandslash.services.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,19 +25,10 @@ public class Application {
 
             if (!glfwInit()) throw new IllegalStateException("Невозвожно инициализировать GLFW!");
 
-            glfwDefaultWindowHints();
-            glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-            glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GLFW_TRUE);
-
             window = new Window(800, 600, "Hack and Slash");
             var gameController = new GameController(window);
 
             window.show();
-
             gameController.gameLoop();
 
             glfwSetErrorCallback(null);

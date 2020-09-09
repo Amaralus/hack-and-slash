@@ -4,7 +4,7 @@ import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 
 public class Camera {
 

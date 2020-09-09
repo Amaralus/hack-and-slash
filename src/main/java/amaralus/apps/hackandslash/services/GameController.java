@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash.services;
 
-import amaralus.apps.hackandslash.Window;
 import amaralus.apps.hackandslash.graphics.Camera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
 import amaralus.apps.hackandslash.graphics.data.Texture;
@@ -12,7 +11,7 @@ import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 import org.lwjgl.opengl.GL;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.vec2;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
 
