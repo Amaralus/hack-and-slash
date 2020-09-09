@@ -78,6 +78,7 @@ public class GameController {
 
     private void handleKeyActions() {
         float speed = 5;
+        if (keys[GLFW_KEY_ESCAPE]) window.close();
         if (keys[GLFW_KEY_W]) entityWorldPos.y -= speed;
         if (keys[GLFW_KEY_S]) entityWorldPos.y += speed;
         if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;

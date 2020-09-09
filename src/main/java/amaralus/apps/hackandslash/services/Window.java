@@ -58,6 +58,10 @@ public class Window implements Destroyable {
         glfwShowWindow(windowHandle);
     }
 
+    public void close() {
+        glfwSetWindowShouldClose(windowHandle, true);
+    }
+
     public boolean isShouldClose() {
         return glfwWindowShouldClose(windowHandle);
     }
