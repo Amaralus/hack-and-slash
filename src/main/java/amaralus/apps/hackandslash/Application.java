@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
+import amaralus.apps.hackandslash.graphics.camera.Camera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
 import amaralus.apps.hackandslash.graphics.data.sprites.SimpleSprite;
 import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
@@ -32,7 +32,7 @@ public class Application {
     private float height = 600;
 
     private Vector2f entityWorldPos = vec2(0f, 0f);
-    private OrthoCamera camera;
+    private Camera camera;
     private SpriteSheet sprite;
 
     private boolean[] keys = new boolean[1024];
@@ -110,7 +110,7 @@ public class Application {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
-        camera = new OrthoCamera(width, height);
+        camera = new Camera(width, height);
         camera.setScale(4.5f);
         var spriteRenderer = new SpriteRenderer();
 

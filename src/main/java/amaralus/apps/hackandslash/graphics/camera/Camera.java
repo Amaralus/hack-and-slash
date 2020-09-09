@@ -1,103 +1,89 @@
 package amaralus.apps.hackandslash.graphics.camera;
 
+import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
-import org.lwjgl.BufferUtils;
-
-import java.nio.FloatBuffer;
+import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.VectMatrUtil.*;
-import static org.joml.Math.*;
 
 public class Camera {
 
     private final float width;
     private final float height;
+    private float scale = 1f;
 
-    private final Vector3f position;
-    private final Vector3f cameraUp = vec3(0f, 1f, 0f);
-    private Vector3f cameraFront = vec3(0f, 0f, -1f);
+    private final Vector2f position;
+    private final Vector2f leftTopPosition;
 
-    private float fov = 45f;
+    private final Matrix4f projection;
 
-    private float yaw = -90.0f;
-    private float pitch = 0.0f;
-
-    public Camera(float width, float height, float x, float y, float z) {
-        this(width, height, vec3(x, y, z));
+    public Camera(float width, float height) {
+        this(width, height, vec2(0f, 0f));
     }
 
-    public Camera(float width, float height, Vector3f position) {
+    public Camera(float width, float height, Vector2f position) {
         this.width = width;
         this.height = height;
         this.position = position;
+        leftTopPosition = copy(position).sub(vec2(width * 0.5f, height * 0.5f));
+        projection = mat4().ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
     }
 
-    public void moveForward(float distance) {
-        position.add(cameraFront().mul(distance));
+    public Vector2f getEntityCamPos(Vector2f entityPos, Vector2f spriteSizeOfCam, Vector2f offsetToSpriteCenter) {
+        return copy(entityPos)
+                .sub(copy(spriteSizeOfCam).mul(offsetToSpriteCenter))
+                .sub(leftTopPosition);
     }
 
-    public void moveBackward(float distance) {
-        position.sub(cameraFront().mul(distance));
+    public Vector2f getSpriteScaleOfCam(Sprite sprite) {
+        return vec2(sprite.getWidth() * scale, sprite.getHeight() * scale);
     }
 
     public void moveLeft(float distance) {
-        position.sub(cameraFront().cross(cameraUp()).normalize().mul(distance));
+        position.x -= distance;
+        leftTopPosition.x -= distance;
     }
 
     public void moveRight(float distance) {
-        position.add(cameraFront().cross(cameraUp()).normalize().mul(distance));
+        position.x += distance;
+        leftTopPosition.x += distance;
     }
 
     public void moveUp(float distance) {
-        position.add(cameraUp().mul(distance));
+        position.y -= distance;
+        leftTopPosition.y -= distance;
     }
 
     public void moveDown(float distance) {
-        position.sub(cameraUp().mul(distance));
+        position.y += distance;
+        leftTopPosition.y += distance;
     }
 
-    public void rotate(float xAngle, float yAngle) {
-        yaw += xAngle;
-        pitch += yAngle;
-
-        if (pitch > 89.0f) pitch = 89.0f;
-        if (pitch < -89.0f) pitch = -89.0f;
-
-        cameraFront = new Vector3f(
-                cos(toRadians(pitch)) * cos(toRadians(yaw)),
-                sin(toRadians(pitch)),
-                cos(toRadians(pitch)) * sin(toRadians(yaw)))
-                .normalize();
+    public float getWidth() {
+        return width;
     }
 
-    public Matrix4f viewMatrix() {
-        return mat4()
-                .perspective(toRadians(fov), width / height, 0.1f, 100.0f)
-                .lookAt(position(), position().add(cameraFront()), cameraUp());
+    public float getHeight() {
+        return height;
     }
 
-    public FloatBuffer viewMatrixBuffer() {
-        return viewMatrix().get(BufferUtils.createFloatBuffer(16));
+    public Vector2f getPosition() {
+        return position;
     }
 
-    public Vector3f position() {
-        return copy(position);
+    public Vector2f getLeftTopPosition() {
+        return leftTopPosition;
     }
 
-    public Vector3f cameraFront() {
-        return copy(cameraFront);
+    public Matrix4f getProjection() {
+        return projection;
     }
 
-    public Vector3f cameraUp() {
-        return copy(cameraUp);
+    public float getScale() {
+        return scale;
     }
 
-    public float fov() {
-        return fov;
-    }
-
-    public void fov(float fov) {
-        this.fov = fov;
+    public void setScale(float scale) {
+        this.scale = scale;
     }
 }
