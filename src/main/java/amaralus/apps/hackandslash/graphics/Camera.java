@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.camera;
+package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;

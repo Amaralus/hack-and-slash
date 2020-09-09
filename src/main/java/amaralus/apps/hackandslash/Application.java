@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.graphics.camera.Camera;
+import amaralus.apps.hackandslash.graphics.Camera;
 import amaralus.apps.hackandslash.graphics.SpriteRenderer;
 import amaralus.apps.hackandslash.graphics.data.sprites.SimpleSprite;
 import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
