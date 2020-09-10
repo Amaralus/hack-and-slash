@@ -1,19 +1,22 @@
 package amaralus.apps.hackandslash.services;
 
+import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+
 public abstract class GameLoop {
 
-    private static final long MS_PER_UPDATE = 10;
-
+    private final long msPerUpdate;
     private boolean shouldStop = false;
 
+    protected GameLoop(long msPerUpdate) {
+        this.msPerUpdate = msPerUpdate;
+    }
+
     public void enable() {
-        onEnable();
         shouldStop = false;
         loop();
     }
 
     public void disable() {
-        onDisable();
         shouldStop = true;
     }
 
@@ -28,21 +31,29 @@ public abstract class GameLoop {
     public abstract void render(double timeShift);
 
     private void loop() {
+        onEnable();
+
         long previous = System.currentTimeMillis();
         long lag = 0;
-        while (!shouldStop) {
+        while (!disableLoop()) {
             long current = System.currentTimeMillis();
             long elapsed = current - previous;
             lag += elapsed;
 
             processInput();
 
-            while (lag >= MS_PER_UPDATE) {
+            while (lag >= msPerUpdate) {
                 update();
-                lag -= MS_PER_UPDATE;
+                lag -= msPerUpdate;
             }
 
-            render((double) lag / (double) MS_PER_UPDATE);
+            render((double) lag / (double) msPerUpdate);
         }
+
+        onDisable();
+    }
+
+    private boolean disableLoop() {
+        return shouldStop || getService(Window.class).isShouldClose();
     }
 }

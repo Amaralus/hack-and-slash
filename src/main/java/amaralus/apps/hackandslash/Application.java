@@ -6,6 +6,7 @@ import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static amaralus.apps.hackandslash.services.ServiceLocator.registerService;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Application {
@@ -26,9 +27,11 @@ public class Application {
             if (!glfwInit()) throw new IllegalStateException("Невозвожно инициализировать GLFW!");
 
             window = new Window(800, 600, "Hack and Slash");
-            var gameController = new GameController(window);
-
+            registerService(window);
             window.show();
+
+            var gameController = new GameController(window);
+            registerService(gameController);
             gameController.gameLoop();
 
             glfwSetErrorCallback(null);
