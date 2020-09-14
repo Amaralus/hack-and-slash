@@ -1,11 +1,9 @@
 package amaralus.apps.hackandslash.services;
 
 import amaralus.apps.hackandslash.graphics.Renderer;
-import amaralus.apps.hackandslash.graphics.data.Texture;
 import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
-import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.KeyEvent;
-import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
+import amaralus.apps.hackandslash.resources.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
@@ -31,6 +29,7 @@ public class GameController {
 
     public GameController(Window window) {
         this.window = window;
+        getService(ResourceFactory.class).produceShader("texture");
         renderer = new Renderer(window);
         window.setKeyCallBack(this::updateKeyEvent);
     }
@@ -43,9 +42,8 @@ public class GameController {
     }
 
     public void runGameLoop() {
-        var spriteSheetData = new FileLoadService().loadFromJson("sprites/data/" + SPRITE_NAME + ".json", SpriteSheetData.class);
-        getService(ResourceManager.class)
-                .addResource(SPRITE_NAME, new SpriteSheet(new Texture(SPRITE_NAME), spriteSheetData));
+        getService(ResourceFactory.class).produceEbo("defaultTexture", new int[]{0, 1, 3, 1, 2, 3});
+        getService(ResourceFactory.class).produceSimpleSprite(SPRITE_NAME);
 
         var gameLoop = new GameLoop(10L) {
 

@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
+import amaralus.apps.hackandslash.resources.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.services.GameController;
 import amaralus.apps.hackandslash.services.Window;
@@ -57,8 +58,9 @@ public class Application {
     }
 
     private void loadServices() {
-        registerService(new GameController(window));
         registerService(new FileLoadService());
         registerService(new ResourceManager());
+        registerService(new ResourceFactory(getService(ResourceManager.class)));
+        registerService(new GameController(window));
     }
 }

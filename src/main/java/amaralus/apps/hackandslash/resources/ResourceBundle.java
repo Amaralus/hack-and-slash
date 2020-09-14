@@ -1,6 +1,8 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.Destroyable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +10,8 @@ import java.util.Map;
 import static amaralus.apps.hackandslash.resources.Resource.resourceInfoName;
 
 public final class ResourceBundle<R extends Destroyable> implements Destroyable {
+
+    private static final Logger log = LoggerFactory.getLogger(ResourceBundle.class);
 
     private final Map<String, Resource<R>> resourceMap;
     private final Class<R> resourcesClass;
@@ -36,7 +40,10 @@ public final class ResourceBundle<R extends Destroyable> implements Destroyable 
 
     @Override
     public void destroy() {
-        resourceMap.values().forEach(Destroyable::destroy);
+        for (Resource<R> resource : resourceMap.values()) {
+            resource.destroy();
+            log.debug("Ресурс освобождён: {}", resourceInfoName(resourcesClass, resource.getName()));
+        }
     }
 
     public Class<R> getResourcesClass() {

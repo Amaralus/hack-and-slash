@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.graphics.data;
 
+import amaralus.apps.hackandslash.Destroyable;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -7,7 +8,7 @@ import org.slf4j.LoggerFactory;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
-public class Texture implements Bindable {
+public class Texture implements Bindable, Destroyable {
 
     private static final Logger log = LoggerFactory.getLogger(Texture.class);
 
@@ -33,6 +34,11 @@ public class Texture implements Bindable {
         glGenerateMipmap(GL_TEXTURE_2D);
 
         unbind();
+    }
+
+    @Override
+    public void destroy() {
+        glDeleteTextures(id);
     }
 
     @Override

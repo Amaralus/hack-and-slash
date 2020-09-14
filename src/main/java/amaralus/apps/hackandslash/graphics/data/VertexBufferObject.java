@@ -47,4 +47,8 @@ public class VertexBufferObject implements Bindable, Destroyable {
     public int id() {
         return id;
     }
+
+    public int getBufferType() {
+        return bufferType;
+    }
 }
