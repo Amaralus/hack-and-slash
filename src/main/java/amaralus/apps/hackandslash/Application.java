@@ -1,11 +1,14 @@
 package amaralus.apps.hackandslash;
 
+import amaralus.apps.hackandslash.io.FileLoadService;
+import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.services.GameController;
 import amaralus.apps.hackandslash.services.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.services.ServiceLocator.registerService;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -30,9 +33,8 @@ public class Application {
             registerService(window);
             window.show();
 
-            var gameController = new GameController(window);
-            registerService(gameController);
-            gameController.gameLoop();
+            loadServices();
+            getService(GameController.class).runGameLoop();
 
             glfwSetErrorCallback(null);
 
@@ -40,9 +42,17 @@ public class Application {
             log.error("Непредвиденная ошибка", e);
             glfwSetErrorCallback(null);
         } finally {
-            if (window != null)
-                window.destroy();
-            glfwTerminate();
+            shutdown();
         }
+    }
+
+    private void shutdown() {
+
+    }
+
+    private void loadServices() {
+        registerService(new GameController(window));
+        registerService(new FileLoadService());
+        registerService(new ResourceManager());
     }
 }

@@ -6,21 +6,27 @@ import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
+import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class GameController {
+
+    private static final Logger log = LoggerFactory.getLogger(GameController.class);
+    private static final String SPRITE_NAME = "testTextureSheet";
 
     private final boolean[] keys = new boolean[1024];
     private final Window window;
     private final Renderer renderer;
 
     private final Vector2f entityWorldPos = vec2(0f, 0f);
-    private SpriteSheet sprite;
     private long lastMillis = System.currentTimeMillis();
 
     public GameController(Window window) {
@@ -36,19 +42,21 @@ public class GameController {
             keys[event.getKey()] = false;
     }
 
-    public void gameLoop() {
+    public void runGameLoop() {
+        var spriteSheetData = new FileLoadService().loadFromJson("sprites/data/" + SPRITE_NAME + ".json", SpriteSheetData.class);
+        getService(ResourceManager.class)
+                .addResource(SPRITE_NAME, new SpriteSheet(new Texture(SPRITE_NAME), spriteSheetData));
 
         var gameLoop = new GameLoop(10L) {
 
             @Override
             public void onEnable() {
-                var spriteSheetData = new FileLoadService().loadFromJson("sprites/data/testTextureSheet.json", SpriteSheetData.class);
-                sprite = new SpriteSheet(new Texture("testTextureSheet"), spriteSheetData);
+                log.debug("Игровой цикл включён");
             }
 
             @Override
             public void onDisable() {
-                sprite.destroy();
+                log.debug("Игровой цикл отключён");
             }
 
             @Override
@@ -63,13 +71,15 @@ public class GameController {
 
                 if (lastMillis + 300 < millis) {
                     lastMillis = millis;
-                    sprite.getActiveSprite().nextFrame();
+                    getService(ResourceManager.class)
+                            .getResource(SPRITE_NAME, SpriteSheet.class)
+                            .getActiveSprite().nextFrame();
                 }
             }
 
             @Override
             public void render(double timeShift) {
-                renderer.render(List.of(sprite), entityWorldPos);
+                renderer.render(List.of(getService(ResourceManager.class).getResource(SPRITE_NAME, SpriteSheet.class)), entityWorldPos);
             }
         };
 
@@ -84,6 +94,7 @@ public class GameController {
         if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;
         if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
 
+        var sprite = getService(ResourceManager.class).getResource(SPRITE_NAME, SpriteSheet.class);
         if (keys[GLFW_KEY_1]) sprite.setActiveSprite(0);
         if (keys[GLFW_KEY_2]) sprite.setActiveSprite(1);
         if (keys[GLFW_KEY_3]) sprite.setActiveSprite(2);
