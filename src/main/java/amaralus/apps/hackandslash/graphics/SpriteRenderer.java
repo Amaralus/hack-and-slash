@@ -1,11 +1,10 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.graphics.camera.OrthoCamera;
 import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 import static org.joml.Math.toRadians;
 import static org.lwjgl.opengl.GL15.*;
 
@@ -17,7 +16,7 @@ public class SpriteRenderer {
         textureShader = new Shader("vertex", "fragment");
     }
 
-    public void draw(OrthoCamera camera, Sprite sprite, Vector2f entityPos, float rotateAngle) {
+    public void draw(Camera camera, Sprite sprite, Vector2f entityPos, float rotateAngle) {
         var textureSize = camera.getSpriteScaleOfCam(sprite);
         var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());
 

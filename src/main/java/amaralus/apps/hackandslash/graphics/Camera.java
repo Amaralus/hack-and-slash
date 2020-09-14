@@ -1,12 +1,12 @@
-package amaralus.apps.hackandslash.graphics.camera;
+package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 
-public class OrthoCamera {
+public class Camera {
 
     private final float width;
     private final float height;
@@ -17,11 +17,11 @@ public class OrthoCamera {
 
     private final Matrix4f projection;
 
-    public OrthoCamera(float width, float height) {
+    public Camera(float width, float height) {
         this(width, height, vec2(0f, 0f));
     }
 
-    public OrthoCamera(float width, float height, Vector2f position) {
+    public Camera(float width, float height, Vector2f position) {
         this.width = width;
         this.height = height;
         this.position = position;

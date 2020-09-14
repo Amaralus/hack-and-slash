@@ -5,7 +5,7 @@ import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.data.VertexBufferObject;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.vec2;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 

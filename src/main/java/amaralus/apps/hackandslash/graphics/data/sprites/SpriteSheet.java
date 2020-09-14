@@ -7,7 +7,7 @@ import org.joml.Vector2f;
 import java.util.ArrayList;
 import java.util.List;
 
-import static amaralus.apps.hackandslash.VectMatrUtil.vec2;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class SpriteSheet extends SimpleSprite {
 
