@@ -47,7 +47,13 @@ public class Application {
     }
 
     private void shutdown() {
+        if (window != null)
+            window.destroy();
 
+        var resourceManager = getService(ResourceManager.class);
+        if (resourceManager != null) resourceManager.destroy();
+
+        glfwTerminate();
     }
 
     private void loadServices() {
