@@ -31,8 +31,8 @@ public class Shader implements Destroyable {
         glDeleteShader(vertexShaderId);
         glDeleteShader(fragmentShaderId);
 
-        var linkLog = resultLog(glGetProgramInfoLog(program));
-        log.debug("Результат линковки программы шейдеров: {}", linkLog);
+        checkResult(glGetProgramInfoLog(program));
+        log.debug("Шейдер {} успешно слинкован", shaderName);
     }
 
     @Override
@@ -55,14 +55,15 @@ public class Shader implements Destroyable {
         glShaderSource(shader, getService(FileLoadService.class).loadFileAsString(fileName));
         glCompileShader(shader);
 
-        var compileLog = resultLog(glGetShaderInfoLog(shader));
-        log.debug("Результат компиляции шейдера {}: {}", name, compileLog);
+        checkResult(glGetShaderInfoLog(shader));
+        log.debug("Шейдер {} успешно скомпилирован", name);
 
         return shader;
     }
 
-    private String resultLog(String logString) {
-        return logString.isEmpty() ? "successful" : logString;
+    private void checkResult(String result) {
+        if (!result.isEmpty())
+            throw new ShaderLoadException(result);
     }
 
     public int getProgram() {
@@ -79,5 +80,11 @@ public class Shader implements Destroyable {
 
     public void setInt(String parameter, int i) {
         glUniform1i(getUniformLocation(parameter), i);
+    }
+
+    public static final class ShaderLoadException extends RuntimeException {
+        public ShaderLoadException(String message) {
+            super(message);
+        }
     }
 }
