@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.resources;
+package amaralus.apps.hackandslash.resources.factory;
 
 import amaralus.apps.hackandslash.graphics.Shader;
 import amaralus.apps.hackandslash.graphics.data.Texture;
@@ -8,6 +8,7 @@ import amaralus.apps.hackandslash.graphics.data.sprites.SimpleSprite;
 import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
+import amaralus.apps.hackandslash.resources.ResourceManager;
 
 import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
@@ -16,19 +17,23 @@ import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 public class ResourceFactory {
 
     private final ResourceManager resourceManager;
+    private final ShaderFactory shaderFactory;
+    private final TextureFactory textureFactory;
 
     public ResourceFactory(ResourceManager resourceManager) {
         this.resourceManager = resourceManager;
+        shaderFactory = new ShaderFactory();
+        textureFactory = new TextureFactory();
     }
 
     public Shader produceShader(String shaderName) {
-        var shader = new Shader(shaderName);
+        var shader = shaderFactory.produce(shaderName);
         resourceManager.addResource(shaderName, shader);
         return shader;
     }
 
     public Texture produceTexture(String textureName) {
-        var texture = new Texture(textureName);
+        var texture = textureFactory.produce(textureName);
         resourceManager.addResource(textureName, texture);
         return texture;
     }

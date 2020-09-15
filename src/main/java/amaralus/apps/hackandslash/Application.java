@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
-import amaralus.apps.hackandslash.resources.ResourceFactory;
+import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.services.GameController;
 import amaralus.apps.hackandslash.services.Window;

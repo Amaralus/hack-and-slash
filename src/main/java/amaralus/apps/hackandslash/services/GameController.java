@@ -3,7 +3,7 @@ package amaralus.apps.hackandslash.services;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
 import amaralus.apps.hackandslash.io.KeyEvent;
-import amaralus.apps.hackandslash.resources.ResourceFactory;
+import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
