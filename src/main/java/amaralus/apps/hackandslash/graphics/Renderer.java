@@ -3,7 +3,6 @@ package amaralus.apps.hackandslash.graphics;
 import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import amaralus.apps.hackandslash.services.Window;
 import org.joml.Vector2f;
-import org.lwjgl.opengl.GL;
 
 import java.util.List;
 
@@ -19,12 +18,6 @@ public class Renderer {
         this.window = window;
         camera = new Camera(window.getWidth(), window.getHeight());
         camera.setScale(4.5f);
-
-        GL.createCapabilities();
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 
         spriteRenderer = new SpriteRenderer();
     }

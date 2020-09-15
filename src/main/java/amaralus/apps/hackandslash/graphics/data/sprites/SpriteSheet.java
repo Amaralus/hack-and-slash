@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.graphics.data.sprites;
 
 import amaralus.apps.hackandslash.graphics.data.Texture;
+import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 
@@ -18,8 +19,8 @@ public class SpriteSheet extends SimpleSprite {
     private final List<SpriteAnimation> spriteAnimations;
     private int activeSprite = 0;
 
-    public SpriteSheet(Texture texture, SpriteSheetData spriteSheetData) {
-        super(texture, frameTexturePosition(texture, spriteSheetData));
+    public SpriteSheet(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
+        super(texture, vao);
 
         frameWidth = spriteSheetData.getFrameWidth();
         frameHeight = spriteSheetData.getFrameHeight();
@@ -31,7 +32,7 @@ public class SpriteSheet extends SimpleSprite {
         offsetToSpriteCenter = frameTexturePosition(texture, spriteSheetData).mul(0.5f);
     }
 
-    private static Vector2f frameTexturePosition(Texture texture, SpriteSheetData spriteSheetData) {
+    public static Vector2f frameTexturePosition(Texture texture, SpriteSheetData spriteSheetData) {
         return vec2(
                 (float) spriteSheetData.getFrameWidth() / (float) texture.getWidth(),
                 (float) spriteSheetData.getFrameHeight() / (float) texture.getHeight());

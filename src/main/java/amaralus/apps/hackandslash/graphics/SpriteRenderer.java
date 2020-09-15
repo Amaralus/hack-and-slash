@@ -1,9 +1,11 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
+import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
+import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 import static org.joml.Math.toRadians;
 import static org.lwjgl.opengl.GL15.*;
@@ -13,7 +15,7 @@ public class SpriteRenderer {
     private final Shader textureShader;
 
     public SpriteRenderer() {
-        textureShader = new Shader("vertex", "fragment");
+        textureShader = getService(ResourceManager.class).getResource("texture", Shader.class);
     }
 
     public void draw(Camera camera, Sprite sprite, Vector2f entityPos, float rotateAngle) {
