@@ -24,6 +24,8 @@ public class ResourceFactory {
         this.resourceManager = resourceManager;
         shaderFactory = new ShaderFactory();
         textureFactory = new TextureFactory();
+
+        produceEbo("defaultTexture", new int[]{0, 1, 3, 1, 2, 3});
     }
 
     public Shader produceShader(String shaderName) {

@@ -42,7 +42,6 @@ public class GameController {
     }
 
     public void runGameLoop() {
-        getService(ResourceFactory.class).produceEbo("defaultTexture", new int[]{0, 1, 3, 1, 2, 3});
         getService(ResourceFactory.class).produceSpriteSheet(SPRITE_NAME);
 
         var gameLoop = new GameLoop(10L) {
