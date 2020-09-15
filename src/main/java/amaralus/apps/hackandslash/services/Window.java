@@ -3,6 +3,7 @@ package amaralus.apps.hackandslash.services;
 import amaralus.apps.hackandslash.Destroyable;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
@@ -11,6 +12,7 @@ import java.util.function.Consumer;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
+import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 import static org.lwjgl.system.MemoryUtil.NULL;
 
@@ -56,6 +58,16 @@ public class Window implements Destroyable {
         glfwMakeContextCurrent(windowHandle);
         glfwSwapInterval(1);
         glfwShowWindow(windowHandle);
+
+        enableOpenGLProperties();
+    }
+
+    private void enableOpenGLProperties() {
+        GL.createCapabilities();
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     }
 
     public void close() {

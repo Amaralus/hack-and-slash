@@ -29,6 +29,7 @@ public class GameController {
 
     public GameController(Window window) {
         this.window = window;
+        getService(ResourceFactory.class).produceShader("texture");
         renderer = new Renderer(window);
         window.setKeyCallBack(this::updateKeyEvent);
     }
