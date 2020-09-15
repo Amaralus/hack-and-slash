@@ -21,9 +21,10 @@ public class ResourceFactory {
         this.resourceManager = resourceManager;
     }
 
-    public void produceShader(String shaderName) {
+    public Shader produceShader(String shaderName) {
         var shader = new Shader(shaderName);
         resourceManager.addResource(shaderName, shader);
+        return shader;
     }
 
     public Texture produceTexture(String textureName) {

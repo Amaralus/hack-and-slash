@@ -29,7 +29,6 @@ public class GameController {
 
     public GameController(Window window) {
         this.window = window;
-        getService(ResourceFactory.class).produceShader("texture");
         renderer = new Renderer(window);
         window.setKeyCallBack(this::updateKeyEvent);
     }
@@ -43,7 +42,7 @@ public class GameController {
 
     public void runGameLoop() {
         getService(ResourceFactory.class).produceEbo("defaultTexture", new int[]{0, 1, 3, 1, 2, 3});
-        getService(ResourceFactory.class).produceSimpleSprite(SPRITE_NAME);
+        getService(ResourceFactory.class).produceSpriteSheet(SPRITE_NAME);
 
         var gameLoop = new GameLoop(10L) {
 
