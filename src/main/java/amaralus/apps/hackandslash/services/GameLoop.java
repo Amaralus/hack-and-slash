@@ -37,7 +37,7 @@ public abstract class GameLoop {
 
     public abstract void processInput();
 
-    public abstract void update();
+    public abstract void update(long elapsedTime);
 
     public abstract void render(double timeShift);
 
@@ -55,7 +55,7 @@ public abstract class GameLoop {
             processInput();
 
             while (lag >= msPerUpdate) {
-                update();
+                update(msPerUpdate);
                 lag -= msPerUpdate;
             }
 

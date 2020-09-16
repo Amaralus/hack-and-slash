@@ -12,13 +12,15 @@ import static org.lwjgl.opengl.GL15.*;
 
 public class SpriteRenderer {
 
+    private final Camera camera;
     private final Shader textureShader;
 
-    public SpriteRenderer() {
+    public SpriteRenderer(Camera camera) {
+        this.camera = camera;
         textureShader = getService(ResourceManager.class).getResource("texture", Shader.class);
     }
 
-    public void draw(Camera camera, Sprite sprite, Vector2f entityPos, float rotateAngle) {
+    public void draw(Sprite sprite, Vector2f entityPos, float rotateAngle) {
         var textureSize = camera.getSpriteScaleOfCam(sprite);
         var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());
 

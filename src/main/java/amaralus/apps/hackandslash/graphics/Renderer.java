@@ -19,14 +19,14 @@ public class Renderer {
         camera = new Camera(window.getWidth(), window.getHeight());
         camera.setScale(4.5f);
 
-        spriteRenderer = new SpriteRenderer();
+        spriteRenderer = new SpriteRenderer(camera);
     }
 
     public void render(List<Sprite> sprites, Vector2f entityPos) {
         clear();
 
         for (Sprite sprite : sprites)
-            spriteRenderer.draw(camera, sprite, entityPos, 0f);
+            spriteRenderer.draw(sprite, entityPos, 0f);
 
         window.swapBuffers();
     }

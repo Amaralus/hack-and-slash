@@ -9,13 +9,13 @@ import java.util.List;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class SpriteAnimation {
+public class FramesStrip {
 
     private final List<Frame> frames;
 
     private int currentFrame = 0;
 
-    public SpriteAnimation(Texture texture, SpriteSheetData spriteSheetData, int spriteNumber) {
+    public FramesStrip(Texture texture, SpriteSheetData spriteSheetData, int spriteNumber) {
         int framesCount = spriteSheetData.getFramesCount().get(spriteNumber);
         frames = new ArrayList<>(framesCount);
 

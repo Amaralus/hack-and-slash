@@ -3,7 +3,7 @@ package amaralus.apps.hackandslash;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
-import amaralus.apps.hackandslash.services.GameController;
+import amaralus.apps.hackandslash.services.GamePlayManager;
 import amaralus.apps.hackandslash.services.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
@@ -35,7 +35,7 @@ public class Application {
             window.show();
 
             loadServices();
-            getService(GameController.class).runGameLoop();
+            getService(GamePlayManager.class).runGameLoop();
 
             glfwSetErrorCallback(null);
 
@@ -62,6 +62,6 @@ public class Application {
         registerService(new FileLoadService());
         registerService(new ResourceManager());
         registerService(new ResourceFactory(getService(ResourceManager.class)));
-        registerService(new GameController(window));
+        registerService(new GamePlayManager(window));
     }
 }

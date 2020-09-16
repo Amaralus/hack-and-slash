@@ -15,9 +15,9 @@ import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
-public class GameController {
+public class GamePlayManager {
 
-    private static final Logger log = LoggerFactory.getLogger(GameController.class);
+    private static final Logger log = LoggerFactory.getLogger(GamePlayManager.class);
     private static final String SPRITE_NAME = "testTextureSheet";
 
     private final boolean[] keys = new boolean[1024];
@@ -25,9 +25,9 @@ public class GameController {
     private final Renderer renderer;
 
     private final Vector2f entityWorldPos = vec2(0f, 0f);
-    private long lastMillis = System.currentTimeMillis();
+    private long millis = 0;
 
-    public GameController(Window window) {
+    public GamePlayManager(Window window) {
         this.window = window;
         getService(ResourceFactory.class).produceShader("texture");
         renderer = new Renderer(window);
@@ -44,7 +44,7 @@ public class GameController {
     public void runGameLoop() {
         getService(ResourceFactory.class).produceSpriteSheet(SPRITE_NAME);
 
-        var gameLoop = new GameLoop(10L) {
+        var gameLoop = new GameLoop(16L) {
 
             @Override
             public void onEnable() {
@@ -63,14 +63,14 @@ public class GameController {
             }
 
             @Override
-            public void update() {
-                var millis = System.currentTimeMillis();
+            public void update(long elapsedTime) {
+                millis += elapsedTime;
 
-                if (lastMillis + 300 < millis) {
-                    lastMillis = millis;
+                if (millis >= 300) {
+                    millis = 0;
                     getService(ResourceManager.class)
                             .getResource(SPRITE_NAME, SpriteSheet.class)
-                            .getActiveSprite().nextFrame();
+                            .getCurrentFrameStrip().nextFrame();
                 }
             }
 
@@ -92,8 +92,8 @@ public class GameController {
         if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
 
         var sprite = getService(ResourceManager.class).getResource(SPRITE_NAME, SpriteSheet.class);
-        if (keys[GLFW_KEY_1]) sprite.setActiveSprite(0);
-        if (keys[GLFW_KEY_2]) sprite.setActiveSprite(1);
-        if (keys[GLFW_KEY_3]) sprite.setActiveSprite(2);
+        if (keys[GLFW_KEY_1]) sprite.setCurrentFrameStrip(0);
+        if (keys[GLFW_KEY_2]) sprite.setCurrentFrameStrip(1);
+        if (keys[GLFW_KEY_3]) sprite.setCurrentFrameStrip(2);
     }
 }

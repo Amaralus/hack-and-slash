@@ -16,8 +16,8 @@ public class SpriteSheet extends SimpleSprite {
     private final float frameHeight;
     private final Vector2f offsetToSpriteCenter;
 
-    private final List<SpriteAnimation> spriteAnimations;
-    private int activeSprite = 0;
+    private final List<FramesStrip> framesStrips;
+    private int currentFrameStrip = 0;
 
     public SpriteSheet(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
         super(texture, vao);
@@ -25,9 +25,9 @@ public class SpriteSheet extends SimpleSprite {
         frameWidth = spriteSheetData.getFrameWidth();
         frameHeight = spriteSheetData.getFrameHeight();
 
-        spriteAnimations = new ArrayList<>(spriteSheetData.getFramesCount().size());
+        framesStrips = new ArrayList<>(spriteSheetData.getFramesCount().size());
         for (int i = 0; i < spriteSheetData.getFramesCount().size(); i++)
-            spriteAnimations.add(new SpriteAnimation(texture, spriteSheetData, i));
+            framesStrips.add(new FramesStrip(texture, spriteSheetData, i));
 
         offsetToSpriteCenter = frameTexturePosition(texture, spriteSheetData).mul(0.5f);
     }
@@ -40,7 +40,7 @@ public class SpriteSheet extends SimpleSprite {
 
     @Override
     public Vector2f getTextureOffset() {
-        return getActiveSprite().getCurrentFrame().getFrameOffset();
+        return getCurrentFrameStrip().getCurrentFrame().getFrameOffset();
     }
 
     @Override
@@ -56,12 +56,12 @@ public class SpriteSheet extends SimpleSprite {
         return frameHeight;
     }
 
-    public SpriteAnimation getActiveSprite() {
-        return spriteAnimations.get(activeSprite);
+    public FramesStrip getCurrentFrameStrip() {
+        return framesStrips.get(currentFrameStrip);
     }
 
-    public void setActiveSprite(int activeSprite) {
-        this.activeSprite = activeSprite;
-        getActiveSprite().reset();
+    public void setCurrentFrameStrip(int currentFrameStrip) {
+        this.currentFrameStrip = currentFrameStrip;
+        getCurrentFrameStrip().reset();
     }
 }
