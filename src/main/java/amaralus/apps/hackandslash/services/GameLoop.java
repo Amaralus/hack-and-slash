@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.services;
 
+import amaralus.apps.hackandslash.utils.FpsMeter;
+
 import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 
 public abstract class GameLoop {
@@ -24,7 +26,7 @@ public abstract class GameLoop {
     }
 
     public int getFps() {
-        return fpsMeter.fps;
+        return fpsMeter.getFps();
     }
 
     public abstract void onEnable();
@@ -64,21 +66,5 @@ public abstract class GameLoop {
 
     private boolean disableLoop() {
         return shouldStop || getService(Window.class).isShouldClose();
-    }
-
-    private static class FpsMeter {
-
-        private int frames = 0;
-        private long millis = 0;
-        private int fps = 0;
-
-        private void update() {
-            frames++;
-            if (System.currentTimeMillis() - millis >= 1000) {
-                fps = frames;
-                frames = 0;
-                millis = System.currentTimeMillis();
-            }
-        }
     }
 }
