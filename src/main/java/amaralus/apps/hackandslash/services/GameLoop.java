@@ -6,13 +6,15 @@ import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
 
 public abstract class GameLoop {
 
-    private final FpsMeter fpsMeter;
+    private final Window window;
     private final long msPerUpdate;
     private boolean shouldStop = false;
 
+    private final FpsMeter fpsMeter;
 
     protected GameLoop(long msPerUpdate) {
         this.msPerUpdate = msPerUpdate;
+        window = getService(Window.class);
         fpsMeter = new FpsMeter();
     }
 
@@ -65,6 +67,6 @@ public abstract class GameLoop {
     }
 
     private boolean disableLoop() {
-        return shouldStop || getService(Window.class).isShouldClose();
+        return shouldStop || window.isShouldClose();
     }
 }
