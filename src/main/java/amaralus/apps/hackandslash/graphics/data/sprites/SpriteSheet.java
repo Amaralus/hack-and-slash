@@ -12,22 +12,23 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class SpriteSheet extends SimpleSprite {
 
-    private final float frameWidth;
-    private final float frameHeight;
     private final Vector2f offsetToSpriteCenter;
-
     private final List<FramesStrip> framesStrips;
     private int currentFrameStrip = 0;
 
     public SpriteSheet(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
         super(texture, vao);
 
-        frameWidth = spriteSheetData.getFrameWidth();
-        frameHeight = spriteSheetData.getFrameHeight();
+        int frameStripsCount = spriteSheetData.getFrameStrips().size();
 
-        framesStrips = new ArrayList<>(spriteSheetData.getFramesCount().size());
-        for (int i = 0; i < spriteSheetData.getFramesCount().size(); i++)
-            framesStrips.add(new FramesStrip(texture, spriteSheetData, i));
+        framesStrips = new ArrayList<>(frameStripsCount);
+        for (int frameStripNumber = 0; frameStripNumber < frameStripsCount; frameStripNumber++)
+            framesStrips.add(new FramesStrip(
+                    texture,
+                    spriteSheetData.getFrameStrips().get(frameStripNumber),
+                    spriteSheetData.getFrameWidth(),
+                    spriteSheetData.getFrameHeight(),
+                    frameStripNumber));
 
         offsetToSpriteCenter = frameTexturePosition(texture, spriteSheetData).mul(0.5f);
     }
@@ -46,14 +47,6 @@ public class SpriteSheet extends SimpleSprite {
     @Override
     public Vector2f getOffsetToSpriteCenter() {
         return offsetToSpriteCenter;
-    }
-
-    public float getFrameWidth() {
-        return frameWidth;
-    }
-
-    public float getFrameHeight() {
-        return frameHeight;
     }
 
     public FramesStrip getCurrentFrameStrip() {
