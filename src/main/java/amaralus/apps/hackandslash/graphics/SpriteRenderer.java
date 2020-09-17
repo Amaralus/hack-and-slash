@@ -25,7 +25,11 @@ public class SpriteRenderer {
 
         textureShader.use();
         textureShader.setVec2("offset", renderEntity.getTextureOffset());
-        textureShader.setMat4("model", calcModel(textureSize, cameraEntityPos, renderEntity.getSpriteRotateAngle()));
+        textureShader.setMat4("model", calcModel(
+                textureSize,
+                cameraEntityPos,
+                camera.getFrameScaleOfCam(renderEntity.getCurrentFrame()),
+                renderEntity.getSpriteRotateAngle()));
         textureShader.setMat4("projection", camera.getProjection());
 
         renderEntity.getSprite().getTexture().bind();
@@ -34,9 +38,9 @@ public class SpriteRenderer {
         renderEntity.getSprite().getVao().unbind();
     }
 
-    private Matrix4f calcModel(Vector2f textureSize, Vector2f cameraEntityPos, float rotateAngle) {
+    private Matrix4f calcModel(Vector2f textureSize, Vector2f cameraEntityPos, Vector2f frameSize, float rotateAngle) {
         var model = mat4().translate(vec3(cameraEntityPos, 1f));
-        rotateModel(model, textureSize, rotateAngle);
+        rotateModel(model, frameSize, rotateAngle);
         return model.scale(vec3(textureSize, 1f));
     }
 

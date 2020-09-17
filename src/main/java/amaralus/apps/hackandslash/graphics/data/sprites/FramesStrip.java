@@ -67,11 +67,11 @@ public final class FramesStrip {
             return frameOffset;
         }
 
-        public int getFrameWidth() {
+        public int getWidth() {
             return FramesStrip.this.getFrameWidth();
         }
 
-        public int getFrameHeight() {
+        public int getHeight() {
             return FramesStrip.this.getFrameHeight();
         }
     }

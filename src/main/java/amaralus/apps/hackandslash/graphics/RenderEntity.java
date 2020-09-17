@@ -28,9 +28,7 @@ public class RenderEntity {
     }
 
     public Vector2f getTextureOffset() {
-        return getCurrentFrameStrip()
-                .getFrame(getCurrentAnimation().getCurrentFrame())
-                .getFrameOffset();
+        return getCurrentFrame().getFrameOffset();
     }
 
     public void startAnimation() {
@@ -58,6 +56,10 @@ public class RenderEntity {
 
     private FramesStrip getCurrentFrameStrip() {
         return sprite.getFrameStrip(currentFrameStrip);
+    }
+
+    public FramesStrip.Frame getCurrentFrame() {
+        return getCurrentFrameStrip().getFrame(getCurrentAnimation().getCurrentFrame());
     }
 
     public Sprite getSprite() {

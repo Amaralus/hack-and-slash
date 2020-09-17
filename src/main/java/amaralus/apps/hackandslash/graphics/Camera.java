@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.graphics;
 
+import amaralus.apps.hackandslash.graphics.data.sprites.FramesStrip;
 import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -37,6 +38,10 @@ public class Camera {
 
     public Vector2f getSpriteScaleOfCam(Sprite sprite) {
         return vec2(sprite.getWidth() * scale, sprite.getHeight() * scale);
+    }
+
+    public Vector2f getFrameScaleOfCam(FramesStrip.Frame frame) {
+        return vec2(frame.getWidth() * scale, frame.getHeight() * scale);
     }
 
     public void moveLeft(float distance) {
