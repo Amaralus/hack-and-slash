@@ -6,6 +6,7 @@ import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
@@ -14,7 +15,6 @@ public class SpriteSheet extends SimpleSprite {
 
     private final Vector2f offsetToSpriteCenter;
     private final List<FramesStrip> framesStrips;
-    private int currentFrameStrip = 0;
 
     public SpriteSheet(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
         super(texture, vao);
@@ -40,21 +40,15 @@ public class SpriteSheet extends SimpleSprite {
     }
 
     @Override
-    public Vector2f getTextureOffset() {
-        return getCurrentFrameStrip().getCurrentFrame().getFrameOffset();
-    }
-
-    @Override
     public Vector2f getOffsetToSpriteCenter() {
         return offsetToSpriteCenter;
     }
 
-    public FramesStrip getCurrentFrameStrip() {
-        return framesStrips.get(currentFrameStrip);
+    public FramesStrip getFrameStrip(int frameStripNumber) {
+        return framesStrips.get(frameStripNumber);
     }
 
-    public void setCurrentFrameStrip(int currentFrameStrip) {
-        this.currentFrameStrip = currentFrameStrip;
-        getCurrentFrameStrip().reset();
+    public List<FramesStrip> getFramesStrips() {
+        return Collections.unmodifiableList(framesStrips);
     }
 }

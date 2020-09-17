@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
@@ -20,19 +19,19 @@ public class SpriteRenderer {
         textureShader = getService(ResourceManager.class).getResource("texture", Shader.class);
     }
 
-    public void draw(Sprite sprite, Vector2f entityPos, float rotateAngle) {
-        var textureSize = camera.getSpriteScaleOfCam(sprite);
-        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());
+    public void render(RenderEntity renderEntity, Vector2f entityPos) {
+        var textureSize = camera.getSpriteScaleOfCam(renderEntity.getSprite());
+        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, renderEntity.getSprite().getOffsetToSpriteCenter());
 
         textureShader.use();
-        textureShader.setVec2("offset", sprite.getTextureOffset());
-        textureShader.setMat4("model", calcModel(textureSize, cameraEntityPos, rotateAngle));
+        textureShader.setVec2("offset", renderEntity.getTextureOffset());
+        textureShader.setMat4("model", calcModel(textureSize, cameraEntityPos, renderEntity.getSpriteRotateAngle()));
         textureShader.setMat4("projection", camera.getProjection());
 
-        sprite.getTexture().bind();
-        sprite.getVao().bind();
+        renderEntity.getSprite().getTexture().bind();
+        renderEntity.getSprite().getVao().bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        sprite.getVao().unbind();
+        renderEntity.getSprite().getVao().unbind();
     }
 
     private Matrix4f calcModel(Vector2f textureSize, Vector2f cameraEntityPos, float rotateAngle) {

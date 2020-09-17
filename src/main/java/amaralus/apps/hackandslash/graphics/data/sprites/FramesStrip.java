@@ -9,16 +9,14 @@ import java.util.List;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class FramesStrip {
+public final class FramesStrip {
 
-    private final float frameWidth;
-    private final float frameHeight;
+    private final int frameWidth;
+    private final int frameHeight;
     private final boolean animated;
     private final List<Frame> frames;
 
-    private int currentFrame = 0;
-
-    public FramesStrip(Texture texture, FrameStripData frameStripData, int frameWidth, int frameHeight,  int frameStripNumber) {
+    public FramesStrip(Texture texture, FrameStripData frameStripData, int frameWidth, int frameHeight, int frameStripNumber) {
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         animated = frameStripData.isAnimated();
@@ -34,29 +32,23 @@ public class FramesStrip {
         }
     }
 
-    public void reset() {
-        currentFrame = 0;
-    }
-
-    public void nextFrame() {
-        currentFrame++;
-        if (currentFrame == frames.size())
-            reset();
-    }
-
-    public Frame getCurrentFrame() {
-        return frames.get(currentFrame);
-    }
-
     private float calcOffset(float textureLength, float frameLength, float frameNum) {
         return (frameLength * (frameNum - 1)) / textureLength;
     }
 
-    public float getFrameWidth() {
+    public Frame getFrame(int frameNumber) {
+        return frames.get(frameNumber);
+    }
+
+    public int getFramesCount() {
+        return frames.size();
+    }
+
+    public int getFrameWidth() {
         return frameWidth;
     }
 
-    public float getFrameHeight() {
+    public int getFrameHeight() {
         return frameHeight;
     }
 
@@ -64,7 +56,7 @@ public class FramesStrip {
         return animated;
     }
 
-    public class Frame {
+    public final class Frame {
         private final Vector2f frameOffset;
 
         public Frame(Vector2f frameOffset) {
@@ -75,11 +67,11 @@ public class FramesStrip {
             return frameOffset;
         }
 
-        public float getFrameWidth() {
+        public int getFrameWidth() {
             return FramesStrip.this.getFrameWidth();
         }
 
-        public float getFrameHeight() {
+        public int getFrameHeight() {
             return FramesStrip.this.getFrameHeight();
         }
     }

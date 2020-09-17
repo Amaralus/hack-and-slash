@@ -1,10 +1,9 @@
 package amaralus.apps.hackandslash.services;
 
+import amaralus.apps.hackandslash.graphics.RenderEntity;
 import amaralus.apps.hackandslash.graphics.Renderer;
-import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,8 +23,9 @@ public class GamePlayManager {
     private final Window window;
     private final Renderer renderer;
 
+    private RenderEntity renderEntity;
+
     private final Vector2f entityWorldPos = vec2(0f, 0f);
-    private long millis = 0;
 
     public GamePlayManager(Window window) {
         this.window = window;
@@ -42,18 +42,19 @@ public class GamePlayManager {
     }
 
     public void runGameLoop() {
-        getService(ResourceFactory.class).produceSpriteSheet(SPRITE_NAME);
+        renderEntity = new RenderEntity(getService(ResourceFactory.class).produceSpriteSheet(SPRITE_NAME));
 
         var gameLoop = new GameLoop(16L) {
 
             @Override
             public void onEnable() {
-                log.debug("Игровой цикл включён");
+                log.info("Игровой цикл включён");
+                renderEntity.startAnimation();
             }
 
             @Override
             public void onDisable() {
-                log.debug("Игровой цикл отключён");
+                log.info("Игровой цикл отключён");
             }
 
             @Override
@@ -64,19 +65,12 @@ public class GamePlayManager {
 
             @Override
             public void update(long elapsedTime) {
-                millis += elapsedTime;
-
-                if (millis >= 300) {
-                    millis = 0;
-                    getService(ResourceManager.class)
-                            .getResource(SPRITE_NAME, SpriteSheet.class)
-                            .getCurrentFrameStrip().nextFrame();
-                }
+                renderEntity.update(elapsedTime);
             }
 
             @Override
             public void render(double timeShift) {
-                renderer.render(List.of(getService(ResourceManager.class).getResource(SPRITE_NAME, SpriteSheet.class)), entityWorldPos);
+                renderer.render(List.of(renderEntity), entityWorldPos);
             }
         };
 
@@ -90,10 +84,11 @@ public class GamePlayManager {
         if (keys[GLFW_KEY_S]) entityWorldPos.y += speed;
         if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;
         if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
+        if (keys[GLFW_KEY_Q]) renderEntity.setSpriteRotateAngle(renderEntity.getSpriteRotateAngle() - speed);
+        if (keys[GLFW_KEY_E]) renderEntity.setSpriteRotateAngle(renderEntity.getSpriteRotateAngle() + speed);
 
-        var sprite = getService(ResourceManager.class).getResource(SPRITE_NAME, SpriteSheet.class);
-        if (keys[GLFW_KEY_1]) sprite.setCurrentFrameStrip(0);
-        if (keys[GLFW_KEY_2]) sprite.setCurrentFrameStrip(1);
-        if (keys[GLFW_KEY_3]) sprite.setCurrentFrameStrip(2);
+        if (keys[GLFW_KEY_1]) renderEntity.setCurrentFrameStrip(0);
+        if (keys[GLFW_KEY_2]) renderEntity.setCurrentFrameStrip(1);
+        if (keys[GLFW_KEY_3]) renderEntity.setCurrentFrameStrip(2);
     }
 }
