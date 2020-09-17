@@ -8,8 +8,16 @@ public final class VectMatrUtil {
 
     private VectMatrUtil() {}
 
+    public static Vector2f vec2() {
+        return new Vector2f();
+    }
+
     public static Vector2f vec2(float x, float y) {
         return new Vector2f(x, y);
+    }
+
+    public static Vector3f vec3() {
+        return new Vector3f();
     }
 
     public static Vector3f vec3(float x, float y, float z) {
@@ -30,5 +38,13 @@ public final class VectMatrUtil {
 
     public static Vector2f copy(Vector2f vector) {
         return new Vector2f(vector);
+    }
+
+    public static String toStr(Vector2f vector) {
+        return "[" + vector.x + "," + vector.y + "]";
+    }
+
+    public static String toStr(Vector3f vector) {
+        return "[" + vector.x + "," + vector.y + "," + vector.z + "]";
     }
 }

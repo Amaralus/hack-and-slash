@@ -19,23 +19,23 @@ public class SpriteRenderer {
         textureShader = getService(ResourceManager.class).getResource("texture", Shader.class);
     }
 
-    public void render(RenderEntity renderEntity, Vector2f entityPos) {
-        var textureSize = camera.getSpriteScaleOfCam(renderEntity.getSprite());
-        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, renderEntity.getSprite().getOffsetToSpriteCenter());
+    public void render(RenderComponent renderComponent, Vector2f entityPos) {
+        var textureSize = camera.getSpriteScaleOfCam(renderComponent.getSprite());
+        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, renderComponent.getSprite().getOffsetToSpriteCenter());
 
         textureShader.use();
-        textureShader.setVec2("offset", renderEntity.getTextureOffset());
+        textureShader.setVec2("offset", renderComponent.getTextureOffset());
         textureShader.setMat4("model", calcModel(
                 textureSize,
                 cameraEntityPos,
-                camera.getFrameScaleOfCam(renderEntity.getCurrentFrame()),
-                renderEntity.getSpriteRotateAngle()));
+                camera.getFrameScaleOfCam(renderComponent.getCurrentFrame()),
+                renderComponent.getSpriteRotateAngle()));
         textureShader.setMat4("projection", camera.getProjection());
 
-        renderEntity.getSprite().getTexture().bind();
-        renderEntity.getSprite().getVao().bind();
+        renderComponent.getSprite().getTexture().bind();
+        renderComponent.getSprite().getVao().bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        renderEntity.getSprite().getVao().unbind();
+        renderComponent.getSprite().getVao().unbind();
     }
 
     private Matrix4f calcModel(Vector2f textureSize, Vector2f cameraEntityPos, Vector2f frameSize, float rotateAngle) {

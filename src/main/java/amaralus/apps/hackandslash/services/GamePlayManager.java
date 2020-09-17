@@ -1,10 +1,12 @@
 package amaralus.apps.hackandslash.services;
 
-import amaralus.apps.hackandslash.graphics.RenderEntity;
+import amaralus.apps.hackandslash.Entity;
+import amaralus.apps.hackandslash.graphics.RenderComponent;
 import amaralus.apps.hackandslash.graphics.Renderer;
+import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
 import amaralus.apps.hackandslash.io.KeyEvent;
+import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
-import org.joml.Vector2f;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,15 +19,12 @@ import static org.lwjgl.glfw.GLFW.*;
 public class GamePlayManager {
 
     private static final Logger log = LoggerFactory.getLogger(GamePlayManager.class);
-    private static final String SPRITE_NAME = "testTextureSheet";
 
     private final boolean[] keys = new boolean[1024];
     private final Window window;
     private final Renderer renderer;
 
-    private RenderEntity renderEntity;
-
-    private final Vector2f entityWorldPos = vec2(0f, 0f);
+    private Entity testEntity;
 
     public GamePlayManager(Window window) {
         this.window = window;
@@ -42,14 +41,28 @@ public class GamePlayManager {
     }
 
     public void runGameLoop() {
-        renderEntity = new RenderEntity(getService(ResourceFactory.class).produceSpriteSheet(SPRITE_NAME));
+        testEntity = new Entity(
+                new RenderComponent(getService(ResourceFactory.class).produceSpriteSheet("testTextureSheet")),
+                vec2());
+        testEntity.getRenderComponent().startAnimation();
+
+        var testEntity2 = new Entity(
+                new RenderComponent(getService(ResourceManager.class).getResource("testTextureSheet", SpriteSheet.class)),
+                vec2(150, 100));
+        testEntity2.getRenderComponent().setCurrentFrameStrip(2);
+        testEntity2.getRenderComponent().startAnimation();
+
+        var inosuke = new Entity(
+                new RenderComponent(getService(ResourceFactory.class).produceSpriteSheet("inosuke2")),
+                vec2());
+
+        var entityList = List.of(testEntity, testEntity2, inosuke);
 
         var gameLoop = new GameLoop(16L) {
 
             @Override
             public void onEnable() {
                 log.info("Игровой цикл включён");
-                renderEntity.startAnimation();
             }
 
             @Override
@@ -65,12 +78,12 @@ public class GamePlayManager {
 
             @Override
             public void update(long elapsedTime) {
-                renderEntity.update(elapsedTime);
+                entityList.forEach(entity -> entity.update(elapsedTime));
             }
 
             @Override
             public void render(double timeShift) {
-                renderer.render(List.of(renderEntity), entityWorldPos);
+                renderer.render(entityList);
             }
         };
 
@@ -80,10 +93,14 @@ public class GamePlayManager {
     private void handleKeyActions() {
         float speed = 5;
         if (keys[GLFW_KEY_ESCAPE]) window.close();
-        if (keys[GLFW_KEY_W]) entityWorldPos.y -= speed;
-        if (keys[GLFW_KEY_S]) entityWorldPos.y += speed;
-        if (keys[GLFW_KEY_A]) entityWorldPos.x -= speed;
-        if (keys[GLFW_KEY_D]) entityWorldPos.x += speed;
+
+        if (keys[GLFW_KEY_W]) testEntity.moveUp(speed);
+        if (keys[GLFW_KEY_S]) testEntity.moveDown(speed);
+        if (keys[GLFW_KEY_A]) testEntity.moveLeft(speed);
+        if (keys[GLFW_KEY_D]) testEntity.moveRight(speed);
+
+        var renderEntity = testEntity.getRenderComponent();
+
         if (keys[GLFW_KEY_Q]) renderEntity.setSpriteRotateAngle(renderEntity.getSpriteRotateAngle() - speed);
         if (keys[GLFW_KEY_E]) renderEntity.setSpriteRotateAngle(renderEntity.getSpriteRotateAngle() + speed);
 

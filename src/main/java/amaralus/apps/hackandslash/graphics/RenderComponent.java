@@ -8,7 +8,7 @@ import org.joml.Vector2f;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RenderEntity {
+public class RenderComponent {
 
     private final SpriteSheet sprite;
     private final List<FrameStripAnimation> animations;
@@ -16,7 +16,7 @@ public class RenderEntity {
     private int currentFrameStrip;
     private float spriteRotateAngle;
 
-    public RenderEntity(SpriteSheet sprite) {
+    public RenderComponent(SpriteSheet sprite) {
         this.sprite = sprite;
         animations = sprite.getFramesStrips().stream()
                 .map(framesStrip -> new FrameStripAnimation(1000L, framesStrip.getFramesCount()))
