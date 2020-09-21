@@ -4,6 +4,7 @@ import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
+import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
@@ -44,13 +45,13 @@ public class GamePlayManager {
         testEntity = new Entity(
                 new RenderComponent(getService(ResourceFactory.class).produceSprite("testTextureSheet")),
                 vec2());
-        testEntity.getRenderComponent().startAnimation();
+        testEntity.getRenderComponent().computeAnimation(Animation::start);
 
         var testEntity2 = new Entity(
                 new RenderComponent(getService(ResourceManager.class).getResource("testTextureSheet", Sprite.class)),
                 vec2(150, 100));
         testEntity2.getRenderComponent().setCurrentFrameStrip(2);
-        testEntity2.getRenderComponent().startAnimation();
+        testEntity2.getRenderComponent().computeAnimation(Animation::start);
 
         var inosuke = new Entity(
                 new RenderComponent(getService(ResourceFactory.class).produceSprite("inosuke2")),
@@ -99,13 +100,17 @@ public class GamePlayManager {
         if (keys[GLFW_KEY_A]) testEntity.moveLeft(speed);
         if (keys[GLFW_KEY_D]) testEntity.moveRight(speed);
 
-        var renderEntity = testEntity.getRenderComponent();
+        var renderComponent = testEntity.getRenderComponent();
 
-        if (keys[GLFW_KEY_Q]) renderEntity.setSpriteRotateAngle(renderEntity.getSpriteRotateAngle() - speed);
-        if (keys[GLFW_KEY_E]) renderEntity.setSpriteRotateAngle(renderEntity.getSpriteRotateAngle() + speed);
+        if (keys[GLFW_KEY_Q]) renderComponent.setSpriteRotateAngle(renderComponent.getSpriteRotateAngle() - speed);
+        if (keys[GLFW_KEY_E]) renderComponent.setSpriteRotateAngle(renderComponent.getSpriteRotateAngle() + speed);
 
-        if (keys[GLFW_KEY_1]) renderEntity.setCurrentFrameStrip(0);
-        if (keys[GLFW_KEY_2]) renderEntity.setCurrentFrameStrip(1);
-        if (keys[GLFW_KEY_3]) renderEntity.setCurrentFrameStrip(2);
+        if (keys[GLFW_KEY_1] || keys[GLFW_KEY_2] || keys[GLFW_KEY_3]) {
+            renderComponent.computeAnimation(Animation::stopAndReset);
+            if (keys[GLFW_KEY_1]) renderComponent.setCurrentFrameStrip(0);
+            if (keys[GLFW_KEY_2]) renderComponent.setCurrentFrameStrip(1);
+            if (keys[GLFW_KEY_3]) renderComponent.setCurrentFrameStrip(2);
+            renderComponent.computeAnimation(Animation::start);
+        }
     }
 }
