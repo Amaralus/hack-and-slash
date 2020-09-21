@@ -3,14 +3,14 @@ package amaralus.apps.hackandslash;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
-import amaralus.apps.hackandslash.services.GameController;
-import amaralus.apps.hackandslash.services.Window;
+import amaralus.apps.hackandslash.gameplay.GamePlayManager;
+import amaralus.apps.hackandslash.graphics.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
-import static amaralus.apps.hackandslash.services.ServiceLocator.registerService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.registerService;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Application {
@@ -35,7 +35,7 @@ public class Application {
             window.show();
 
             loadServices();
-            getService(GameController.class).runGameLoop();
+            getService(GamePlayManager.class).runGameLoop();
 
             glfwSetErrorCallback(null);
 
@@ -48,11 +48,12 @@ public class Application {
     }
 
     private void shutdown() {
-        if (window != null)
-            window.destroy();
-
         var resourceManager = getService(ResourceManager.class);
         if (resourceManager != null) resourceManager.destroy();
+
+        if (window != null) {
+            window.destroy();
+        }
 
         glfwTerminate();
     }
@@ -61,6 +62,6 @@ public class Application {
         registerService(new FileLoadService());
         registerService(new ResourceManager());
         registerService(new ResourceFactory(getService(ResourceManager.class)));
-        registerService(new GameController(window));
+        registerService(new GamePlayManager(window));
     }
 }

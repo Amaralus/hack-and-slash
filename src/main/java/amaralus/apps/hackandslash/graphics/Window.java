@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash.services;
+package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.Destroyable;
+import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;

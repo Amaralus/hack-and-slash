@@ -1,11 +1,11 @@
 package amaralus.apps.hackandslash.resources.factory;
 
-import amaralus.apps.hackandslash.graphics.Shader;
+import amaralus.apps.hackandslash.graphics.entities.Shader;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderFactory {

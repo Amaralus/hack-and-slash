@@ -1,8 +1,7 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
-import amaralus.apps.hackandslash.services.Window;
-import org.joml.Vector2f;
+import amaralus.apps.hackandslash.gameplay.Entity;
+import amaralus.apps.hackandslash.graphics.entities.Camera;
 
 import java.util.List;
 
@@ -19,14 +18,15 @@ public class Renderer {
         camera = new Camera(window.getWidth(), window.getHeight());
         camera.setScale(4.5f);
 
-        spriteRenderer = new SpriteRenderer();
+        spriteRenderer = new SpriteRenderer(camera);
     }
 
-    public void render(List<Sprite> sprites, Vector2f entityPos) {
+    public void render(List<Entity> entities) {
         clear();
 
-        for (Sprite sprite : sprites)
-            spriteRenderer.draw(camera, sprite, entityPos, 0f);
+        for (Entity entity : entities) {
+            spriteRenderer.render(entity.getRenderComponent(), entity.getPosition());
+        }
 
         window.swapBuffers();
     }

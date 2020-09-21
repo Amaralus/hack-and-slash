@@ -1,16 +1,21 @@
-package amaralus.apps.hackandslash.services;
+package amaralus.apps.hackandslash.gameplay;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.utils.FpsMeter;
+
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 
 public abstract class GameLoop {
 
-    private final FpsMeter fpsMeter;
+    private final Window window;
     private final long msPerUpdate;
     private boolean shouldStop = false;
 
+    private final FpsMeter fpsMeter;
 
     protected GameLoop(long msPerUpdate) {
         this.msPerUpdate = msPerUpdate;
+        window = getService(Window.class);
         fpsMeter = new FpsMeter();
     }
 
@@ -24,7 +29,7 @@ public abstract class GameLoop {
     }
 
     public int getFps() {
-        return fpsMeter.fps;
+        return fpsMeter.getFps();
     }
 
     public abstract void onEnable();
@@ -33,7 +38,7 @@ public abstract class GameLoop {
 
     public abstract void processInput();
 
-    public abstract void update();
+    public abstract void update(long elapsedTime);
 
     public abstract void render(double timeShift);
 
@@ -51,7 +56,7 @@ public abstract class GameLoop {
             processInput();
 
             while (lag >= msPerUpdate) {
-                update();
+                update(msPerUpdate);
                 lag -= msPerUpdate;
             }
 
@@ -63,22 +68,6 @@ public abstract class GameLoop {
     }
 
     private boolean disableLoop() {
-        return shouldStop || getService(Window.class).isShouldClose();
-    }
-
-    private static class FpsMeter {
-
-        private int frames = 0;
-        private long millis = 0;
-        private int fps = 0;
-
-        private void update() {
-            frames++;
-            if (System.currentTimeMillis() - millis >= 1000) {
-                fps = frames;
-                frames = 0;
-                millis = System.currentTimeMillis();
-            }
-        }
+        return shouldStop || window.isShouldClose();
     }
 }

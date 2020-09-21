@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.resources;
 
-import amaralus.apps.hackandslash.Destroyable;
+import amaralus.apps.hackandslash.common.Destroyable;
 
 public class Resource<R extends Destroyable> implements Destroyable {
 

@@ -1,5 +1,19 @@
 {
   "frameWidth": 16,
   "frameHeight": 24,
-  "framesCount": [2,3,4]
+  "frameStrips": [
+    {
+      "framesCount": 2,
+      "animated": true,
+      "animationTime": 1000
+    },
+    {
+      "framesCount": 3
+    },
+    {
+      "framesCount": 4,
+      "animated": true,
+      "animationTime": 500
+    }
+  ]
 }

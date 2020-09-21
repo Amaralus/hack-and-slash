@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash.graphics.data;
+package amaralus.apps.hackandslash.graphics.entities.data;
 
-import amaralus.apps.hackandslash.Destroyable;
+import amaralus.apps.hackandslash.common.Destroyable;
 
 import static org.lwjgl.opengl.GL15.*;
 

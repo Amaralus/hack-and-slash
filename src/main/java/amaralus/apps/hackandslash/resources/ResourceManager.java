@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.resources;
 
-import amaralus.apps.hackandslash.Destroyable;
+import amaralus.apps.hackandslash.common.Destroyable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,7 +27,8 @@ public class ResourceManager implements Destroyable {
     public <R extends Destroyable> void addResource(String name, R resource) {
         ResourceBundle<R> bundle = (ResourceBundle<R>) getOrCreateResourceBundle(resource.getClass());
         bundle.addResource(name, resource);
-        log.debug("Добавлен ресурс {}", resourceInfoName(resource.getClass(), name));
+        var resourceInfo = resourceInfoName(resource.getClass(), name);
+        log.debug("Добавлен ресурс {}", resourceInfo);
     }
 
     public <R extends Destroyable> R getResource(String name, Class<R> resourceClass) {
