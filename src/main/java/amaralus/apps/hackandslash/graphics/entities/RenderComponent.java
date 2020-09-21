@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.graphics.entities;
 
+import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.graphics.entities.sprites.FrameStripAnimation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.FramesStrip;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
@@ -8,7 +9,7 @@ import org.joml.Vector2f;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class RenderComponent {
+public class RenderComponent implements Updateable {
 
     private final Sprite sprite;
     private final List<FrameStripAnimation> animations;
@@ -23,6 +24,7 @@ public class RenderComponent {
                 .collect(Collectors.toList());
     }
 
+    @Override
     public void update(long elapsedTime) {
         animations.get(currentFrameStrip).update(elapsedTime);
     }

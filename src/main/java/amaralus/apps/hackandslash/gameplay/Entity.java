@@ -1,9 +1,10 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import org.joml.Vector2f;
 
-public class Entity {
+public class Entity implements Updateable {
 
     private final RenderComponent renderComponent;
     private final Vector2f position;
@@ -13,6 +14,7 @@ public class Entity {
         this.position = position;
     }
 
+    @Override
     public void update(long elapsedTime) {
         renderComponent.update(elapsedTime);
     }

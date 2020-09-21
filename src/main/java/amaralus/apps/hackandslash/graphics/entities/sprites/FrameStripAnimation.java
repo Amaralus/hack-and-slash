@@ -1,6 +1,8 @@
 package amaralus.apps.hackandslash.graphics.entities.sprites;
 
-public class FrameStripAnimation {
+import amaralus.apps.hackandslash.common.Updateable;
+
+public class FrameStripAnimation implements Updateable {
 
     private final long timePerFrame;
     private final int framesCount;
@@ -14,6 +16,7 @@ public class FrameStripAnimation {
         timePerFrame = animationTimeMs / framesCount;
     }
 
+    @Override
     public void update(long elapsedTime) {
         if (played) {
             millis += elapsedTime;
