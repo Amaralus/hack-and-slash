@@ -14,12 +14,14 @@ public final class FramesStrip {
     private final int frameWidth;
     private final int frameHeight;
     private final boolean animated;
+    private final long animationTimeMs;
     private final List<Frame> frames;
 
     public FramesStrip(Texture texture, FrameStripData frameStripData, int frameWidth, int frameHeight, int frameStripNumber) {
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         animated = frameStripData.isAnimated();
+        animationTimeMs = frameStripData.getAnimationTime();
 
         int framesCount = frameStripData.getFramesCount();
         frames = new ArrayList<>(framesCount);
@@ -54,6 +56,10 @@ public final class FramesStrip {
 
     public boolean isAnimated() {
         return animated;
+    }
+
+    public long getAnimationTimeMs() {
+        return animationTimeMs;
     }
 
     public final class Frame {

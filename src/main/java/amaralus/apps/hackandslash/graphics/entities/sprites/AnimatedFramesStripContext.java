@@ -2,17 +2,15 @@ package amaralus.apps.hackandslash.graphics.entities.sprites;
 
 import amaralus.apps.hackandslash.common.Updateable;
 
-public class FrameStripAnimation implements Updateable {
+public class AnimatedFramesStripContext extends FramesStripContext implements Updateable {
 
     private final long timePerFrame;
-    private final int framesCount;
 
-    private int currentFrame;
     private boolean played;
     private long millis;
 
-    public FrameStripAnimation(long animationTimeMs, int framesCount) {
-        this.framesCount = framesCount;
+    public AnimatedFramesStripContext(int framesCount, long animationTimeMs) {
+        super(framesCount);
         timePerFrame = animationTimeMs / framesCount;
     }
 
@@ -29,6 +27,11 @@ public class FrameStripAnimation implements Updateable {
         }
     }
 
+    @Override
+    public boolean isAnimated() {
+        return true;
+    }
+
     public void start() {
         played = true;
     }
@@ -39,10 +42,6 @@ public class FrameStripAnimation implements Updateable {
 
     public void reset() {
         currentFrame = 0;
-    }
-
-    public int getCurrentFrame() {
-        return currentFrame;
     }
 
     public boolean isPlayed() {

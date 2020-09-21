@@ -1,32 +1,39 @@
 package amaralus.apps.hackandslash.graphics.entities;
 
 import amaralus.apps.hackandslash.common.Updateable;
-import amaralus.apps.hackandslash.graphics.entities.sprites.FrameStripAnimation;
+import amaralus.apps.hackandslash.graphics.entities.sprites.AnimatedFramesStripContext;
 import amaralus.apps.hackandslash.graphics.entities.sprites.FramesStrip;
+import amaralus.apps.hackandslash.graphics.entities.sprites.FramesStripContext;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import org.joml.Vector2f;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class RenderComponent implements Updateable {
 
     private final Sprite sprite;
-    private final List<FrameStripAnimation> animations;
+    private final List<FramesStripContext> framesStripContextList;
 
     private int currentFrameStrip;
     private float spriteRotateAngle;
 
     public RenderComponent(Sprite sprite) {
         this.sprite = sprite;
-        animations = sprite.getFramesStrips().stream()
-                .map(framesStrip -> new FrameStripAnimation(1000L, framesStrip.getFramesCount()))
+        framesStripContextList = sprite.getFramesStrips().stream()
+                .map(framesStrip -> {
+                    if (framesStrip.isAnimated())
+                        return new AnimatedFramesStripContext(framesStrip.getFramesCount(), framesStrip.getAnimationTimeMs());
+                    else
+                        return new FramesStripContext(framesStrip.getFramesCount());
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
     public void update(long elapsedTime) {
-        animations.get(currentFrameStrip).update(elapsedTime);
+        doIfContextAnimated(context -> context.update(elapsedTime));
     }
 
     public Vector2f getTextureOffset() {
@@ -34,26 +41,32 @@ public class RenderComponent implements Updateable {
     }
 
     public void startAnimation() {
-        getCurrentAnimation().start();
+        doIfContextAnimated(AnimatedFramesStripContext::start);
     }
 
     public void stopAnimation() {
-        getCurrentAnimation().stop();
+        doIfContextAnimated(AnimatedFramesStripContext::stop);
     }
 
     public void resetAnimation() {
-        getCurrentAnimation().reset();
+        doIfContextAnimated(AnimatedFramesStripContext::reset);
     }
 
     public void setCurrentFrameStrip(int frameStripNumber) {
-        getCurrentAnimation().stop();
+        startAnimation();
+        resetAnimation();
         currentFrameStrip = frameStripNumber;
-        getCurrentAnimation().reset();
-        getCurrentAnimation().start();
+        startAnimation();
     }
 
-    private FrameStripAnimation getCurrentAnimation() {
-        return animations.get(currentFrameStrip);
+    private void doIfContextAnimated(Consumer<AnimatedFramesStripContext> contextConsumer) {
+        var context = getCurrentFramesStripContext();
+        if (context.isAnimated())
+            contextConsumer.accept((AnimatedFramesStripContext) context);
+    }
+
+    private FramesStripContext getCurrentFramesStripContext() {
+        return framesStripContextList.get(currentFrameStrip);
     }
 
     private FramesStrip getCurrentFrameStrip() {
@@ -61,7 +74,7 @@ public class RenderComponent implements Updateable {
     }
 
     public FramesStrip.Frame getCurrentFrame() {
-        return getCurrentFrameStrip().getFrame(getCurrentAnimation().getCurrentFrame());
+        return getCurrentFrameStrip().getFrame(getCurrentFramesStripContext().getCurrentFrame());
     }
 
     public Sprite getSprite() {

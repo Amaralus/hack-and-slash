@@ -4,15 +4,16 @@
   "frameStrips": [
     {
       "framesCount": 2,
-      "animated": true
+      "animated": true,
+      "animationTime": 1000
     },
     {
-      "framesCount": 3,
-      "animated": true
+      "framesCount": 3
     },
     {
       "framesCount": 4,
-      "animated": true
+      "animated": true,
+      "animationTime": 500
     }
   ]
 }
