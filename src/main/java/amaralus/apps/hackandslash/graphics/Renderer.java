@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.Entity;
-import amaralus.apps.hackandslash.services.Window;
+import amaralus.apps.hackandslash.gameplay.Entity;
+import amaralus.apps.hackandslash.graphics.entities.Camera;
 
 import java.util.List;
 

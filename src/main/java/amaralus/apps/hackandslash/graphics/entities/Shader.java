@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash.graphics;
+package amaralus.apps.hackandslash.graphics.entities;
 
-import amaralus.apps.hackandslash.Destroyable;
+import amaralus.apps.hackandslash.common.Destroyable;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;

@@ -1,8 +1,8 @@
-package amaralus.apps.hackandslash.graphics;
+package amaralus.apps.hackandslash.graphics.entities;
 
-import amaralus.apps.hackandslash.graphics.data.sprites.FramesStrip;
-import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
-import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
+import amaralus.apps.hackandslash.graphics.entities.sprites.FrameStripAnimation;
+import amaralus.apps.hackandslash.graphics.entities.sprites.FramesStrip;
+import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import org.joml.Vector2f;
 
 import java.util.List;
@@ -10,13 +10,13 @@ import java.util.stream.Collectors;
 
 public class RenderComponent {
 
-    private final SpriteSheet sprite;
+    private final Sprite sprite;
     private final List<FrameStripAnimation> animations;
 
     private int currentFrameStrip;
     private float spriteRotateAngle;
 
-    public RenderComponent(SpriteSheet sprite) {
+    public RenderComponent(Sprite sprite) {
         this.sprite = sprite;
         animations = sprite.getFramesStrips().stream()
                 .map(framesStrip -> new FrameStripAnimation(1000L, framesStrip.getFramesCount()))

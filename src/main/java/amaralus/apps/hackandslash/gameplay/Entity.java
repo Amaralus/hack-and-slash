@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.gameplay;
 
-import amaralus.apps.hackandslash.graphics.RenderComponent;
+import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import org.joml.Vector2f;
 
 public class Entity {

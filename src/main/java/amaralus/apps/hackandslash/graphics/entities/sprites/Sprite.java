@@ -1,7 +1,8 @@
-package amaralus.apps.hackandslash.graphics.data.sprites;
+package amaralus.apps.hackandslash.graphics.entities.sprites;
 
-import amaralus.apps.hackandslash.graphics.data.Texture;
-import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
+import amaralus.apps.hackandslash.common.Destroyable;
+import amaralus.apps.hackandslash.graphics.entities.data.Texture;
+import amaralus.apps.hackandslash.graphics.entities.data.VertexArraysObject;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 
@@ -11,13 +12,16 @@ import java.util.List;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class SpriteSheet extends SimpleSprite {
+public class Sprite implements Destroyable {
 
+    private final Texture texture;
+    private final VertexArraysObject vao;
     private final Vector2f offsetToSpriteCenter;
     private final List<FramesStrip> framesStrips;
 
-    public SpriteSheet(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
-        super(texture, vao);
+    public Sprite(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
+        this.texture = texture;
+        this.vao = vao;
 
         int frameStripsCount = spriteSheetData.getFrameStrips().size();
 
@@ -39,9 +43,29 @@ public class SpriteSheet extends SimpleSprite {
                 (float) spriteSheetData.getFrameHeight() / (float) texture.getHeight());
     }
 
-    @Override
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public VertexArraysObject getVao() {
+        return vao;
+    }
+
+    public float getWidth() {
+        return texture.getWidth();
+    }
+
+    public float getHeight() {
+        return texture.getHeight();
+    }
+
     public Vector2f getOffsetToSpriteCenter() {
         return offsetToSpriteCenter;
+    }
+
+    @Override
+    public void destroy() {
+        vao.destroy();
     }
 
     public FramesStrip getFrameStrip(int frameStripNumber) {

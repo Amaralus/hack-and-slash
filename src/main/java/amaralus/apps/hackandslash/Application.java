@@ -3,14 +3,14 @@ package amaralus.apps.hackandslash;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
-import amaralus.apps.hackandslash.services.GamePlayManager;
-import amaralus.apps.hackandslash.services.Window;
+import amaralus.apps.hackandslash.gameplay.GamePlayManager;
+import amaralus.apps.hackandslash.graphics.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
-import static amaralus.apps.hackandslash.services.ServiceLocator.registerService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.registerService;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Application {

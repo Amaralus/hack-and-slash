@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics;
+package amaralus.apps.hackandslash.graphics.entities.sprites;
 
 public class FrameStripAnimation {
 

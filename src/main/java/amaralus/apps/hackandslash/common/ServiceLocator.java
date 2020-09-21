@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.services;
+package amaralus.apps.hackandslash.common;
 
 import java.util.HashMap;
 import java.util.Map;

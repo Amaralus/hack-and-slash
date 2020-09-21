@@ -1,10 +1,13 @@
 package amaralus.apps.hackandslash.graphics;
 
+import amaralus.apps.hackandslash.graphics.entities.Camera;
+import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
+import amaralus.apps.hackandslash.graphics.entities.Shader;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 import static org.joml.Math.toRadians;
 import static org.lwjgl.opengl.GL15.*;
@@ -20,8 +23,9 @@ public class SpriteRenderer {
     }
 
     public void render(RenderComponent renderComponent, Vector2f entityPos) {
-        var textureSize = camera.getSpriteScaleOfCam(renderComponent.getSprite());
-        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, renderComponent.getSprite().getOffsetToSpriteCenter());
+        var sprite = renderComponent.getSprite();
+        var textureSize = camera.getSpriteScaleOfCam(sprite);
+        var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());
 
         textureShader.use();
         textureShader.setVec2("offset", renderComponent.getTextureOffset());
@@ -32,10 +36,10 @@ public class SpriteRenderer {
                 renderComponent.getSpriteRotateAngle()));
         textureShader.setMat4("projection", camera.getProjection());
 
-        renderComponent.getSprite().getTexture().bind();
-        renderComponent.getSprite().getVao().bind();
+        sprite.getTexture().bind();
+        sprite.getVao().bind();
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        renderComponent.getSprite().getVao().unbind();
+        sprite.getVao().unbind();
     }
 
     private Matrix4f calcModel(Vector2f textureSize, Vector2f cameraEntityPos, Vector2f frameSize, float rotateAngle) {
@@ -44,10 +48,10 @@ public class SpriteRenderer {
         return model.scale(vec3(textureSize, 1f));
     }
 
-    private void rotateModel(Matrix4f model, Vector2f textureSize, float rotateAngle) {
+    private void rotateModel(Matrix4f model, Vector2f frameSize, float rotateAngle) {
         if (rotateAngle != 0)
-            model.translate(vec3(0.5f * textureSize.x, 0.5f * textureSize.y, 0f))
+            model.translate(vec3(0.5f * frameSize.x, 0.5f * frameSize.y, 0f))
                     .rotate(toRadians(rotateAngle), vec3(0f, 0f, 1f))
-                    .translate(vec3(-0.5f * textureSize.x, -0.5f * textureSize.y, 0f));
+                    .translate(vec3(-0.5f * frameSize.x, -0.5f * frameSize.y, 0f));
     }
 }

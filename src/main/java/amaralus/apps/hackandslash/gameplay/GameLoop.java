@@ -1,8 +1,9 @@
-package amaralus.apps.hackandslash.services;
+package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.utils.FpsMeter;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 
 public abstract class GameLoop {
 

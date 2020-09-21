@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash;
+package amaralus.apps.hackandslash.common;
 
 public interface Destroyable {
 

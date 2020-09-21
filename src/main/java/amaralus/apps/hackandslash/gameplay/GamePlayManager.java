@@ -1,9 +1,9 @@
-package amaralus.apps.hackandslash.services;
+package amaralus.apps.hackandslash.gameplay;
 
-import amaralus.apps.hackandslash.Entity;
-import amaralus.apps.hackandslash.graphics.RenderComponent;
+import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.Renderer;
-import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
+import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.KeyEvent;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -42,18 +42,18 @@ public class GamePlayManager {
 
     public void runGameLoop() {
         testEntity = new Entity(
-                new RenderComponent(getService(ResourceFactory.class).produceSpriteSheet("testTextureSheet")),
+                new RenderComponent(getService(ResourceFactory.class).produceSprite("testTextureSheet")),
                 vec2());
         testEntity.getRenderComponent().startAnimation();
 
         var testEntity2 = new Entity(
-                new RenderComponent(getService(ResourceManager.class).getResource("testTextureSheet", SpriteSheet.class)),
+                new RenderComponent(getService(ResourceManager.class).getResource("testTextureSheet", Sprite.class)),
                 vec2(150, 100));
         testEntity2.getRenderComponent().setCurrentFrameStrip(2);
         testEntity2.getRenderComponent().startAnimation();
 
         var inosuke = new Entity(
-                new RenderComponent(getService(ResourceFactory.class).produceSpriteSheet("inosuke2")),
+                new RenderComponent(getService(ResourceFactory.class).produceSprite("inosuke2")),
                 vec2());
 
         var entityList = List.of(testEntity, testEntity2, inosuke);

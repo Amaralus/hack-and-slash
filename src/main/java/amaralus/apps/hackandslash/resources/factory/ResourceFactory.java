@@ -1,16 +1,15 @@
 package amaralus.apps.hackandslash.resources.factory;
 
-import amaralus.apps.hackandslash.graphics.Shader;
-import amaralus.apps.hackandslash.graphics.data.Texture;
-import amaralus.apps.hackandslash.graphics.data.VertexArraysObject;
-import amaralus.apps.hackandslash.graphics.data.VertexBufferObject;
-import amaralus.apps.hackandslash.graphics.data.sprites.SimpleSprite;
-import amaralus.apps.hackandslash.graphics.data.sprites.SpriteSheet;
+import amaralus.apps.hackandslash.graphics.entities.Shader;
+import amaralus.apps.hackandslash.graphics.entities.data.Texture;
+import amaralus.apps.hackandslash.graphics.entities.data.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.entities.data.VertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 
-import static amaralus.apps.hackandslash.services.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
 import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
 
@@ -40,24 +39,15 @@ public class ResourceFactory {
         return texture;
     }
 
-    public SimpleSprite produceSimpleSprite(String spriteName) {
-        var texture = produceTexture(spriteName);
-        var vao = produceTextureVao(spriteName, produceTextureVbo(spriteName, 1f, 1f));
-
-        var sprite = new SimpleSprite(texture, vao);
-        resourceManager.addResource(spriteName, sprite);
-        return sprite;
-    }
-
-    public SpriteSheet produceSpriteSheet(String spriteName) {
+    public Sprite produceSprite(String spriteName) {
         var texture = produceTexture(spriteName);
         var spriteSheetData = getService(FileLoadService.class)
                 .loadFromJson("sprites/data/" + spriteName + ".json", SpriteSheetData.class);
 
-        var frameTexturePosition = SpriteSheet.frameTexturePosition(texture, spriteSheetData);
+        var frameTexturePosition = Sprite.frameTexturePosition(texture, spriteSheetData);
         var vao = produceTextureVao(spriteName, produceTextureVbo(spriteName, frameTexturePosition.x, frameTexturePosition.y));
 
-        var sprite = new SpriteSheet(texture, vao, spriteSheetData);
+        var sprite = new Sprite(texture, vao, spriteSheetData);
         resourceManager.addResource(spriteName, sprite);
         return sprite;
     }

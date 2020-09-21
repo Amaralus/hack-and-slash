@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.data;
+package amaralus.apps.hackandslash.graphics.entities.data;
 
 public interface Bindable {
 

@@ -1,7 +1,7 @@
-package amaralus.apps.hackandslash.graphics;
+package amaralus.apps.hackandslash.graphics.entities;
 
-import amaralus.apps.hackandslash.graphics.data.sprites.FramesStrip;
-import amaralus.apps.hackandslash.graphics.data.sprites.Sprite;
+import amaralus.apps.hackandslash.graphics.entities.sprites.FramesStrip;
+import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
