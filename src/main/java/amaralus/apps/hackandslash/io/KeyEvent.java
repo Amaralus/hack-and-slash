@@ -1,16 +1,18 @@
 package amaralus.apps.hackandslash.io;
 
+import amaralus.apps.hackandslash.io.entities.KeyCode;
+
 public class KeyEvent {
 
     private final long window;
-    private final int key; 
+    private final KeyCode key;
     private final int scancode; 
     private final int action; 
     private final int mods;
 
     public KeyEvent(long window, int key, int scancode, int action, int mods) {
         this.window = window;
-        this.key = key;
+        this.key = KeyCode.valueOfNumber(key);
         this.scancode = scancode;
         this.action = action;
         this.mods = mods;
@@ -20,7 +22,7 @@ public class KeyEvent {
         return window;
     }
 
-    public int getKey() {
+    public KeyCode getKey() {
         return key;
     }
 
