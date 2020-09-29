@@ -46,6 +46,13 @@ public class RenderComponent implements Updateable {
         return getCurrentFrame().getFrameOffset();
     }
 
+    public void changeAnimatedFrameStrip(int frameStripNumber) {
+        if (currentFrameStrip == frameStripNumber) return;
+        computeAnimation(Animation::stopAndReset);
+        setCurrentFrameStrip(frameStripNumber);
+        computeAnimation(Animation::start);
+    }
+
     public void setCurrentFrameStrip(int frameStripNumber) {
         currentFrameStrip = frameStripNumber;
     }
@@ -72,5 +79,9 @@ public class RenderComponent implements Updateable {
 
     public void setSpriteRotateAngle(float spriteRotateAngle) {
         this.spriteRotateAngle = spriteRotateAngle;
+    }
+
+    public void addSpriteRotateAngle(float spriteRotateAngle) {
+        setSpriteRotateAngle(this.spriteRotateAngle + spriteRotateAngle);
     }
 }

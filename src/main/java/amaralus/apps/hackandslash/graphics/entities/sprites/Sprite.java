@@ -59,6 +59,10 @@ public class Sprite implements Destroyable {
         return texture.getHeight();
     }
 
+    public Vector2f getSize() {
+        return vec2(getWidth(), getHeight());
+    }
+
     public Vector2f getOffsetToSpriteCenter() {
         return offsetToSpriteCenter;
     }

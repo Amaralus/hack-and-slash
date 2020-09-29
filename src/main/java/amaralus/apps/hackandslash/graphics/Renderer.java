@@ -16,7 +16,7 @@ public class Renderer {
     public Renderer(Window window) {
         this.window = window;
         camera = new Camera(window.getWidth(), window.getHeight());
-        camera.setScale(4.5f);
+        camera.setScale(0.5f);
 
         spriteRenderer = new SpriteRenderer(camera);
     }
@@ -34,5 +34,9 @@ public class Renderer {
     private void clear() {
         glClearColor(0f, 0f, 0f, 1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public Camera getCamera() {
+        return camera;
     }
 }
