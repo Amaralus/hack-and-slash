@@ -24,7 +24,7 @@ public class SpriteRenderer {
 
     public void render(RenderComponent renderComponent, Vector2f entityPos) {
         var sprite = renderComponent.getSprite();
-        var textureSize = camera.getSpriteScaleOfCam(sprite);
+        var textureSize = sprite.getSize();
         var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());
 
         textureShader.use();
@@ -32,7 +32,7 @@ public class SpriteRenderer {
         textureShader.setMat4("model", calcModel(
                 textureSize,
                 cameraEntityPos,
-                camera.getFrameScaleOfCam(renderComponent.getCurrentFrame()),
+                renderComponent.getCurrentFrame().getSize(),
                 renderComponent.getSpriteRotateAngle()));
         textureShader.setMat4("projection", camera.getProjection());
 

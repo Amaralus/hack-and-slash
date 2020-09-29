@@ -1,7 +1,5 @@
 package amaralus.apps.hackandslash.graphics.entities;
 
-import amaralus.apps.hackandslash.graphics.entities.sprites.FramesStrip;
-import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -14,9 +12,9 @@ public class Camera {
     private float scale = 1f;
 
     private final Vector2f position;
-    private final Vector2f leftTopPosition;
 
-    private final Matrix4f projection;
+    private Vector2f leftTopPosition;
+    private Matrix4f projection;
 
     public Camera(float width, float height) {
         this(width, height, vec2(0f, 0f));
@@ -26,22 +24,22 @@ public class Camera {
         this.width = width;
         this.height = height;
         this.position = position;
-        leftTopPosition = copy(position).sub(vec2(width * 0.5f, height * 0.5f));
-        projection = mat4().ortho(0.0f, width, height, 0.0f, -1.0f, 1.0f);
+        leftTopPosition = calcLeftTopPosition();
+        projection = calcProjection();
+    }
+
+    private Matrix4f calcProjection() {
+        return mat4().ortho(0.0f, getScaledWidth(), getScaledHeight(), 0.0f, -1.0f, 1.0f);
+    }
+
+    private Vector2f calcLeftTopPosition() {
+        return copy(position).sub(vec2(getScaledWidth() * 0.5f, getScaledHeight() * 0.5f));
     }
 
     public Vector2f getEntityCamPos(Vector2f entityPos, Vector2f spriteSizeOfCam, Vector2f offsetToSpriteCenter) {
         return copy(entityPos)
                 .sub(copy(spriteSizeOfCam).mul(offsetToSpriteCenter))
                 .sub(leftTopPosition);
-    }
-
-    public Vector2f getSpriteScaleOfCam(Sprite sprite) {
-        return vec2(sprite.getWidth() * scale, sprite.getHeight() * scale);
-    }
-
-    public Vector2f getFrameScaleOfCam(FramesStrip.Frame frame) {
-        return vec2(frame.getWidth() * scale, frame.getHeight() * scale);
     }
 
     public void moveLeft(float distance) {
@@ -72,6 +70,14 @@ public class Camera {
         return height;
     }
 
+    public float getScaledWidth() {
+        return width * scale;
+    }
+
+    public float getScaledHeight() {
+        return height * scale;
+    }
+
     public Vector2f getPosition() {
         return position;
     }
@@ -89,6 +95,13 @@ public class Camera {
     }
 
     public void setScale(float scale) {
+        if (scale < 0.05f) scale = 0.05f;
         this.scale = scale;
+        leftTopPosition = calcLeftTopPosition();
+        projection = calcProjection();
+    }
+
+    public void addScale(float scale) {
+        setScale(this.scale + scale);
     }
 }

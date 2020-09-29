@@ -80,5 +80,9 @@ public final class FramesStrip {
         public int getHeight() {
             return FramesStrip.this.getFrameHeight();
         }
+
+        public Vector2f getSize() {
+            return vec2(getWidth(), getHeight());
+        }
     }
 }

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import java.util.List;
 
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
+import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.io.entities.KeyCode.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
@@ -34,23 +35,28 @@ public class GamePlayManager {
         renderer = new Renderer(window);
         inputHandler = new InputHandler();
         window.setKeyCallBack(inputHandler::handleKeyEvents);
+        setUpInput();
     }
 
     public void runGameLoop() {
+        float speed = 200;
         testEntity = new Entity(
                 new RenderComponent(getService(ResourceFactory.class).produceSprite("testTextureSheet")),
-                vec2());
+                vec2(),
+                speed);
         testEntity.getRenderComponent().computeAnimation(Animation::start);
 
         var testEntity2 = new Entity(
                 new RenderComponent(getService(ResourceManager.class).getResource("testTextureSheet", Sprite.class)),
-                vec2(150, 100));
+                vec2(150, 100),
+                speed);
         testEntity2.getRenderComponent().setCurrentFrameStrip(2);
         testEntity2.getRenderComponent().computeAnimation(Animation::start);
 
         var inosuke = new Entity(
                 new RenderComponent(getService(ResourceFactory.class).produceSprite("inosuke2")),
-                vec2());
+                vec2(),
+                speed);
 
         var entityList = List.of(testEntity, testEntity2, inosuke);
 
@@ -69,7 +75,7 @@ public class GamePlayManager {
             @Override
             public void processInput() {
                 glfwPollEvents();
-                handleKeyActions();
+                inputHandler.executeKeyActions();
             }
 
             @Override
@@ -86,26 +92,21 @@ public class GamePlayManager {
         gameLoop.enable();
     }
 
-    private void handleKeyActions() {
-        float speed = 5;
-        if (inputHandler.isPressed(ESCAPE)) window.close();
+    private void setUpInput() {
+        inputHandler.addAction(ESCAPE, window::close);
 
-        if (inputHandler.isPressed(W)) testEntity.moveUp(speed);
-        if (inputHandler.isPressed(S)) testEntity.moveDown(speed);
-        if (inputHandler.isPressed(A)) testEntity.moveLeft(speed);
-        if (inputHandler.isPressed(D)) testEntity.moveRight(speed);
+        inputHandler.addAction(W, () -> testEntity.getInputComponent().addCommand(ENTITY_MOVE_UP));
+        inputHandler.addAction(S, () -> testEntity.getInputComponent().addCommand(ENTITY_MOVE_DOWN));
+        inputHandler.addAction(A, () -> testEntity.getInputComponent().addCommand(ENTITY_MOVE_LEFT));
+        inputHandler.addAction(D, () -> testEntity.getInputComponent().addCommand(ENTITY_MOVE_RIGHT));
 
-        var renderComponent = testEntity.getRenderComponent();
+        inputHandler.addAction(Q, () -> testEntity.getRenderComponent().addSpriteRotateAngle(-5f));
+        inputHandler.addAction(E, () -> testEntity.getRenderComponent().addSpriteRotateAngle(5f));
+        inputHandler.addAction(EQUAL, () -> renderer.getCamera().addScale(-0.05f));
+        inputHandler.addAction(MINUS, () -> renderer.getCamera().addScale(0.05f));
 
-        if (inputHandler.isPressed(Q)) renderComponent.setSpriteRotateAngle(renderComponent.getSpriteRotateAngle() - speed);
-        if (inputHandler.isPressed(E)) renderComponent.setSpriteRotateAngle(renderComponent.getSpriteRotateAngle() + speed);
-
-        if (inputHandler.isPressed(DIG1) || inputHandler.isPressed(DIG2) || inputHandler.isPressed(DIG3)) {
-            renderComponent.computeAnimation(Animation::stopAndReset);
-            if (inputHandler.isPressed(DIG1)) renderComponent.setCurrentFrameStrip(0);
-            if (inputHandler.isPressed(DIG2)) renderComponent.setCurrentFrameStrip(1);
-            if (inputHandler.isPressed(DIG3)) renderComponent.setCurrentFrameStrip(2);
-            renderComponent.computeAnimation(Animation::start);
-        }
+        inputHandler.addAction(DIG1, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(0));
+        inputHandler.addAction(DIG2, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(1));
+        inputHandler.addAction(DIG3, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(2));
     }
 }
