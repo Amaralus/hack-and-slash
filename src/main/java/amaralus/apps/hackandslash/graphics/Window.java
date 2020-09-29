@@ -4,6 +4,8 @@ import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.io.events.KeyboardKeyEvent;
 import amaralus.apps.hackandslash.io.events.MouseButtonEvent;
 import amaralus.apps.hackandslash.io.events.ScrollEvent;
+import org.joml.Vector2f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
@@ -11,6 +13,7 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.IntBuffer;
 import java.util.function.Consumer;
 
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.glfw.GLFW.glfwSetWindowPos;
@@ -97,6 +100,15 @@ public class Window implements Destroyable {
     public void setScrollCallback(Consumer<ScrollEvent> scrollEventConsumer) {
         glfwSetScrollCallback(windowHandle, (window, xOffset, yOffset) ->
                 scrollEventConsumer.accept(new ScrollEvent(window, xOffset, yOffset)));
+    }
+
+    public Vector2f getCursorPosition() {
+        var xBuffer = BufferUtils.createDoubleBuffer(1);
+        var yBuffer = BufferUtils.createDoubleBuffer(1);
+
+        glfwGetCursorPos(windowHandle, xBuffer, yBuffer);
+
+        return vec2((float) xBuffer.get(0), (float) yBuffer.get(0));
     }
 
     @Override

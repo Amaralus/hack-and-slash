@@ -17,6 +17,7 @@ import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.toStr;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -108,7 +109,8 @@ public class GamePlayManager {
         inputHandler.addAction(DIG2, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(1));
         inputHandler.addAction(DIG3, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(2));
 
-        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> log.info("LMB"));
+        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> testEntity.setPosition(
+                renderer.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(yOffset));
     }

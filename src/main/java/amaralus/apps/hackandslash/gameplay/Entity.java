@@ -10,7 +10,7 @@ public class Entity implements Updateable {
 
     private final InputComponent inputComponent;
     private final RenderComponent renderComponent;
-    private final Vector2f position;
+    private Vector2f position;
 
     private float speedPerSec;
     private float speedCoef;
@@ -45,6 +45,10 @@ public class Entity implements Updateable {
 
     public Vector2f getPosition() {
         return position;
+    }
+
+    public void setPosition(Vector2f position) {
+        this.position = position;
     }
 
     public float getSpeedPerSec() {
