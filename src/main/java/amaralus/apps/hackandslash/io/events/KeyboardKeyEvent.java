@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash.io.entities;
+package amaralus.apps.hackandslash.io.events;
 
-public class KeyEvent {
+public class KeyboardKeyEvent {
 
     private final long window;
     private final KeyCode key;
@@ -8,7 +8,7 @@ public class KeyEvent {
     private final int action; 
     private final int mods;
 
-    public KeyEvent(long window, int key, int scancode, int action, int mods) {
+    public KeyboardKeyEvent(long window, int key, int scancode, int action, int mods) {
         this.window = window;
         this.key = KeyCode.valueOfNumber(key);
         this.scancode = scancode;

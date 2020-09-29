@@ -1,8 +1,9 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.common.Destroyable;
-import amaralus.apps.hackandslash.io.entities.KeyEvent;
-import amaralus.apps.hackandslash.io.entities.ScrollEvent;
+import amaralus.apps.hackandslash.io.events.KeyboardKeyEvent;
+import amaralus.apps.hackandslash.io.events.MouseButtonEvent;
+import amaralus.apps.hackandslash.io.events.ScrollEvent;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.system.MemoryStack;
@@ -83,9 +84,14 @@ public class Window implements Destroyable {
         glfwSwapBuffers(windowHandle);
     }
 
-    public void setKeyCallback(Consumer<KeyEvent> keyEventConsumer) {
+    public void setKeyCallback(Consumer<KeyboardKeyEvent> keyEventConsumer) {
         glfwSetKeyCallback(windowHandle, (eventWindowHandle, key, scancode, action, mods) ->
-                keyEventConsumer.accept(new KeyEvent(eventWindowHandle, key, scancode, action, mods)));
+                keyEventConsumer.accept(new KeyboardKeyEvent(eventWindowHandle, key, scancode, action, mods)));
+    }
+
+    public void setMouseButtonCallback(Consumer<MouseButtonEvent> buttonEventConsumer) {
+        glfwSetMouseButtonCallback(windowHandle, (window, button, action, mods) ->
+                buttonEventConsumer.accept(new MouseButtonEvent(window, button, action, mods)));
     }
 
     public void setScrollCallback(Consumer<ScrollEvent> scrollEventConsumer) {

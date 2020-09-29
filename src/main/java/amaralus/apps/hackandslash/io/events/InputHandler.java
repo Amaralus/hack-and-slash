@@ -1,9 +1,6 @@
-package amaralus.apps.hackandslash.io;
+package amaralus.apps.hackandslash.io.events;
 
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.io.entities.KeyCode;
-import amaralus.apps.hackandslash.io.entities.KeyEvent;
-import amaralus.apps.hackandslash.io.entities.ScrollEvent;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -18,39 +15,61 @@ public class InputHandler {
     private final EnumSet<KeyCode> pressedKeys;
     private final Map<KeyCode, Runnable> keyActions;
 
+    private final EnumSet<MouseButton> pressedButtons;
+    private final Map<MouseButton, Runnable> buttonActions;
+
     private BiConsumer<Float, Float> scrollAction;
+    private float scrollingSensitivity = 0.1f;
     private float scrollXOffset;
     private float scrollYOffset;
 
     public InputHandler() {
         pressedKeys = EnumSet.noneOf(KeyCode.class);
+        pressedButtons = EnumSet.noneOf(MouseButton.class);
+
         keyActions = new EnumMap<>(KeyCode.class);
+        buttonActions = new EnumMap<>(MouseButton.class);
     }
 
     public void setUpInputHandling(Window window) {
-        window.setKeyCallback(this::handleKeyEvents);
+        window.setKeyCallback(this::handleKeyboardKeyEvents);
+        window.setMouseButtonCallback(this::handleMouseButtonsEvents);
         window.setScrollCallback(this::handleScrollEvents);
     }
 
-    public void handleKeyEvents(KeyEvent event) {
+    public void handleKeyboardKeyEvents(KeyboardKeyEvent event) {
         if (GLFW_PRESS == event.getAction())
             setPressed(event.getKey());
         if (GLFW_RELEASE == event.getAction())
             setReleased(event.getKey());
     }
 
+    public void handleMouseButtonsEvents(MouseButtonEvent event) {
+        if (GLFW_PRESS == event.getAction())
+            setPressed(event.getButton());
+        if (GLFW_RELEASE == event.getAction())
+            setReleased(event.getButton());
+    }
+
     public void handleScrollEvents(ScrollEvent event) {
-        scrollXOffset = (float) event.getxOffset();
-        scrollYOffset = (float) event.getyOffset();
+        scrollXOffset = (float) event.getxOffset() * scrollingSensitivity;
+        scrollYOffset = (float) event.getyOffset() * scrollingSensitivity;
     }
 
     public void executeActions() {
         executeKeyActions();
+        executeButtonActions();
         executeScrollAction();
     }
 
     private void executeKeyActions() {
         for (var entry : keyActions.entrySet())
+            if (isPressed(entry.getKey()))
+                entry.getValue().run();
+    }
+
+    private void executeButtonActions() {
+        for (var entry : buttonActions.entrySet())
             if (isPressed(entry.getKey()))
                 entry.getValue().run();
     }
@@ -89,6 +108,42 @@ public class InputHandler {
 
     public void clearKeyActions() {
         keyActions.clear();
+    }
+
+    //
+
+    public void setPressed(MouseButton mouseButton) {
+        pressedButtons.add(mouseButton);
+    }
+
+    public void setReleased(MouseButton mouseButton) {
+        pressedButtons.remove(mouseButton);
+    }
+
+    public boolean isPressed(MouseButton mouseButton) {
+        return pressedButtons.contains(mouseButton);
+    }
+
+    public void releasePressedMouseButtons() {
+        pressedButtons.clear();
+    }
+
+    public void addAction(MouseButton mouseButton, Runnable action) {
+        buttonActions.put(mouseButton, action);
+    }
+
+    public void removeAction(MouseButton mouseButton) {
+        buttonActions.remove(mouseButton);
+    }
+
+    public void clearButtonActions() {
+        buttonActions.clear();
+    }
+
+    public void setScrollingSensitivity(float scrollingSensitivity) {
+        if (scrollingSensitivity < 0.01f) scrollingSensitivity = 0.01f;
+        if (scrollingSensitivity > 1f) scrollingSensitivity = 1f;
+        this.scrollingSensitivity = scrollingSensitivity;
     }
 
     public void setScrollAction(BiConsumer<Float, Float> scrollAction) {

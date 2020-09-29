@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.io.entities;
+package amaralus.apps.hackandslash.io.events;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

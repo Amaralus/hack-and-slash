@@ -5,7 +5,7 @@ import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
-import amaralus.apps.hackandslash.io.InputHandler;
+import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import org.slf4j.Logger;
@@ -15,7 +15,8 @@ import java.util.List;
 
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
-import static amaralus.apps.hackandslash.io.entities.KeyCode.*;
+import static amaralus.apps.hackandslash.io.events.KeyCode.*;
+import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
@@ -107,6 +108,8 @@ public class GamePlayManager {
         inputHandler.addAction(DIG2, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(1));
         inputHandler.addAction(DIG3, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(2));
 
-        inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(0.1f * yOffset));
+        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> log.info("LMB"));
+
+        inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(yOffset));
     }
 }
