@@ -34,7 +34,7 @@ public class GamePlayManager {
         getService(ResourceFactory.class).produceShader("texture");
         renderer = new Renderer(window);
         inputHandler = new InputHandler();
-        window.setKeyCallBack(inputHandler::handleKeyEvents);
+        inputHandler.setUpInputHandling(window);
         setUpInput();
     }
 
@@ -75,7 +75,7 @@ public class GamePlayManager {
             @Override
             public void processInput() {
                 glfwPollEvents();
-                inputHandler.executeKeyActions();
+                inputHandler.executeActions();
             }
 
             @Override
@@ -102,11 +102,11 @@ public class GamePlayManager {
 
         inputHandler.addAction(Q, () -> testEntity.getRenderComponent().addSpriteRotateAngle(-5f));
         inputHandler.addAction(E, () -> testEntity.getRenderComponent().addSpriteRotateAngle(5f));
-        inputHandler.addAction(EQUAL, () -> renderer.getCamera().addScale(-0.05f));
-        inputHandler.addAction(MINUS, () -> renderer.getCamera().addScale(0.05f));
 
         inputHandler.addAction(DIG1, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(0));
         inputHandler.addAction(DIG2, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(1));
         inputHandler.addAction(DIG3, () -> testEntity.getRenderComponent().changeAnimatedFrameStrip(2));
+
+        inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(0.1f * yOffset));
     }
 }

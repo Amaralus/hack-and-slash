@@ -1,6 +1,4 @@
-package amaralus.apps.hackandslash.io;
-
-import amaralus.apps.hackandslash.io.entities.KeyCode;
+package amaralus.apps.hackandslash.io.entities;
 
 public class KeyEvent {
 
