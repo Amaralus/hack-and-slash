@@ -42,6 +42,10 @@ public class Camera {
                 .sub(leftTopPosition);
     }
 
+    public Vector2f getWordPosOfScreenPos(Vector2f screenPosition) {
+        return copy(leftTopPosition).add(screenPosition.mul(scale));
+    }
+
     public void moveLeft(float distance) {
         position.x -= distance;
         leftTopPosition.x -= distance;
