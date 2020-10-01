@@ -13,6 +13,7 @@ import org.lwjgl.system.MemoryStack;
 import java.nio.IntBuffer;
 import java.util.function.Consumer;
 
+import static amaralus.apps.hackandslash.common.ServiceLocator.registerService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
@@ -27,7 +28,13 @@ public class Window implements Destroyable {
     private final int height;
     private final long windowHandle;
 
-    public Window(int width, int height, String title) {
+    public static Window create(int width, int height, String title) {
+        var window = new Window(width, height, title);
+        registerService(window);
+        return window;
+    }
+
+    private Window(int width, int height, String title) {
         this.width = width;
         this.height = height;
 

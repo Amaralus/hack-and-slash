@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash.resources.factory;
 
-import amaralus.apps.hackandslash.graphics.entities.Shader;
 import amaralus.apps.hackandslash.graphics.entities.data.Texture;
 import amaralus.apps.hackandslash.graphics.entities.data.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.entities.data.VertexBufferObject;
@@ -27,20 +26,18 @@ public class ResourceFactory {
         produceEbo("defaultTexture", new int[]{0, 1, 3, 1, 2, 3});
     }
 
-    public Shader produceShader(String shaderName) {
+    public void produceShader(String shaderName) {
         var shader = shaderFactory.produce(shaderName);
         resourceManager.addResource(shaderName, shader);
-        return shader;
     }
 
-    public Texture produceTexture(String textureName) {
+    public void produceTexture(String textureName) {
         var texture = textureFactory.produce(textureName);
         resourceManager.addResource(textureName, texture);
-        return texture;
     }
 
     public Sprite produceSprite(String spriteName) {
-        var texture = produceTexture(spriteName);
+        var texture = resourceManager.getResource(spriteName, Texture.class);
         var spriteSheetData = getService(FileLoadService.class)
                 .loadFromJson("sprites/data/" + spriteName + ".json", SpriteSheetData.class);
 

@@ -20,7 +20,7 @@ public class TextureFactory {
     }
 
     public Texture produce(String name) {
-        log.info("Загрузка текстуры {}", name);
+        log.debug("Загрузка текстуры {}", name);
 
         var imageData = fileLoadService.loadImageData("sprites/" + name + ".png");
 

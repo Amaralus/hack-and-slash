@@ -4,8 +4,6 @@ import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.toStr;
-
 public class Entity implements Updateable {
 
     private final InputComponent inputComponent;
@@ -15,11 +13,10 @@ public class Entity implements Updateable {
     private float speedPerSec;
     private float speedCoef;
 
-    public Entity(RenderComponent renderComponent, Vector2f position, float speedPerSec) {
+    public Entity(RenderComponent renderComponent, Vector2f position) {
         inputComponent = new InputComponent();
         this.renderComponent = renderComponent;
         this.position = position;
-        this.speedPerSec = speedPerSec;
     }
 
     @Override
