@@ -19,12 +19,12 @@ public class ShaderFactory {
     }
 
     public Shader produce(String name) {
-        log.info("Загрузка шейдера {}", name);
+        log.debug("Загрузка шейдера {}", name);
 
         int program = glCreateProgram();
 
-        int vertexShaderId = loadShader(GL_VERTEX_SHADER, name + "Vertex");
-        int fragmentShaderId = loadShader(GL_FRAGMENT_SHADER, name + "Fragment");
+        int vertexShaderId = loadShader(GL_VERTEX_SHADER, name + ".vsh");
+        int fragmentShaderId = loadShader(GL_FRAGMENT_SHADER, name + ".frsh");
 
         linkShader(program, vertexShaderId, fragmentShaderId);
 

@@ -8,10 +8,14 @@ import org.slf4j.LoggerFactory;
 
 import javax.imageio.ImageIO;
 import java.io.*;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class FileLoadService {
 
@@ -66,6 +70,22 @@ public class FileLoadService {
     public <D> D loadFromJson(String path, Class<D> clazz) {
         try {
             return new Gson().fromJson(new InputStreamReader(loadResourceAsStream(path)), clazz);
+        } catch (Exception e) {
+            throw new LoadFileException(e);
+        }
+    }
+
+    public List<String> loadFileNamesFromDirectory(String pathToDir) {
+        try {
+            var resource = ClassLoader.getSystemResource(pathToDir);
+
+            if (resource == null)
+                throw new FileNotFoundException(pathToDir);
+
+            return Stream.of(Path.of(resource.toURI()).toFile().listFiles())
+                    .filter(File::isFile)
+                    .map(File::getName)
+                    .collect(Collectors.toList());
         } catch (Exception e) {
             throw new LoadFileException(e);
         }
