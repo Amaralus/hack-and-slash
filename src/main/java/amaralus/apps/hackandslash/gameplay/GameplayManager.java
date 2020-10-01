@@ -1,22 +1,17 @@
 package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.Renderer;
-import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.events.InputHandler;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class GameplayManager {
@@ -38,11 +33,11 @@ public class GameplayManager {
     }
 
     public void runGameLoop() {
-        float speed = 200;
-        player = new Entity(
-                new RenderComponent(getService(ResourceManager.class).getResource("testTextureSheet", Sprite.class)),
-                vec2(),
-                speed);
+        player = new EntityFactory()
+                .sprite("testTextureSheet")
+                .position(0, 0)
+                .speed(200)
+                .produce();
         player.getRenderComponent().computeAnimation(Animation::start);
 
         var entityList = List.of(player);
