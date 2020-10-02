@@ -1,16 +1,19 @@
 package amaralus.apps.hackandslash.resources.factory;
 
-import amaralus.apps.hackandslash.graphics.entities.data.Texture;
-import amaralus.apps.hackandslash.graphics.entities.data.VertexArraysObject;
-import amaralus.apps.hackandslash.graphics.entities.data.VertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.data.*;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 
+import java.nio.Buffer;
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
-import static org.lwjgl.opengl.GL15.GL_ARRAY_BUFFER;
-import static org.lwjgl.opengl.GL15.GL_ELEMENT_ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ELEMENT_ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.STATIC_DRAW;
 
 public class ResourceFactory {
 
@@ -49,27 +52,27 @@ public class ResourceFactory {
         return sprite;
     }
 
-    public VertexBufferObject produceVbo(String vboName, float[] buffer) {
-        return produceVbo(vboName + "Vbo", new VertexBufferObject(GL_ARRAY_BUFFER, buffer));
+    public VertexBufferObject<FloatBuffer> produceVbo(String vboName, float[] buffer) {
+        return produceVbo(vboName + "Vbo", new FloatVertexBufferObject(ARRAY_BUFFER, STATIC_DRAW, buffer));
     }
 
-    public VertexBufferObject produceEbo(String eboName, int[] buffer) {
-        return produceVbo(eboName + "Ebo", new VertexBufferObject(GL_ELEMENT_ARRAY_BUFFER, buffer));
+    public VertexBufferObject<IntBuffer> produceEbo(String eboName, int[] buffer) {
+        return produceVbo(eboName + "Ebo", new IntVertexBufferObject(ELEMENT_ARRAY_BUFFER, STATIC_DRAW, buffer));
     }
 
-    private VertexBufferObject produceVbo(String vboName, VertexBufferObject vbo) {
+    private <B extends Buffer> VertexBufferObject<B> produceVbo(String vboName, VertexBufferObject<B> vbo) {
         resourceManager.addResource(vboName, vbo);
         return vbo;
     }
 
-    private VertexBufferObject produceTextureVbo(String vboName, float textureXPosition, float textureYPosition) {
+    private VertexBufferObject<FloatBuffer> produceTextureVbo(String vboName, float textureXPosition, float textureYPosition) {
         return produceVbo(vboName, new float[]{0f, textureYPosition, 0f, 0f, textureXPosition, 0f, textureXPosition, textureYPosition});
     }
 
-    public VertexArraysObject produceTextureVao(String vaoName, VertexBufferObject vbo) {
+    public VertexArraysObject produceTextureVao(String vaoName, VertexBufferObject<FloatBuffer> vbo) {
         var vao = new VertexArraysObject(
                 vbo,
-                resourceManager.getResource("defaultTextureEbo", VertexBufferObject.class)
+                resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class)
         );
         resourceManager.addResource(vaoName + "Vao", vao);
         return vao;

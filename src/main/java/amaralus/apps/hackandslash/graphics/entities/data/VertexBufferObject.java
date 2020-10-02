@@ -2,31 +2,38 @@ package amaralus.apps.hackandslash.graphics.entities.data;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 
+import java.nio.Buffer;
+
 import static org.lwjgl.opengl.GL15.*;
 
-public class VertexBufferObject implements Bindable, Destroyable {
+public abstract class VertexBufferObject<B extends Buffer> implements Bindable, Destroyable {
 
     private final int id;
-    private final int bufferType;
+    protected final BufferType type;
+    protected final BufferUsage usage;
 
-    private VertexBufferObject(int bufferType) {
+    private VertexBufferObject(BufferType type, BufferUsage usage) {
         id = glGenBuffers();
-        this.bufferType = bufferType;
+        this.type = type;
+        this.usage = usage;
     }
 
-    public VertexBufferObject(int bufferType, float[] buffer) {
-        this(bufferType);
+    public VertexBufferObject(BufferType type, BufferUsage usage, B buffer) {
+        this(type, usage);
         bind();
-        glBufferData(bufferType, buffer, GL_STATIC_DRAW);
+        initBuffer(buffer);
         unbind();
     }
 
-    public VertexBufferObject(int bufferType, int[] buffer) {
-        this(bufferType);
+    public void updateBuffer(B buffer) {
         bind();
-        glBufferData(bufferType, buffer, GL_STATIC_DRAW);
+        resetBuffer(buffer);
         unbind();
     }
+
+    protected abstract void initBuffer(B buffer);
+
+    protected abstract void resetBuffer(B buffer);
 
     @Override
     public void destroy() {
@@ -35,12 +42,12 @@ public class VertexBufferObject implements Bindable, Destroyable {
 
     @Override
     public void bind() {
-        glBindBuffer(bufferType, id);
+        glBindBuffer(type.getType(), id);
     }
 
     @Override
     public void unbind() {
-        glBindBuffer(bufferType, 0);
+        glBindBuffer(type.getType(), 0);
     }
 
     @Override
@@ -48,7 +55,11 @@ public class VertexBufferObject implements Bindable, Destroyable {
         return id;
     }
 
-    public int getBufferType() {
-        return bufferType;
+    public BufferType getType() {
+        return type;
+    }
+
+    public BufferUsage getUsage() {
+        return usage;
     }
 }
