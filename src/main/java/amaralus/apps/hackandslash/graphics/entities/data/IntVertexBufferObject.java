@@ -21,7 +21,7 @@ public class IntVertexBufferObject extends VertexBufferObject<IntBuffer> {
     }
 
     @Override
-    protected void resetBuffer(IntBuffer buffer) {
-        glBufferSubData(type.getType(), 0 , buffer.array());
+    protected void updateBufferData(IntBuffer buffer, long offset) {
+        glBufferSubData(type.getType(), offset , buffer.array());
     }
 }

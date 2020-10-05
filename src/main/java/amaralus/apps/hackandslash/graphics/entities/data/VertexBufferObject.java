@@ -25,15 +25,15 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
         unbind();
     }
 
-    public void updateBuffer(B buffer) {
+    public void updateBuffer(B buffer, long offset) {
         bind();
-        resetBuffer(buffer);
+        updateBufferData(buffer, offset);
         unbind();
     }
 
     protected abstract void initBuffer(B buffer);
 
-    protected abstract void resetBuffer(B buffer);
+    protected abstract void updateBufferData(B buffer, long offset);
 
     @Override
     public void destroy() {

@@ -6,14 +6,13 @@ import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 
-import java.nio.Buffer;
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ELEMENT_ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.STATIC_DRAW;
+import static amaralus.apps.hackandslash.resources.factory.VaoFactory.newVao;
+import static amaralus.apps.hackandslash.resources.factory.VboFactory.floatBuffer;
+import static amaralus.apps.hackandslash.resources.factory.VboFactory.intBuffer;
 
 public class ResourceFactory {
 
@@ -26,7 +25,7 @@ public class ResourceFactory {
         shaderFactory = new ShaderFactory();
         textureFactory = new TextureFactory();
 
-        produceEbo("defaultTexture", new int[]{0, 1, 3, 1, 2, 3});
+        produceDefaultTextureEbo();
     }
 
     public void produceShader(String shaderName) {
@@ -39,42 +38,35 @@ public class ResourceFactory {
         resourceManager.addResource(textureName, texture);
     }
 
-    public Sprite produceSprite(String spriteName) {
+    public void produceSprite(String spriteName) {
         var texture = resourceManager.getResource(spriteName, Texture.class);
         var spriteSheetData = getService(FileLoadService.class)
                 .loadFromJson("sprites/data/" + spriteName + ".json", SpriteSheetData.class);
 
-        var frameTexturePosition = Sprite.frameTexturePosition(texture, spriteSheetData);
-        var vao = produceTextureVao(spriteName, produceTextureVbo(spriteName, frameTexturePosition.x, frameTexturePosition.y));
+        var vao = newVao()
+                .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))
+                .buffer(floatBuffer(textureData(texture, spriteSheetData))
+                        .type(ARRAY_BUFFER)
+                        .usage(STATIC_DRAW)
+                        .saveAs(spriteName + "Vbo", resourceManager)
+                        .build())
+                .saveAs(spriteName + "Vao", resourceManager)
+                .build();
 
         var sprite = new Sprite(texture, vao, spriteSheetData);
         resourceManager.addResource(spriteName, sprite);
-        return sprite;
     }
 
-    public VertexBufferObject<FloatBuffer> produceVbo(String vboName, float[] buffer) {
-        return produceVbo(vboName + "Vbo", new FloatVertexBufferObject(ARRAY_BUFFER, STATIC_DRAW, buffer));
+    private float[] textureData(Texture texture, SpriteSheetData spriteSheetData) {
+        var texturePosition = Sprite.frameTexturePosition(texture, spriteSheetData);
+        return new float[]{0f, texturePosition.y, 0f, 0f, texturePosition.x, 0f, texturePosition.x, texturePosition.y};
     }
 
-    public VertexBufferObject<IntBuffer> produceEbo(String eboName, int[] buffer) {
-        return produceVbo(eboName + "Ebo", new IntVertexBufferObject(ELEMENT_ARRAY_BUFFER, STATIC_DRAW, buffer));
-    }
-
-    private <B extends Buffer> VertexBufferObject<B> produceVbo(String vboName, VertexBufferObject<B> vbo) {
-        resourceManager.addResource(vboName, vbo);
-        return vbo;
-    }
-
-    private VertexBufferObject<FloatBuffer> produceTextureVbo(String vboName, float textureXPosition, float textureYPosition) {
-        return produceVbo(vboName, new float[]{0f, textureYPosition, 0f, 0f, textureXPosition, 0f, textureXPosition, textureYPosition});
-    }
-
-    public VertexArraysObject produceTextureVao(String vaoName, VertexBufferObject<FloatBuffer> vbo) {
-        var vao = new VertexArraysObject(
-                vbo,
-                resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class)
-        );
-        resourceManager.addResource(vaoName + "Vao", vao);
-        return vao;
+    private void produceDefaultTextureEbo() {
+        intBuffer(new int[]{0, 1, 3, 1, 2, 3})
+                .type(ELEMENT_ARRAY_BUFFER)
+                .usage(STATIC_DRAW)
+                .saveAs("defaultTextureEbo", resourceManager)
+                .build();
     }
 }

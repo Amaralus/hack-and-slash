@@ -21,7 +21,7 @@ public class FloatVertexBufferObject extends VertexBufferObject<FloatBuffer> {
     }
 
     @Override
-    protected void resetBuffer(FloatBuffer buffer) {
-        glBufferSubData(type.getType(), 0 , buffer.array());
+    protected void updateBufferData(FloatBuffer buffer, long offset) {
+        glBufferSubData(type.getType(), offset , buffer.array());
     }
 }

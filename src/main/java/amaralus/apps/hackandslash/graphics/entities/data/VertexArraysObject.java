@@ -12,13 +12,17 @@ public class VertexArraysObject implements Bindable, Destroyable {
 
     private List<VertexBufferObject> buffers;
 
-    public VertexArraysObject() {
+    private VertexArraysObject() {
         id = glGenVertexArrays();
     }
 
     public VertexArraysObject(VertexBufferObject... buffers) {
+        this(List.of(buffers));
+    }
+
+    public VertexArraysObject(List<VertexBufferObject> buffers) {
         this();
-        this.buffers = List.of(buffers);
+        this.buffers = buffers;
         init();
     }
 
