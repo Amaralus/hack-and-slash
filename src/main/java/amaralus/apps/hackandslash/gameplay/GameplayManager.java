@@ -48,6 +48,11 @@ public class GameplayManager {
                 vec2(-0.5f, -0.5f),
                 vec2(0.5f, 0.5f));
 
+        var line2 = getService(ResourceFactory.class).produceLine(
+                "line2",
+                vec2(-0.5f, 0.5f),
+                vec2(0.5f, -0.5f));
+
         var entityList = List.of(player);
 
         var gameLoop = new GameLoop(16L) {
@@ -75,7 +80,7 @@ public class GameplayManager {
 
             @Override
             public void render(double timeShift) {
-                renderer.render(entityList, line);
+                renderer.render(entityList, List.of(line, line2));
             }
         };
 

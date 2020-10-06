@@ -24,14 +24,14 @@ public class Renderer {
         lineRender = new LineRender();
     }
 
-    public void render(List<Entity> entities, Line line) {
+    public void render(List<Entity> entities, List<Line> lines) {
         clear();
 
-        for (Entity entity : entities) {
+        for (Entity entity : entities)
             spriteRenderer.render(entity.getRenderComponent(), entity.getPosition());
-        }
 
-        lineRender.render(line);
+        for (Line line : lines)
+            lineRender.render(line);
 
         window.swapBuffers();
     }

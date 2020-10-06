@@ -21,7 +21,7 @@ public class VboFactory {
         return new VboFactory(intBuffer);
     }
 
-    public static VboFactory intBuffer(int[] intBuffer) {
+    public static VboFactory intBuffer(int... intBuffer) {
         return new VboFactory(IntBuffer.wrap(intBuffer));
     }
 
@@ -29,7 +29,7 @@ public class VboFactory {
         return new VboFactory(floatBuffer);
     }
 
-    public static VboFactory floatBuffer(float[] floatBuffer) {
+    public static VboFactory floatBuffer(float... floatBuffer) {
         return new VboFactory(FloatBuffer.wrap(floatBuffer));
     }
 

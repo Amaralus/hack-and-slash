@@ -15,6 +15,7 @@ import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.STAT
 import static amaralus.apps.hackandslash.resources.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.resources.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.resources.factory.VboFactory.intBuffer;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 public class ResourceFactory {
 
@@ -42,7 +43,7 @@ public class ResourceFactory {
 
     public Line produceLine(String name, Vector2f start, Vector2f end) {
         var vao = newVao()
-                .buffer(floatBuffer(new float[]{start.x, start.y, end.x, end.y})
+                .buffer(floatBuffer(toArray(start, end))
                         .type(ARRAY_BUFFER)
                         .usage(DYNAMIC_DRAW)
                         .saveAsVbo(name, resourceManager))
@@ -78,7 +79,7 @@ public class ResourceFactory {
     }
 
     private void produceDefaultTextureEbo() {
-        intBuffer(new int[]{0, 1, 3, 1, 2, 3})
+        intBuffer(0, 1, 3, 1, 2, 3)
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)
                 .needDataFormat(false)
