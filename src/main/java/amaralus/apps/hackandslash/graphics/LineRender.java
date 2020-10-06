@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.graphics.entities.Camera;
 import amaralus.apps.hackandslash.graphics.entities.Shader;
 import amaralus.apps.hackandslash.graphics.entities.data.Line;
 import amaralus.apps.hackandslash.resources.ResourceManager;

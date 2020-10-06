@@ -51,7 +51,7 @@ public class ResourceFactory {
                 .saveAsVao(name, resourceManager)
                 .build();
 
-        return new Line(vao);
+        return new Line(start, end, vao);
     }
 
     public void produceSprite(String spriteName) {

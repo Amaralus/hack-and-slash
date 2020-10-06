@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.Renderer;
+import amaralus.apps.hackandslash.graphics.entities.data.Line;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
@@ -26,6 +27,7 @@ public class GameplayManager {
     private final InputHandler inputHandler;
 
     private Entity player;
+    private Line line;
 
     public GameplayManager(Window window) {
         this.window = window;
@@ -43,7 +45,7 @@ public class GameplayManager {
                 .produce();
         player.getRenderComponent().computeAnimation(Animation::start);
 
-        var line = getService(ResourceFactory.class).produceLine(
+        line = getService(ResourceFactory.class).produceLine(
                 "line",
                 vec2(-0.5f, -0.5f),
                 vec2(0.5f, 0.5f));
@@ -104,6 +106,8 @@ public class GameplayManager {
 
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
                 renderer.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> line.updateEnd(window.getCursorPosition().sub(400f, 300f).div(400, -300)));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(yOffset));
     }
