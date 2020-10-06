@@ -5,10 +5,12 @@ import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import amaralus.apps.hackandslash.resources.ResourceManager;
+import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ELEMENT_ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.DYNAMIC_DRAW;
 import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.STATIC_DRAW;
 import static amaralus.apps.hackandslash.resources.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.resources.factory.VboFactory.floatBuffer;
@@ -38,6 +40,19 @@ public class ResourceFactory {
         resourceManager.addResource(textureName, texture);
     }
 
+    public Line produceLine(String name, Vector2f start, Vector2f end) {
+        var vao = newVao()
+                .buffer(floatBuffer(new float[]{start.x, start.y, end.x, end.y})
+                        .type(ARRAY_BUFFER)
+                        .usage(DYNAMIC_DRAW)
+                        .saveAsVbo(name, resourceManager))
+                .dataFormat(0, 2, 2, 0, Float.TYPE)
+                .saveAsVao(name, resourceManager)
+                .build();
+
+        return new Line(vao);
+    }
+
     public void produceSprite(String spriteName) {
         var texture = resourceManager.getResource(spriteName, Texture.class);
         var spriteSheetData = getService(FileLoadService.class)
@@ -48,10 +63,9 @@ public class ResourceFactory {
                 .buffer(floatBuffer(textureData(texture, spriteSheetData))
                         .type(ARRAY_BUFFER)
                         .usage(STATIC_DRAW)
-                        .saveAs(spriteName + "Vbo", resourceManager)
-                        .build())
+                        .saveAsVbo(spriteName, resourceManager))
                 .dataFormat(0, 2, 2, 0, Float.TYPE)
-                .saveAs(spriteName + "Vao", resourceManager)
+                .saveAsVao(spriteName, resourceManager)
                 .build();
 
         var sprite = new Sprite(texture, vao, spriteSheetData);
@@ -68,7 +82,7 @@ public class ResourceFactory {
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)
                 .needDataFormat(false)
-                .saveAs("defaultTextureEbo", resourceManager)
+                .saveAsEbo("defaultTexture", resourceManager)
                 .build();
     }
 }

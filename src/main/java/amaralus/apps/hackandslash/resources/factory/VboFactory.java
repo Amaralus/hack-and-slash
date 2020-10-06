@@ -56,6 +56,14 @@ public class VboFactory {
         return this;
     }
 
+    public VboFactory saveAsVbo(String name, ResourceManager resourceManager) {
+        return saveAs(name + "Vbo", resourceManager);
+    }
+
+    public VboFactory saveAsEbo(String name, ResourceManager resourceManager) {
+        return saveAs(name + "Ebo", resourceManager);
+    }
+
     public VboFactory saveAs(String name, ResourceManager resourceManager) {
         this.resourceName = name;
         this.resourceManager = resourceManager;

@@ -4,14 +4,17 @@ import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.events.InputHandler;
+import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
+import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class GameplayManager {
@@ -40,6 +43,11 @@ public class GameplayManager {
                 .produce();
         player.getRenderComponent().computeAnimation(Animation::start);
 
+        var line = getService(ResourceFactory.class).produceLine(
+                "line",
+                vec2(-0.5f, -0.5f),
+                vec2(0.5f, 0.5f));
+
         var entityList = List.of(player);
 
         var gameLoop = new GameLoop(16L) {
@@ -67,7 +75,7 @@ public class GameplayManager {
 
             @Override
             public void render(double timeShift) {
-                renderer.render(entityList);
+                renderer.render(entityList, line);
             }
         };
 

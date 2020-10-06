@@ -42,6 +42,10 @@ public class VaoFactory {
         return this;
     }
 
+    public VaoFactory saveAsVao(String name, ResourceManager resourceManager) {
+        return saveAs(name + "Vao", resourceManager);
+    }
+
     public VaoFactory saveAs(String name, ResourceManager resourceManager) {
         this.resourceName = name;
         this.resourceManager = resourceManager;

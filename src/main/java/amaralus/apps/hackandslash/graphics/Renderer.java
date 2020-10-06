@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.gameplay.Entity;
 import amaralus.apps.hackandslash.graphics.entities.Camera;
+import amaralus.apps.hackandslash.graphics.entities.data.Line;
 
 import java.util.List;
 
@@ -12,6 +13,7 @@ public class Renderer {
     private final Window window;
     private final Camera camera;
     private final SpriteRenderer spriteRenderer;
+    private final LineRender lineRender;
 
     public Renderer(Window window) {
         this.window = window;
@@ -19,14 +21,17 @@ public class Renderer {
         camera.setScale(0.5f);
 
         spriteRenderer = new SpriteRenderer(camera);
+        lineRender = new LineRender();
     }
 
-    public void render(List<Entity> entities) {
+    public void render(List<Entity> entities, Line line) {
         clear();
 
         for (Entity entity : entities) {
             spriteRenderer.render(entity.getRenderComponent(), entity.getPosition());
         }
+
+        lineRender.render(line);
 
         window.swapBuffers();
     }
