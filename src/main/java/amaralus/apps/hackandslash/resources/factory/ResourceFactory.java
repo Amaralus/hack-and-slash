@@ -50,6 +50,7 @@ public class ResourceFactory {
                         .usage(STATIC_DRAW)
                         .saveAs(spriteName + "Vbo", resourceManager)
                         .build())
+                .dataFormat(0, 2, 2, 0, Float.TYPE)
                 .saveAs(spriteName + "Vao", resourceManager)
                 .build();
 
@@ -66,6 +67,7 @@ public class ResourceFactory {
         intBuffer(new int[]{0, 1, 3, 1, 2, 3})
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)
+                .needDataFormat(false)
                 .saveAs("defaultTextureEbo", resourceManager)
                 .build();
     }

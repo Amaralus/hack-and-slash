@@ -12,6 +12,7 @@ public class VboFactory {
     private BufferUsage usage;
     private IntBuffer intBuffer;
     private FloatBuffer floatBuffer;
+    private boolean needDataFormat = true;
 
     private ResourceManager resourceManager;
     private String resourceName;
@@ -50,6 +51,11 @@ public class VboFactory {
         return this;
     }
 
+    public VboFactory needDataFormat(boolean needDataFormat) {
+        this.needDataFormat = needDataFormat;
+        return this;
+    }
+
     public VboFactory saveAs(String name, ResourceManager resourceManager) {
         this.resourceName = name;
         this.resourceManager = resourceManager;
@@ -60,6 +66,8 @@ public class VboFactory {
         var buffer = intBuffer != null ?
                 new IntVertexBufferObject(type, usage, intBuffer) :
                 new FloatVertexBufferObject(type, usage, floatBuffer);
+
+        buffer.setNeedDataFormat(needDataFormat);
 
         if (resourceManager != null) resourceManager.addResource(resourceName, buffer);
         return buffer;

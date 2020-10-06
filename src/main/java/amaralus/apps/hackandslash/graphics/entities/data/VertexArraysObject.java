@@ -11,27 +11,23 @@ public class VertexArraysObject implements Bindable, Destroyable {
     private final int id;
 
     private List<VertexBufferObject> buffers;
+    private List<VertexBufferDataFormat> dataFormats;
 
     private VertexArraysObject() {
         id = glGenVertexArrays();
     }
 
-    public VertexArraysObject(VertexBufferObject... buffers) {
-        this(List.of(buffers));
-    }
-
-    public VertexArraysObject(List<VertexBufferObject> buffers) {
+    public VertexArraysObject(List<VertexBufferObject> buffers, List<VertexBufferDataFormat> dataFormats) {
         this();
         this.buffers = buffers;
+        this.dataFormats = dataFormats;
         init();
     }
 
     private void init() {
         bind();
         buffers.forEach(Bindable::bind);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(0);
+        dataFormats.forEach(VertexBufferDataFormat::enable);
 
         unbind();
     }
@@ -59,5 +55,30 @@ public class VertexArraysObject implements Bindable, Destroyable {
 
     public List<VertexBufferObject> getBuffers() {
         return buffers;
+    }
+
+    public static class VertexBufferDataFormat {
+
+        private final int index;
+        private final int size;
+        private final long offset;
+        private final int type;
+        private final int stride;
+
+        public VertexBufferDataFormat(int index, int size, int stride, long offset, Class<? extends Number> dataType) {
+            this.index = index;
+            this.size = size;
+            if (dataType.equals(Float.TYPE)) {
+                this.type = GL_FLOAT;
+                this.stride = stride * Float.BYTES;
+                this.offset = offset * Float.BYTES;
+            } else
+                throw new IllegalArgumentException("unexpected dataType: " + dataType);
+        }
+
+        private void enable() {
+            glVertexAttribPointer(index, size, type, false, stride, offset);
+            glEnableVertexAttribArray(index);
+        }
     }
 }

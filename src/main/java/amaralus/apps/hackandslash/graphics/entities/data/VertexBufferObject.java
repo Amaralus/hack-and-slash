@@ -9,17 +9,24 @@ import static org.lwjgl.opengl.GL15.*;
 public abstract class VertexBufferObject<B extends Buffer> implements Bindable, Destroyable {
 
     private final int id;
+    private final int size;
+    private final int dataTypeBytes;
+
+    private boolean needDataFormat = true;
+
     protected final BufferType type;
     protected final BufferUsage usage;
 
-    private VertexBufferObject(BufferType type, BufferUsage usage) {
+    private VertexBufferObject(BufferType type, BufferUsage usage, int size, int dataTypeBytes) {
         id = glGenBuffers();
         this.type = type;
         this.usage = usage;
+        this.size = size;
+        this.dataTypeBytes = dataTypeBytes;
     }
 
-    public VertexBufferObject(BufferType type, BufferUsage usage, B buffer) {
-        this(type, usage);
+    protected VertexBufferObject(BufferType type, BufferUsage usage, B buffer, int dataTypeBytes) {
+        this(type, usage, buffer.capacity(), dataTypeBytes);
         bind();
         initBuffer(buffer);
         unbind();
@@ -61,5 +68,21 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
 
     public BufferUsage getUsage() {
         return usage;
+    }
+
+    public int getSize() {
+        return size;
+    }
+
+    public int getDataTypeBytes() {
+        return dataTypeBytes;
+    }
+
+    public boolean isNeedDataFormat() {
+        return needDataFormat;
+    }
+
+    public void setNeedDataFormat(boolean needDataFormat) {
+        this.needDataFormat = needDataFormat;
     }
 }
