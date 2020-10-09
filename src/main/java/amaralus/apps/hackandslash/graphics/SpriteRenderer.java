@@ -2,7 +2,7 @@ package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.entities.Camera;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
-import amaralus.apps.hackandslash.graphics.entities.Shader;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;

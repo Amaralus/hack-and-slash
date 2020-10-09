@@ -1,6 +1,7 @@
-package amaralus.apps.hackandslash.graphics.entities.data;
+package amaralus.apps.hackandslash.graphics.entities.gpu;
 
 import amaralus.apps.hackandslash.common.Destroyable;
+import amaralus.apps.hackandslash.graphics.entities.Bindable;
 
 import java.util.List;
 

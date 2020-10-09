@@ -2,7 +2,7 @@ package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.gameplay.Entity;
 import amaralus.apps.hackandslash.graphics.entities.Camera;
-import amaralus.apps.hackandslash.graphics.entities.data.Line;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 
 import java.util.List;
 

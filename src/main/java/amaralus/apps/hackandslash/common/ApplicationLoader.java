@@ -4,7 +4,7 @@ import amaralus.apps.hackandslash.gameplay.GameplayManager;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.resources.ResourceManager;
-import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
+import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

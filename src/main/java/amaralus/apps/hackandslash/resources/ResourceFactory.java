@@ -1,23 +1,25 @@
-package amaralus.apps.hackandslash.resources.factory;
+package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.data.*;
+import amaralus.apps.hackandslash.graphics.entities.gpu.IntVertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.factory.ShaderFactory;
+import amaralus.apps.hackandslash.graphics.entities.gpu.factory.TextureFactory;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
-import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.entities.data.BufferType.ELEMENT_ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.DYNAMIC_DRAW;
-import static amaralus.apps.hackandslash.graphics.entities.data.BufferUsage.STATIC_DRAW;
-import static amaralus.apps.hackandslash.resources.factory.VaoFactory.newVao;
-import static amaralus.apps.hackandslash.resources.factory.VboFactory.floatBuffer;
-import static amaralus.apps.hackandslash.resources.factory.VboFactory.intBuffer;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ELEMENT_ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.DYNAMIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.STATIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VaoFactory.newVao;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.floatBuffer;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.intBuffer;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
 
 public class ResourceFactory {
 

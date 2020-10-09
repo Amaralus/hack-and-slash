@@ -3,10 +3,10 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.data.Line;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.events.InputHandler;
-import amaralus.apps.hackandslash.resources.factory.ResourceFactory;
+import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -1,8 +1,8 @@
 package amaralus.apps.hackandslash.graphics.entities.sprites;
 
 import amaralus.apps.hackandslash.common.Destroyable;
-import amaralus.apps.hackandslash.graphics.entities.data.Texture;
-import amaralus.apps.hackandslash.graphics.entities.data.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
+import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 

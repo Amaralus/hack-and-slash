@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.entities.data;
+package amaralus.apps.hackandslash.graphics.entities.gpu;
 
 import java.nio.FloatBuffer;
 

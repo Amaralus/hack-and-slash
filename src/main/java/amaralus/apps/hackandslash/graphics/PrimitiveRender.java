@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.graphics.entities.Shader;
-import amaralus.apps.hackandslash.graphics.entities.data.Line;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;

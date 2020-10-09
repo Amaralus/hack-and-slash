@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.entities;
+package amaralus.apps.hackandslash.graphics.entities.gpu;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 import org.joml.Matrix4f;
