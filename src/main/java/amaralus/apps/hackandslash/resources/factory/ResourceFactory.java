@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.resources.factory;
 
+import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.data.*;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
@@ -16,6 +17,7 @@ import static amaralus.apps.hackandslash.resources.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.resources.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.resources.factory.VboFactory.intBuffer;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
 
 public class ResourceFactory {
 
@@ -41,17 +43,22 @@ public class ResourceFactory {
         resourceManager.addResource(textureName, texture);
     }
 
-    public Line produceLine(String name, Vector2f start, Vector2f end) {
+    public Line produceLine(String name, Vector2f start, Vector2f end, Color color) {
         var vao = newVao()
                 .buffer(floatBuffer(toArray(start, end))
                         .type(ARRAY_BUFFER)
                         .usage(DYNAMIC_DRAW)
-                        .saveAsVbo(name, resourceManager))
-                .dataFormat(0, 2, 2, 0, Float.TYPE)
+                        .saveAsVbo(name, resourceManager)
+                        .dataFormat(0, 2, 2, 0, Float.TYPE))
+                .buffer(floatBuffer(toArray(color.getVector(), color.getVector()))
+                        .type(ARRAY_BUFFER)
+                        .usage(DYNAMIC_DRAW)
+                        .saveAsVbo(name + "Color", resourceManager)
+                        .dataFormat(1, 4, 4, 0, Float.TYPE))
                 .saveAsVao(name, resourceManager)
                 .build();
 
-        return new Line(start, end, vao);
+        return new Line(start, end, color, vao);
     }
 
     public void produceSprite(String spriteName) {
@@ -64,8 +71,8 @@ public class ResourceFactory {
                 .buffer(floatBuffer(textureData(texture, spriteSheetData))
                         .type(ARRAY_BUFFER)
                         .usage(STATIC_DRAW)
-                        .saveAsVbo(spriteName, resourceManager))
-                .dataFormat(0, 2, 2, 0, Float.TYPE)
+                        .saveAsVbo(spriteName, resourceManager)
+                        .dataFormat(0, 2, 2, 0, Float.TYPE))
                 .saveAsVao(spriteName, resourceManager)
                 .build();
 
@@ -82,7 +89,6 @@ public class ResourceFactory {
         intBuffer(0, 1, 3, 1, 2, 3)
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)
-                .needDataFormat(false)
                 .saveAsEbo("defaultTexture", resourceManager)
                 .build();
     }

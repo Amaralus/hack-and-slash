@@ -3,8 +3,12 @@ package amaralus.apps.hackandslash.graphics.entities.data;
 import amaralus.apps.hackandslash.common.Destroyable;
 
 import java.nio.Buffer;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
+import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
 public abstract class VertexBufferObject<B extends Buffer> implements Bindable, Destroyable {
 
@@ -12,13 +16,14 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
     private final int size;
     private final int dataTypeBytes;
 
-    private boolean needDataFormat = true;
-
     protected final BufferType type;
     protected final BufferUsage usage;
 
+    private List<DataFormat> dataFormats;
+
     private VertexBufferObject(BufferType type, BufferUsage usage, int size, int dataTypeBytes) {
         id = glGenBuffers();
+        dataFormats = new ArrayList<>();
         this.type = type;
         this.usage = usage;
         this.size = size;
@@ -45,6 +50,11 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
     @Override
     public void destroy() {
         glDeleteBuffers(id);
+    }
+
+    void initialBind() {
+        bind();
+        for (var dataFormat : dataFormats) dataFormat.enable();
     }
 
     @Override
@@ -78,11 +88,32 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
         return dataTypeBytes;
     }
 
-    public boolean isNeedDataFormat() {
-        return needDataFormat;
+    public void setDataFormats(List<DataFormat> dataFormats) {
+        this.dataFormats = dataFormats;
     }
 
-    public void setNeedDataFormat(boolean needDataFormat) {
-        this.needDataFormat = needDataFormat;
+    public static class DataFormat {
+
+        private final int index;
+        private final int size;
+        private final long offset;
+        private final int type;
+        private final int stride;
+
+        public DataFormat(int index, int size, int stride, long offset, Class<? extends Number> dataType) {
+            this.index = index;
+            this.size = size;
+            if (dataType.equals(Float.TYPE)) {
+                this.type = GL_FLOAT;
+                this.stride = stride * Float.BYTES;
+                this.offset = offset * Float.BYTES;
+            } else
+                throw new IllegalArgumentException("unexpected dataType: " + dataType);
+        }
+
+        private void enable() {
+            glVertexAttribPointer(index, size, type, false, stride, offset);
+            glEnableVertexAttribArray(index);
+        }
     }
 }

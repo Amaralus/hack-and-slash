@@ -3,6 +3,7 @@ package amaralus.apps.hackandslash.utils;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
+import org.joml.Vector4f;
 
 public final class VectMatrUtil {
 
@@ -27,6 +28,14 @@ public final class VectMatrUtil {
 
     public static Vector3f vec3(Vector2f vec2, float z) {
         return new Vector3f(vec2, z);
+    }
+
+    public static Vector4f vec4() {
+        return new Vector4f();
+    }
+
+    public static Vector4f vec4(float x, float y, float z, float w) {
+        return new Vector4f(x, y, z, w);
     }
 
     public static Matrix4f mat4() {
@@ -64,6 +73,17 @@ public final class VectMatrUtil {
             array[j] = vectors[i].x;
             array[j + 1] = vectors[i].y;
             array[j + 2] = vectors[i].z;
+        }
+        return array;
+    }
+
+    public static float[] toArray(Vector4f... vectors) {
+        float[] array = new float[vectors.length * 4];
+        for (int i = 0, j = 0; i < vectors.length; i++, j = i * 4) {
+            array[j] = vectors[i].x;
+            array[j + 1] = vectors[i].y;
+            array[j + 2] = vectors[i].z;
+            array[j + 3] = vectors[i].w;
         }
         return array;
     }

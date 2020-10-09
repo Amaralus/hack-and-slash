@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.Renderer;
+import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.data.Line;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.events.InputHandler;
@@ -48,12 +49,14 @@ public class GameplayManager {
         line = getService(ResourceFactory.class).produceLine(
                 "line",
                 vec2(-0.5f, -0.5f),
-                vec2(0.5f, 0.5f));
+                vec2(0.5f, 0.5f),
+                Color.RED);
 
         var line2 = getService(ResourceFactory.class).produceLine(
                 "line2",
                 vec2(-0.5f, 0.5f),
-                vec2(0.5f, -0.5f));
+                vec2(0.5f, -0.5f),
+                Color.GREEN);
 
         var entityList = List.of(player);
 
@@ -107,7 +110,7 @@ public class GameplayManager {
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
                 renderer.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> line.updateEnd(window.getCursorPosition().sub(400f, 300f).div(400, -300)));
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> line.updateEnd(window.windowPosToGlPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(yOffset));
     }

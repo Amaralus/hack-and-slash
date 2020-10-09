@@ -5,6 +5,8 @@ import amaralus.apps.hackandslash.resources.ResourceManager;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VboFactory {
 
@@ -12,10 +14,11 @@ public class VboFactory {
     private BufferUsage usage;
     private IntBuffer intBuffer;
     private FloatBuffer floatBuffer;
-    private boolean needDataFormat = true;
 
     private ResourceManager resourceManager;
     private String resourceName;
+
+    private final List<VertexBufferObject.DataFormat> dataFormats = new ArrayList<>();
 
     public static VboFactory intBuffer(IntBuffer intBuffer) {
         return new VboFactory(intBuffer);
@@ -51,8 +54,8 @@ public class VboFactory {
         return this;
     }
 
-    public VboFactory needDataFormat(boolean needDataFormat) {
-        this.needDataFormat = needDataFormat;
+    public VboFactory dataFormat(int index, int size, int stride, long offset, Class<? extends Number> dataType) {
+        dataFormats.add(new VertexBufferObject.DataFormat(index, size, stride, offset, dataType));
         return this;
     }
 
@@ -75,7 +78,7 @@ public class VboFactory {
                 new IntVertexBufferObject(type, usage, intBuffer) :
                 new FloatVertexBufferObject(type, usage, floatBuffer);
 
-        buffer.setNeedDataFormat(needDataFormat);
+        buffer.setDataFormats(dataFormats);
 
         if (resourceManager != null) resourceManager.addResource(resourceName, buffer);
         return buffer;

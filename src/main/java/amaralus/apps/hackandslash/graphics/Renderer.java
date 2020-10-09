@@ -13,7 +13,7 @@ public class Renderer {
     private final Window window;
     private final Camera camera;
     private final SpriteRenderer spriteRenderer;
-    private final LineRender lineRender;
+    private final PrimitiveRender primitiveRender;
 
     public Renderer(Window window) {
         this.window = window;
@@ -21,7 +21,7 @@ public class Renderer {
         camera.setScale(0.5f);
 
         spriteRenderer = new SpriteRenderer(camera);
-        lineRender = new LineRender();
+        primitiveRender = new PrimitiveRender();
     }
 
     public void render(List<Entity> entities, List<Line> lines) {
@@ -31,7 +31,7 @@ public class Renderer {
             spriteRenderer.render(entity.getRenderComponent(), entity.getPosition());
 
         for (Line line : lines)
-            lineRender.render(line);
+            primitiveRender.render(line);
 
         window.swapBuffers();
     }
