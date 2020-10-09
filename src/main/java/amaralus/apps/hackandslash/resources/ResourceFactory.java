@@ -1,15 +1,16 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.gpu.IntVertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.*;
 import amaralus.apps.hackandslash.graphics.entities.gpu.factory.ShaderFactory;
 import amaralus.apps.hackandslash.graphics.entities.gpu.factory.TextureFactory;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
-import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
+import org.joml.Vector4f;
 
 import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ARRAY_BUFFER;
@@ -45,22 +46,42 @@ public class ResourceFactory {
         resourceManager.addResource(textureName, texture);
     }
 
-    public Line produceLine(String name, Vector2f start, Vector2f end, Color color) {
-        var vao = newVao()
-                .buffer(floatBuffer(toArray(start, end))
-                        .type(ARRAY_BUFFER)
-                        .usage(DYNAMIC_DRAW)
-                        .saveAsVbo(name, resourceManager)
-                        .dataFormat(0, 2, 2, 0, Float.TYPE))
-                .buffer(floatBuffer(toArray(color.getVector(), color.getVector()))
-                        .type(ARRAY_BUFFER)
-                        .usage(DYNAMIC_DRAW)
-                        .saveAsVbo(name + "Color", resourceManager)
-                        .dataFormat(1, 4, 4, 0, Float.TYPE))
+    public Line produceLine(String name, Color color, Vector2f start, Vector2f end) {
+        return new Line(primitiveVao(name, color, start, end), color, start, end);
+    }
+
+    public Triangle produceTriangle(String name, Color color, Vector2f first, Vector2f second, Vector2f third) {
+        return new Triangle(primitiveVao(name, color, first, second, third), color, first, second, third);
+    }
+
+    private VertexArraysObject primitiveVao(String name, Color color, Vector2f... vectors) {
+        return newVao()
+                .buffer(primitiveBuffer(name, vectors))
+                .buffer(colorBuffer(name, color, vectors.length))
                 .saveAsVao(name, resourceManager)
                 .build();
+    }
 
-        return new Line(start, end, color, vao);
+    private VertexBufferObject primitiveBuffer(String name, Vector2f... vectors) {
+        return floatBuffer(toArray(vectors))
+                .type(ARRAY_BUFFER)
+                .usage(DYNAMIC_DRAW)
+                .saveAsVbo(name, resourceManager)
+                .dataFormat(0, 2, 2, 0, Float.TYPE)
+                .build();
+    }
+
+    private VertexBufferObject colorBuffer(String name, Color color, int countVertex) {
+        Vector4f[] colors = new Vector4f[countVertex];
+        for (int i = 0; i < colors.length; i++)
+            colors[i] = color.getVector();
+
+        return floatBuffer(toArray(colors))
+                .type(ARRAY_BUFFER)
+                .usage(DYNAMIC_DRAW)
+                .saveAsVbo(name + "Color", resourceManager)
+                .dataFormat(1, 4, 4, 0, Float.TYPE)
+                .build();
     }
 
     public void produceSprite(String spriteName) {

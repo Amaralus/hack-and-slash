@@ -3,7 +3,8 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
+import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
@@ -28,7 +29,7 @@ public class GameplayManager {
     private final InputHandler inputHandler;
 
     private Entity player;
-    private Line line;
+    private Primitive primitive;
 
     public GameplayManager(Window window) {
         this.window = window;
@@ -46,17 +47,13 @@ public class GameplayManager {
                 .produce();
         player.getRenderComponent().computeAnimation(Animation::start);
 
-        line = getService(ResourceFactory.class).produceLine(
-                "line",
-                vec2(-0.5f, -0.5f),
-                vec2(0.5f, 0.5f),
-                Color.RED);
-
-        var line2 = getService(ResourceFactory.class).produceLine(
-                "line2",
-                vec2(-0.5f, 0.5f),
+        primitive = getService(ResourceFactory.class).produceTriangle(
+                "triangle",
+                Color.YELLOW,
+                vec2(0f, 0.5f),
                 vec2(0.5f, -0.5f),
-                Color.GREEN);
+                vec2(-0.5f, -0.5f)
+        );
 
         var entityList = List.of(player);
 
@@ -85,7 +82,7 @@ public class GameplayManager {
 
             @Override
             public void render(double timeShift) {
-                renderer.render(entityList, List.of(line, line2));
+                renderer.render(entityList, List.of(primitive));
             }
         };
 
@@ -110,7 +107,7 @@ public class GameplayManager {
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
                 renderer.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> line.updateEnd(window.windowPosToGlPos(window.getCursorPosition())));
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> ((Triangle) primitive).updateFirst(window.windowPosToGlPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(yOffset));
     }
