@@ -1,6 +1,7 @@
-package amaralus.apps.hackandslash.graphics.entities.data;
+package amaralus.apps.hackandslash.graphics.entities.gpu;
 
 import amaralus.apps.hackandslash.common.Destroyable;
+import amaralus.apps.hackandslash.graphics.entities.Bindable;
 
 import java.util.List;
 
@@ -12,23 +13,19 @@ public class VertexArraysObject implements Bindable, Destroyable {
 
     private List<VertexBufferObject> buffers;
 
-    public VertexArraysObject() {
+    private VertexArraysObject() {
         id = glGenVertexArrays();
     }
 
-    public VertexArraysObject(VertexBufferObject... buffers) {
+    public VertexArraysObject(List<VertexBufferObject> buffers) {
         this();
-        this.buffers = List.of(buffers);
+        this.buffers = buffers;
         init();
     }
 
     private void init() {
         bind();
-        buffers.forEach(Bindable::bind);
-
-        glVertexAttribPointer(0, 2, GL_FLOAT, false, 2 * Float.BYTES, 0L);
-        glEnableVertexAttribArray(0);
-
+        buffers.forEach(VertexBufferObject::initialBind);
         unbind();
     }
 

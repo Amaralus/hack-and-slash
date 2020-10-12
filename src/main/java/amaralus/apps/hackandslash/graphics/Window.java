@@ -118,6 +118,13 @@ public class Window implements Destroyable {
         return vec2((float) xBuffer.get(0), (float) yBuffer.get(0));
     }
 
+    public Vector2f windowPosToGlPos(Vector2f position) {
+        float halfWidth = width * 0.5f;
+        float halfHeight = height * 0.5f;
+
+        return position.sub(halfWidth, halfHeight).div(halfWidth, -halfHeight);
+    }
+
     @Override
     public void destroy() {
         glfwFreeCallbacks(windowHandle);

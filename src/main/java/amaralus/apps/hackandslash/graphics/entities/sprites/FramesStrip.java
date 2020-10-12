@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.graphics.entities.sprites;
 
-import amaralus.apps.hackandslash.graphics.entities.data.Texture;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.io.entities.FrameStripData;
 import org.joml.Vector2f;
 

@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash.resources.factory;
+package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
 
-import amaralus.apps.hackandslash.graphics.entities.Shader;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
