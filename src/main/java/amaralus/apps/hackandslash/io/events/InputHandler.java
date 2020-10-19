@@ -75,7 +75,7 @@ public class InputHandler {
     }
 
     private void executeScrollAction() {
-        if (scrollAction != null && scrollXOffset != 0f && scrollYOffset != 0f) {
+        if (scrollAction != null && (scrollXOffset != 0f || scrollYOffset != 0f)) {
             scrollAction.accept(scrollXOffset, scrollYOffset);
             scrollXOffset = 0f;
             scrollYOffset = 0f;
@@ -109,8 +109,6 @@ public class InputHandler {
     public void clearKeyActions() {
         keyActions.clear();
     }
-
-    //
 
     public void setPressed(MouseButton mouseButton) {
         pressedButtons.add(mouseButton);
