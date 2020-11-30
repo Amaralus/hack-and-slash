@@ -4,18 +4,19 @@ import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static org.lwjgl.opengl.GL20.*;
 
+@Component
 public class ShaderFactory {
 
     private static final Logger log = LoggerFactory.getLogger(ShaderFactory.class);
 
     private final FileLoadService fileLoadService;
 
-    public ShaderFactory() {
-        fileLoadService = getService(FileLoadService.class);
+    public ShaderFactory(FileLoadService fileLoadService) {
+        this.fileLoadService = fileLoadService;
     }
 
     public Shader produce(String name) {

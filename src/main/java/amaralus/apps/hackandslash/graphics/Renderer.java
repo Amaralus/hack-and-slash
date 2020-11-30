@@ -3,25 +3,30 @@ package amaralus.apps.hackandslash.graphics;
 import amaralus.apps.hackandslash.gameplay.Entity;
 import amaralus.apps.hackandslash.graphics.entities.Camera;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
+import amaralus.apps.hackandslash.resources.ResourceManager;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
+@Service
 public class Renderer {
 
+    @Lazy
     private final Window window;
     private final Camera camera;
     private final SpriteRenderer spriteRenderer;
     private final PrimitiveRender primitiveRender;
 
-    public Renderer(Window window) {
+    public Renderer(Window window, PrimitiveRender primitiveRender, ResourceManager resourceManager) {
         this.window = window;
         camera = new Camera(window.getWidth(), window.getHeight());
         camera.setScale(0.5f);
 
-        spriteRenderer = new SpriteRenderer(camera);
-        primitiveRender = new PrimitiveRender();
+        spriteRenderer = new SpriteRenderer(camera, resourceManager);
+        this.primitiveRender = primitiveRender;
     }
 
     public void render(List<Entity> entities, List<Primitive> primitives) {

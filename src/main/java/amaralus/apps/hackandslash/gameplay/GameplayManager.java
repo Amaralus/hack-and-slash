@@ -10,44 +10,50 @@ import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.glfw.GLFW.*;
 
+@Service
 public class GameplayManager {
 
     private static final Logger log = LoggerFactory.getLogger(GameplayManager.class);
 
+    @Lazy
     private final Window window;
     private final Renderer renderer;
     private final InputHandler inputHandler;
+    private final EntityFactory entityFactory;
+    private final ResourceFactory resourceFactory;
 
     private Entity player;
     private Primitive primitive;
 
-    public GameplayManager(Window window) {
+    public GameplayManager(Window window, Renderer renderer, EntityFactory entityFactory, ResourceFactory resourceFactory) {
         this.window = window;
-        renderer = new Renderer(window);
+        this.renderer = renderer;
+        this.entityFactory = entityFactory;
+        this.resourceFactory = resourceFactory;
         inputHandler = new InputHandler();
         inputHandler.setUpInputHandling(window);
         setUpInput();
     }
 
     public void runGameLoop() {
-        player = new EntityFactory()
-                .sprite("testTextureSheet")
+        player = entityFactory.sprite("testTextureSheet")
                 .position(0, 0)
                 .speed(200)
                 .produce();
         player.getRenderComponent().computeAnimation(Animation::start);
 
-        primitive = getService(ResourceFactory.class).produceTriangle(
+        primitive = resourceFactory.produceTriangle(
                 "triangle",
                 Color.YELLOW,
                 vec2(0f, 0.5f),
@@ -57,7 +63,7 @@ public class GameplayManager {
 
         var entityList = List.of(player);
 
-        var gameLoop = new GameLoop(16L) {
+        var gameLoop = new GameLoop(window, 16L) {
 
             @Override
             public void onEnable() {

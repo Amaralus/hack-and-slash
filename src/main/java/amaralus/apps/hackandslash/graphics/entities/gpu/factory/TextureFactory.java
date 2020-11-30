@@ -4,19 +4,20 @@ import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
+@Component
 public class TextureFactory {
 
     private static final Logger log = LoggerFactory.getLogger(TextureFactory.class);
 
     private final FileLoadService fileLoadService;
 
-    public TextureFactory() {
-        fileLoadService = getService(FileLoadService.class);
+    public TextureFactory(FileLoadService fileLoadService) {
+        this.fileLoadService = fileLoadService;
     }
 
     public Texture produce(String name) {

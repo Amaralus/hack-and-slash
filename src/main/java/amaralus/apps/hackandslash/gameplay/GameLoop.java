@@ -3,8 +3,6 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.utils.FpsMeter;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
-
 public abstract class GameLoop {
 
     private final Window window;
@@ -13,9 +11,9 @@ public abstract class GameLoop {
 
     private final FpsMeter fpsMeter;
 
-    protected GameLoop(long msPerUpdate) {
+    protected GameLoop(Window window, long msPerUpdate) {
+        this.window = window;
         this.msPerUpdate = msPerUpdate;
-        window = getService(Window.class);
         fpsMeter = new FpsMeter();
     }
 

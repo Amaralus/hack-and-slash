@@ -5,16 +5,19 @@ import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.resources.ResourceManager;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.stereotype.Component;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static org.lwjgl.opengl.GL11.*;
 
+@Component
+@DependsOn("applicationLoader")
 public class PrimitiveRender {
 
     private final Shader primitiveShader;
 
-    public PrimitiveRender() {
-        primitiveShader = getService(ResourceManager.class).getResource("primitive", Shader.class);
+    public PrimitiveRender(ResourceManager resourceManager) {
+        primitiveShader = resourceManager.getResource("primitive", Shader.class);
     }
 
     public void render(Primitive primitive) {
