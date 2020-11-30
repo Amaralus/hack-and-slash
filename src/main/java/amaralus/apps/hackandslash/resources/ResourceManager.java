@@ -3,12 +3,14 @@ package amaralus.apps.hackandslash.resources;
 import amaralus.apps.hackandslash.common.Destroyable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static amaralus.apps.hackandslash.resources.Resource.resourceInfoName;
 
+@Service
 public class ResourceManager implements Destroyable {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);

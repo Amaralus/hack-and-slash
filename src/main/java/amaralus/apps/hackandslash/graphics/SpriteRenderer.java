@@ -7,7 +7,6 @@ import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 import static org.joml.Math.toRadians;
 import static org.lwjgl.opengl.GL15.*;
@@ -17,9 +16,9 @@ public class SpriteRenderer {
     private final Camera camera;
     private final Shader textureShader;
 
-    public SpriteRenderer(Camera camera) {
+    public SpriteRenderer(Camera camera, ResourceManager resourceManager) {
         this.camera = camera;
-        textureShader = getService(ResourceManager.class).getResource("texture", Shader.class);
+        textureShader = resourceManager.getResource("texture", Shader.class);
     }
 
     public void render(RenderComponent renderComponent, Vector2f entityPos) {

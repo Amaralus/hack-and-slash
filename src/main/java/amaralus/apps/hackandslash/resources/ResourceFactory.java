@@ -11,8 +11,8 @@ import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
+import org.springframework.stereotype.Service;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ELEMENT_ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.DYNAMIC_DRAW;
@@ -22,16 +22,22 @@ import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactor
 import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.intBuffer;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
+@Service
 public class ResourceFactory {
 
+    private final FileLoadService fileLoadService;
     private final ResourceManager resourceManager;
     private final ShaderFactory shaderFactory;
     private final TextureFactory textureFactory;
 
-    public ResourceFactory(ResourceManager resourceManager) {
+    public ResourceFactory(FileLoadService fileLoadService,
+                           ResourceManager resourceManager,
+                           ShaderFactory shaderFactory,
+                           TextureFactory textureFactory) {
+        this.fileLoadService = fileLoadService;
         this.resourceManager = resourceManager;
-        shaderFactory = new ShaderFactory();
-        textureFactory = new TextureFactory();
+        this.shaderFactory = shaderFactory;
+        this.textureFactory = textureFactory;
 
         produceDefaultTextureEbo();
     }
@@ -86,8 +92,7 @@ public class ResourceFactory {
 
     public void produceSprite(String spriteName) {
         var texture = resourceManager.getResource(spriteName, Texture.class);
-        var spriteSheetData = getService(FileLoadService.class)
-                .loadFromJson("sprites/data/" + spriteName + ".json", SpriteSheetData.class);
+        var spriteSheetData = fileLoadService.loadFromJson("sprites/data/" + spriteName + ".json", SpriteSheetData.class);
 
         var vao = newVao()
                 .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))

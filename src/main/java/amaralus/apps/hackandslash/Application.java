@@ -1,19 +1,22 @@
 package amaralus.apps.hackandslash;
 
-import amaralus.apps.hackandslash.common.ApplicationLoader;
+import amaralus.apps.hackandslash.config.ApplicationConfig;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.gameplay.GameplayManager;
 import amaralus.apps.hackandslash.graphics.Window;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.context.support.GenericApplicationContext;
 
-import static amaralus.apps.hackandslash.common.ServiceLocator.getService;
 import static org.lwjgl.glfw.GLFW.*;
 
 public class Application {
 
     private static final Logger log = LoggerFactory.getLogger(Application.class);
+
+    private GenericApplicationContext applicationContext;
 
     public static void main(String[] args) {
         new Application().run();
@@ -26,10 +29,8 @@ public class Application {
 
             if (!glfwInit()) throw new IllegalStateException("Невозвожно инициализировать GLFW!");
 
-            Window.create(800, 600, "Hack and Slash").show();
-
-            new ApplicationLoader().initLoading();
-            getService(GameplayManager.class).runGameLoop();
+            applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+            applicationContext.getBean(GameplayManager.class).runGameLoop();
 
             glfwSetErrorCallback(null);
 
@@ -42,11 +43,17 @@ public class Application {
     }
 
     private void onShutdown() {
-        var resourceManager = getService(ResourceManager.class);
-        if (resourceManager != null) resourceManager.destroy();
+        try {
+            var resourceManager = applicationContext.getBean(ResourceManager.class);
+            resourceManager.destroy();
+        } catch (Exception ignored) {
+        }
 
-        var window = getService(Window.class);
-        if (window != null) window.destroy();
+        try {
+            var window = applicationContext.getBean(Window.class);
+            window.destroy();
+        } catch (Exception ignored) {
+        }
 
         glfwTerminate();
     }
