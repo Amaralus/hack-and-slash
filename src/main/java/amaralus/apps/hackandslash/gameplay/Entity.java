@@ -2,9 +2,10 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
+import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Vector2f;
 
-public class Entity implements Updateable {
+public class Entity extends Node implements Updateable {
 
     private final InputComponent inputComponent;
     private final RenderComponent renderComponent;
