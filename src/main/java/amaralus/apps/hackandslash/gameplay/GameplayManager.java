@@ -6,6 +6,7 @@ import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
+import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.slf4j.Logger;
@@ -33,12 +34,15 @@ public class GameplayManager {
     private final EntityFactory entityFactory;
     private final ResourceFactory resourceFactory;
 
+    private final Scene scene;
+
     private Entity player;
     private Primitive primitive;
 
     public GameplayManager(Window window, Renderer renderer, EntityFactory entityFactory, ResourceFactory resourceFactory) {
         this.window = window;
         this.renderer = renderer;
+        scene = new Scene(window.getWidth(), window.getHeight());
         this.entityFactory = entityFactory;
         this.resourceFactory = resourceFactory;
         inputHandler = new InputHandler();
@@ -53,15 +57,25 @@ public class GameplayManager {
                 .produce();
         player.getRenderComponent().computeAnimation(Animation::start);
 
+        var entity = entityFactory.sprite("testTextureSheet")
+                .position(20, 20)
+                .speed(200)
+                .produce();
+
+        entity.getRenderComponent().changeAnimatedFrameStrip(2);
+        entity.getRenderComponent().computeAnimation(Animation::start);
+        player.addChildren(entity);
+
         primitive = resourceFactory.produceTriangle(
                 "triangle",
-                Color.YELLOW,
+                Color.WHITE,
                 vec2(0f, 0.5f),
                 vec2(0.5f, -0.5f),
                 vec2(-0.5f, -0.5f)
         );
 
-        var entityList = List.of(player);
+        var entityList = List.of(player, entity);
+        scene.addChildren(player);
 
         var gameLoop = new GameLoop(window, 16L) {
 
@@ -88,7 +102,7 @@ public class GameplayManager {
 
             @Override
             public void render(double timeShift) {
-                renderer.render(entityList, List.of(primitive));
+                renderer.render(scene);
             }
         };
 

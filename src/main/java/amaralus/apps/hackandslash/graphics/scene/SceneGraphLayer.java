@@ -3,11 +3,11 @@ package amaralus.apps.hackandslash.graphics.scene;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NodeLayer {
+public class SceneGraphLayer {
 
     private final List<Node> nodes = new ArrayList<>();
 
-    public NodeLayer(Node... nodes) {
+    public SceneGraphLayer(Node... nodes) {
         addNodes(nodes);
     }
 

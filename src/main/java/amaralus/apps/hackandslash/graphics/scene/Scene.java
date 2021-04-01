@@ -15,22 +15,22 @@ public class Scene extends Node {
         addChildren(camera);
     }
 
-    public List<NodeLayer> buildSceneGraphLayers() {
-        var layers = new ArrayList<NodeLayer>();
-        fillNodeLayer(layers, this);
+    public List<SceneGraphLayer> buildSceneGraphLayers() {
+        var layers = new ArrayList<SceneGraphLayer>();
+        fillLayers(layers, this);
         return layers;
     }
 
-    private void fillNodeLayer(List<NodeLayer> layers, Node parentNode) {
+    private void fillLayers(List<SceneGraphLayer> layers, Node parentNode) {
         if (parentNode.getChildren().isEmpty())
             return;
         else if (layers.size() == parentNode.getNodeLayerNumber())
-            layers.add(new NodeLayer());
+            layers.add(new SceneGraphLayer());
 
         var children = parentNode.getChildren();
         layers.get(parentNode.getNodeLayerNumber()).addNodes(children);
         for (var child : children)
-            fillNodeLayer(layers, child);
+            fillLayers(layers, child);
     }
 
     public Camera getCamera() {
