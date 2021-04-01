@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.entities.Camera;
-import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
+import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
@@ -19,7 +19,7 @@ public class SpriteRenderer {
         textureShader = resourceManager.getResource("texture", Shader.class);
     }
 
-    public void render(Camera camera, RenderComponent renderComponent, Vector2f entityPos) {
+    public void render(Camera camera, SpriteRenderComponent renderComponent, Vector2f entityPos) {
         var sprite = renderComponent.getSprite();
         var textureSize = sprite.getSize();
         var cameraEntityPos = camera.getEntityCamPos(entityPos, textureSize, sprite.getOffsetToSpriteCenter());

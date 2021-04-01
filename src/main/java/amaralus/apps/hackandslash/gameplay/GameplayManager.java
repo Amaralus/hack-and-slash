@@ -6,6 +6,7 @@ import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
+import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
@@ -55,16 +56,15 @@ public class GameplayManager {
                 .position(0, 0)
                 .speed(200)
                 .produce();
-        player.getRenderComponent().computeAnimation(Animation::start);
+        player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
         var entity = entityFactory.sprite("testTextureSheet")
                 .position(20, 20)
                 .speed(200)
                 .produce();
 
-        entity.getRenderComponent().changeAnimatedFrameStrip(2);
-        entity.getRenderComponent().computeAnimation(Animation::start);
-        player.addChildren(entity);
+        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2);
+        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
         primitive = resourceFactory.produceTriangle(
                 "triangle",
@@ -73,9 +73,11 @@ public class GameplayManager {
                 vec2(0.5f, -0.5f),
                 vec2(-0.5f, -0.5f)
         );
+        var primitiveEntity = new Entity(primitive, vec2());
 
-        var entityList = List.of(player, entity);
-        scene.addChildren(player);
+        var entityList = List.of(primitiveEntity, player, entity);
+        primitiveEntity.addChildren(player, entity);
+        scene.addChildren(primitiveEntity);
 
         var gameLoop = new GameLoop(window, 16L) {
 
@@ -117,12 +119,12 @@ public class GameplayManager {
         inputHandler.addAction(A, () -> player.getInputComponent().addCommand(ENTITY_MOVE_LEFT));
         inputHandler.addAction(D, () -> player.getInputComponent().addCommand(ENTITY_MOVE_RIGHT));
 
-        inputHandler.addAction(Q, () -> player.getRenderComponent().addSpriteRotateAngle(-5f));
-        inputHandler.addAction(E, () -> player.getRenderComponent().addSpriteRotateAngle(5f));
+        inputHandler.addAction(Q, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).addSpriteRotateAngle(-5f));
+        inputHandler.addAction(E, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).addSpriteRotateAngle(5f));
 
-        inputHandler.addAction(DIG1, () -> player.getRenderComponent().changeAnimatedFrameStrip(0));
-        inputHandler.addAction(DIG2, () -> player.getRenderComponent().changeAnimatedFrameStrip(1));
-        inputHandler.addAction(DIG3, () -> player.getRenderComponent().changeAnimatedFrameStrip(2));
+        inputHandler.addAction(DIG1, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(0));
+        inputHandler.addAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1));
+        inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
 
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
                 renderer.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));

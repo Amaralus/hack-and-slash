@@ -3,12 +3,11 @@ package amaralus.apps.hackandslash.graphics;
 import amaralus.apps.hackandslash.gameplay.Entity;
 import amaralus.apps.hackandslash.graphics.entities.Camera;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
+import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -30,19 +29,6 @@ public class Renderer {
         this.primitiveRender = primitiveRender;
     }
 
-    @Deprecated
-    public void render(List<Entity> entities, List<Primitive> primitives) {
-        clear();
-
-        for (Entity entity : entities)
-            spriteRenderer.render(camera, entity.getRenderComponent(), entity.getPosition());
-
-        for (var primitive : primitives)
-            primitiveRender.render(primitive);
-
-        window.swapBuffers();
-    }
-
     public void render(Scene scene) {
         clear();
 
@@ -52,7 +38,12 @@ public class Renderer {
             for (var node : sceneLayers.get(i).getNodes())
                 if (node instanceof Entity) {
                     var entity = (Entity) node;
-                    spriteRenderer.render(scene.getCamera(), entity.getRenderComponent(), entity.getPosition());
+                    var renderComponent = entity.getRenderComponent();
+
+                    if (renderComponent instanceof SpriteRenderComponent)
+                        spriteRenderer.render(scene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getPosition());
+                    if (renderComponent instanceof Primitive)
+                        primitiveRender.render(renderComponent.wrapTo(Primitive.class));
                 }
 
         window.swapBuffers();
