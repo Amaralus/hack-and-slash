@@ -3,8 +3,6 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
-import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
@@ -38,7 +36,7 @@ public class GameplayManager {
     private final Scene scene;
 
     private Entity player;
-    private Primitive primitive;
+    private Entity triangle;
 
     public GameplayManager(Window window, Renderer renderer, EntityFactory entityFactory, ResourceFactory resourceFactory) {
         this.window = window;
@@ -66,14 +64,13 @@ public class GameplayManager {
         entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2);
         entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
-        primitive = resourceFactory.produceTriangle(
+        triangle = new Entity(resourceFactory.produceTriangle(
                 "triangle",
                 Color.WHITE,
                 vec2(0f, -20f),
                 vec2(10f, -10f),
                 vec2(-10f, -10f)
-        );
-        var triangle = new Entity(primitive, vec2());
+        ), vec2());
 
         var line = new Entity(resourceFactory
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
@@ -133,7 +130,7 @@ public class GameplayManager {
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
                 scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> ((Triangle) primitive).updateTopPoint(scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> scene.getCamera().addScale(yOffset));
     }
