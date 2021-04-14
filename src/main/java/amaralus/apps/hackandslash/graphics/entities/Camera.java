@@ -43,6 +43,10 @@ public class Camera extends Node {
                 .sub(leftTopPosition);
     }
 
+    public Vector2f getEntityCamPos(Vector2f entityPos) {
+        return copy(entityPos).sub(leftTopPosition);
+    }
+
     public Vector2f getWordPosOfScreenPos(Vector2f screenPosition) {
         return copy(leftTopPosition).add(screenPosition.mul(scale));
     }

@@ -69,15 +69,19 @@ public class GameplayManager {
         primitive = resourceFactory.produceTriangle(
                 "triangle",
                 Color.WHITE,
-                vec2(0f, 0.5f),
-                vec2(0.5f, -0.5f),
-                vec2(-0.5f, -0.5f)
+                vec2(0f, -20f),
+                vec2(10f, -10f),
+                vec2(-10f, -10f)
         );
-        var primitiveEntity = new Entity(primitive, vec2());
+        var triangle = new Entity(primitive, vec2());
 
-        var entityList = List.of(primitiveEntity, player, entity);
-        primitiveEntity.addChildren(player, entity);
-        scene.addChildren(primitiveEntity);
+        var line = new Entity(resourceFactory
+                .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
+                vec2());
+
+        var entityList = List.of(triangle, player, entity);
+        triangle.addChildren(player, entity);
+        scene.addChildren(triangle, line);
 
         var gameLoop = new GameLoop(window, 16L) {
 
@@ -127,10 +131,10 @@ public class GameplayManager {
         inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
 
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
-                renderer.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+                scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> ((Triangle) primitive).updateFirst(window.windowPosToGlPos(window.getCursorPosition())));
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> ((Triangle) primitive).updateTopPoint(scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.setScrollAction((xOfsset, yOffset) -> renderer.getCamera().addScale(yOffset));
+        inputHandler.setScrollAction((xOfsset, yOffset) -> scene.getCamera().addScale(yOffset));
     }
 }
