@@ -11,14 +11,14 @@ import org.springframework.stereotype.Service;
 import static org.lwjgl.opengl.GL11.*;
 
 @Service
-public class Renderer {
+public class RendererService {
 
     @Lazy
     private final Window window;
     private final SpriteRenderer spriteRenderer;
     private final PrimitiveRender primitiveRender;
 
-    public Renderer(Window window, PrimitiveRender primitiveRender, ResourceManager resourceManager) {
+    public RendererService(Window window, PrimitiveRender primitiveRender, ResourceManager resourceManager) {
         this.window = window;
 
         spriteRenderer = new SpriteRenderer(resourceManager);

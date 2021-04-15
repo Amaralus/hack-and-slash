@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.gameplay.loop;
 
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.utils.FpsMeter;

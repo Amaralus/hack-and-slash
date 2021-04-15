@@ -1,7 +1,8 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.gameplay.loop.DefaultGameLoop;
+import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
@@ -21,34 +22,38 @@ public class GameplayManager {
 
     @Lazy
     private final Window window;
-    private final Renderer renderer;
     private final InputHandler inputHandler;
     private final EntityFactory entityFactory;
     private final ResourceFactory resourceFactory;
     private final UpdateService updateService;
+    private final GameLoop gameLoop;
 
     private final Scene scene;
 
     private Entity player;
     private Entity triangle;
 
-    public GameplayManager(Window window, Renderer renderer, EntityFactory entityFactory, ResourceFactory resourceFactory) {
+    public GameplayManager(Window window,
+                           InputHandler inputHandler,
+                           EntityFactory entityFactory,
+                           ResourceFactory resourceFactory,
+                           UpdateService updateService,
+                           GameLoop gameLoop) {
         this.window = window;
-        this.renderer = renderer;
-        scene = new Scene(window.getWidth(), window.getHeight());
+        this.inputHandler = inputHandler;
         this.entityFactory = entityFactory;
         this.resourceFactory = resourceFactory;
-        inputHandler = new InputHandler();
-        inputHandler.setUpInputHandling(window);
-        updateService = new UpdateService();
-        setUpInput();
+        this.updateService = updateService;
+        this.gameLoop = gameLoop;
+
+        scene = new Scene(window.getWidth(), window.getHeight());
     }
 
     public void runGameLoop() {
+        setUpInput();
         setUpEntities();
 
-        var gameLoop = new DefaultGameLoop(window, inputHandler, updateService, renderer);
-        gameLoop.setScene(scene);
+        ((DefaultGameLoop) gameLoop).setScene(scene);
 
         gameLoop.enable();
     }

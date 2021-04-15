@@ -1,28 +1,31 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.gameplay.loop;
 
-import amaralus.apps.hackandslash.graphics.Renderer;
+import amaralus.apps.hackandslash.gameplay.UpdateService;
+import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 
+@Component
 public class DefaultGameLoop extends GameLoop {
 
     private static final Logger log = LoggerFactory.getLogger(DefaultGameLoop.class);
 
     private final InputHandler inputHandler;
-    private final Renderer renderer;
+    private final RendererService rendererService;
     private final UpdateService updateService;
 
     private Scene scene;
 
-    public DefaultGameLoop(Window window, InputHandler inputHandler, UpdateService updateService, Renderer renderer) {
+    public DefaultGameLoop(Window window, InputHandler inputHandler, UpdateService updateService, RendererService rendererService) {
         super(window, 60);
         this.inputHandler = inputHandler;
-        this.renderer = renderer;
+        this.rendererService = rendererService;
         this.updateService = updateService;
     }
 
@@ -49,7 +52,7 @@ public class DefaultGameLoop extends GameLoop {
 
     @Override
     public void render(double timeShift) {
-        renderer.render(scene);
+        rendererService.render(scene);
     }
 
     public void setScene(Scene scene) {
