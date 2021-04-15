@@ -58,6 +58,20 @@ public final class VectMatrUtil {
         return "[" + vector.x + "," + vector.y + "," + vector.z + "]";
     }
 
+    public static Vector2f average(Vector2f... vectors) {
+        var average = vec2();
+        for (var vector : vectors)
+            average.add(vector);
+        return average.div(vectors.length);
+    }
+
+    public static Vector3f average(Vector3f... vectors) {
+        var average = vec3();
+        for (var vector : vectors)
+            average.add(vector);
+        return average.div(vectors.length);
+    }
+
     public static float[] toArray(Vector2f... vectors) {
         float[] array = new float[vectors.length * 2];
         for (int i = 0, j = 0; i < vectors.length; i++, j = i * 2) {

@@ -34,6 +34,7 @@ public class GameplayManager {
     private final ResourceFactory resourceFactory;
 
     private final Scene scene;
+    private List<Entity> entityList;
 
     private Entity player;
     private Entity triangle;
@@ -50,35 +51,7 @@ public class GameplayManager {
     }
 
     public void runGameLoop() {
-        player = entityFactory.sprite("testTextureSheet")
-                .position(0, 0)
-                .speed(200)
-                .produce();
-        player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
-
-        var entity = entityFactory.sprite("testTextureSheet")
-                .position(20, 20)
-                .speed(200)
-                .produce();
-
-        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2);
-        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
-
-        triangle = new Entity(resourceFactory.produceTriangle(
-                "triangle",
-                Color.WHITE,
-                vec2(0f, -20f),
-                vec2(10f, -10f),
-                vec2(-10f, -10f)
-        ), vec2());
-
-        var line = new Entity(resourceFactory
-                .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
-                vec2());
-
-        var entityList = List.of(triangle, line, player, entity);
-        triangle.addChildren(player, entity);
-        scene.addChildren(triangle, line);
+        setUpEntities();
 
         var gameLoop = new GameLoop(window, 16L) {
 
@@ -133,5 +106,37 @@ public class GameplayManager {
         inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> scene.getCamera().addScale(yOffset));
+    }
+
+    private void setUpEntities() {
+        player = entityFactory.sprite("testTextureSheet")
+                .position(0, 0)
+                .speed(200)
+                .produce();
+        player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
+
+        var entity = entityFactory.sprite("testTextureSheet")
+                .position(20, 20)
+                .speed(200)
+                .produce();
+
+        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2);
+        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
+
+        triangle = new Entity(resourceFactory.produceTriangle(
+                "triangle",
+                Color.WHITE,
+                vec2(0f, -40f),
+                vec2(40f, 40f),
+                vec2(-40f, 40f)
+        ), vec2());
+
+        var line = new Entity(resourceFactory
+                .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
+                vec2());
+
+        entityList = List.of(triangle, line, player, entity);
+        triangle.addChildren(player, entity);
+        scene.addChildren(triangle, line);
     }
 }

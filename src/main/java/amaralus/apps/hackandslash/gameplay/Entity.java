@@ -63,6 +63,10 @@ public class Entity extends Node implements Updateable {
         return globalPosition;
     }
 
+    public void setGlobalPosition(Vector2f globalPosition) {
+        this.globalPosition = globalPosition;
+    }
+
     public void setPosition(Vector2f position) {
         this.position = position;
     }
