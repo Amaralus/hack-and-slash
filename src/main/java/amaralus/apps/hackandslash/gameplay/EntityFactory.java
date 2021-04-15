@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.gameplay;
 
-import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
+import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
@@ -22,7 +22,7 @@ public class EntityFactory {
     }
 
     public Entity produce() {
-        var renderComponent = new RenderComponent(getSprite(spriteName));
+        var renderComponent = new SpriteRenderComponent(getSprite(spriteName));
         var entity = new Entity(renderComponent, position);
         entity.setSpeedPerSec(speed);
         return entity;

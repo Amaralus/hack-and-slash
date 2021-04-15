@@ -1,11 +1,12 @@
 package amaralus.apps.hackandslash.graphics.entities;
 
+import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 
-public class Camera {
+public class Camera extends Node {
 
     private final float width;
     private final float height;
@@ -40,6 +41,10 @@ public class Camera {
         return copy(entityPos)
                 .sub(copy(spriteSizeOfCam).mul(offsetToSpriteCenter))
                 .sub(leftTopPosition);
+    }
+
+    public Vector2f getEntityCamPos(Vector2f entityPos) {
+        return copy(entityPos).sub(leftTopPosition);
     }
 
     public Vector2f getWordPosOfScreenPos(Vector2f screenPosition) {

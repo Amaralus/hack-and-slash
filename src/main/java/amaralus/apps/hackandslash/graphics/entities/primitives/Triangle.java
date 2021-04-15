@@ -10,44 +10,44 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 public class Triangle extends Primitive {
 
-    private Vector2f first;
-    private Vector2f second;
-    private Vector2f third;
+    private Vector2f topPoint;
+    private Vector2f bottomRightPoint;
+    private Vector2f bottomLeftPoint;
 
-    public Triangle(VertexArraysObject vao, Color color, Vector2f first, Vector2f second, Vector2f third) {
+    public Triangle(VertexArraysObject vao, Color color, Vector2f topPoint, Vector2f bottomRightPoint, Vector2f bottomLeftPoint) {
         super(vao, color);
-        this.first = first;
-        this.second = second;
-        this.third = third;
+        this.topPoint = topPoint;
+        this.bottomRightPoint = bottomRightPoint;
+        this.bottomLeftPoint = bottomLeftPoint;
     }
 
-    public void updateFirst(Vector2f vector) {
-        first = vector;
+    public void updateTopPoint(Vector2f vector) {
+        topPoint = vector;
         var vbo = getVbo(0);
-        vbo.updateBuffer(FloatBuffer.wrap(toArray(first)), 0);
+        vbo.updateBuffer(FloatBuffer.wrap(toArray(topPoint)), 0);
     }
 
-    public void updateSecond(Vector2f vector) {
-        second = vector;
+    public void updateBottomRightPoint(Vector2f vector) {
+        bottomRightPoint = vector;
         var vbo = getVbo(0);
-        vbo.updateBuffer(FloatBuffer.wrap(toArray(second)), vbo.getDataTypeBytes() * 2L);
+        vbo.updateBuffer(FloatBuffer.wrap(toArray(bottomRightPoint)), vbo.getDataTypeBytes() * 2L);
     }
 
-    public void updateThird(Vector2f vector) {
-        third = vector;
+    public void updateBottomLeft(Vector2f vector) {
+        bottomLeftPoint = vector;
         var vbo = getVbo(0);
-        vbo.updateBuffer(FloatBuffer.wrap(toArray(third)), vbo.getDataTypeBytes() * 4L);
+        vbo.updateBuffer(FloatBuffer.wrap(toArray(bottomLeftPoint)), vbo.getDataTypeBytes() * 4L);
     }
 
-    public Vector2f getFirst() {
-        return first;
+    public Vector2f getTopPoint() {
+        return topPoint;
     }
 
-    public Vector2f getSecond() {
-        return second;
+    public Vector2f getBottomRightPoint() {
+        return bottomRightPoint;
     }
 
-    public Vector2f getThird() {
-        return third;
+    public Vector2f getBottomLeftPoint() {
+        return bottomLeftPoint;
     }
 }

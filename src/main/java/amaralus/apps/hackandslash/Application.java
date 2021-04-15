@@ -43,18 +43,26 @@ public class Application {
     }
 
     private void onShutdown() {
+        log.info("Завершение работы приложения...");
         try {
             var resourceManager = applicationContext.getBean(ResourceManager.class);
             resourceManager.destroy();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error("Непредвиденная ошибка освобождения ресурсов во время завершения", e);
         }
 
         try {
             var window = applicationContext.getBean(Window.class);
             window.destroy();
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error("Непредвиденная ошибка во время закрытия окна", e);
         }
 
+        try {
+            applicationContext.close();
+        } catch (Exception e) {
+            log.error("Непредвиденная ошибка во время завершения контекста spring", e);
+        }
         glfwTerminate();
     }
 }
