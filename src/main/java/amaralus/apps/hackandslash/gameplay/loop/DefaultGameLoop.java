@@ -3,7 +3,6 @@ package amaralus.apps.hackandslash.gameplay.loop;
 import amaralus.apps.hackandslash.gameplay.UpdateService;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,8 +18,6 @@ public class DefaultGameLoop extends GameLoop {
     private final InputHandler inputHandler;
     private final RendererService rendererService;
     private final UpdateService updateService;
-
-    private Scene scene;
 
     public DefaultGameLoop(Window window, InputHandler inputHandler, UpdateService updateService, RendererService rendererService) {
         super(window, 60);
@@ -52,10 +49,6 @@ public class DefaultGameLoop extends GameLoop {
 
     @Override
     public void render(double timeShift) {
-        rendererService.render(scene);
-    }
-
-    public void setScene(Scene scene) {
-        this.scene = scene;
+        rendererService.render();
     }
 }

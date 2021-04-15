@@ -2,19 +2,19 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
-import amaralus.apps.hackandslash.gameplay.loop.DefaultGameLoop;
+import amaralus.apps.hackandslash.gameplay.entity.EntityService;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
+import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.ACTIVE;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
@@ -22,40 +22,37 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 @Service
 public class GameplayManager {
 
-    @Lazy
     private final Window window;
     private final InputHandler inputHandler;
+    private final EntityService entityService;
     private final EntityFactory entityFactory;
     private final ResourceFactory resourceFactory;
-    private final UpdateService updateService;
     private final GameLoop gameLoop;
-
-    private final Scene scene;
+    private final RendererService rendererService;
 
     private Entity player;
     private Entity triangle;
 
     public GameplayManager(Window window,
                            InputHandler inputHandler,
+                           EntityService entityService,
                            EntityFactory entityFactory,
                            ResourceFactory resourceFactory,
-                           UpdateService updateService,
-                           GameLoop gameLoop) {
+                           GameLoop gameLoop,
+                           RendererService rendererService) {
         this.window = window;
         this.inputHandler = inputHandler;
+        this.entityService = entityService;
         this.entityFactory = entityFactory;
         this.resourceFactory = resourceFactory;
-        this.updateService = updateService;
         this.gameLoop = gameLoop;
 
-        scene = new Scene(window.getWidth(), window.getHeight());
+        this.rendererService = rendererService;
     }
 
     public void runGameLoop() {
         setUpInput();
         setUpEntities();
-
-        ((DefaultGameLoop) gameLoop).setScene(scene);
 
         gameLoop.enable();
     }
@@ -76,11 +73,12 @@ public class GameplayManager {
         inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
 
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
-                scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+                rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(
+                rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.setScrollAction((xOfsset, yOffset) -> scene.getCamera().addScale(yOffset));
+        inputHandler.setScrollAction((xOfsset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 
     private void setUpEntities() {
@@ -110,8 +108,9 @@ public class GameplayManager {
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
                 vec2());
 
-        updateService.registerEntity(triangle, line, player, entity);
-        triangle.addChildren(player, entity);
-        scene.addChildren(triangle, line);
+        entityService.registerEntity(triangle, null, ACTIVE);
+        entityService.registerEntity(line, null, ACTIVE);
+        entityService.registerEntity(player, triangle, ACTIVE);
+        entityService.registerEntity(entity, triangle, ACTIVE);
     }
 }
