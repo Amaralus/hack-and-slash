@@ -8,23 +8,16 @@ import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponen
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
-import static org.lwjgl.glfw.GLFW.*;
 
 @Service
 public class GameplayManager {
-
-    private static final Logger log = LoggerFactory.getLogger(GameplayManager.class);
 
     @Lazy
     private final Window window;
@@ -32,9 +25,9 @@ public class GameplayManager {
     private final InputHandler inputHandler;
     private final EntityFactory entityFactory;
     private final ResourceFactory resourceFactory;
+    private final UpdateService updateService;
 
     private final Scene scene;
-    private List<Entity> entityList;
 
     private Entity player;
     private Entity triangle;
@@ -47,40 +40,15 @@ public class GameplayManager {
         this.resourceFactory = resourceFactory;
         inputHandler = new InputHandler();
         inputHandler.setUpInputHandling(window);
+        updateService = new UpdateService();
         setUpInput();
     }
 
     public void runGameLoop() {
         setUpEntities();
 
-        var gameLoop = new GameLoop(window, 16L) {
-
-            @Override
-            public void onEnable() {
-                log.info("Игровой цикл включён");
-            }
-
-            @Override
-            public void onDisable() {
-                log.info("Игровой цикл отключён");
-            }
-
-            @Override
-            public void processInput() {
-                glfwPollEvents();
-                inputHandler.executeActions();
-            }
-
-            @Override
-            public void update(long elapsedTime) {
-                entityList.forEach(entity -> entity.update(elapsedTime));
-            }
-
-            @Override
-            public void render(double timeShift) {
-                renderer.render(scene);
-            }
-        };
+        var gameLoop = new DefaultGameLoop(window, inputHandler, updateService, renderer);
+        gameLoop.setScene(scene);
 
         gameLoop.enable();
     }
@@ -135,7 +103,7 @@ public class GameplayManager {
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
                 vec2());
 
-        entityList = List.of(triangle, line, player, entity);
+        updateService.registerEntity(triangle, line, player, entity);
         triangle.addChildren(player, entity);
         scene.addChildren(triangle, line);
     }
