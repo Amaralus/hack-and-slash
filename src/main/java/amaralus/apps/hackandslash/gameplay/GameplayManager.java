@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
+import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
 import amaralus.apps.hackandslash.gameplay.loop.DefaultGameLoop;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.Window;

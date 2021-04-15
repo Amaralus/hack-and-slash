@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.gameplay.Entity;
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Scene;

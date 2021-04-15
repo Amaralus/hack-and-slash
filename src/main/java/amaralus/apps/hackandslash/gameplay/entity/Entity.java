@@ -1,6 +1,7 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.gameplay.InputComponent;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Vector2f;

@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

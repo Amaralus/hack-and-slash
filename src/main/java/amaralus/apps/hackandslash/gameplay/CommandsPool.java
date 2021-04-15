@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
+
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public final class CommandsPool {
