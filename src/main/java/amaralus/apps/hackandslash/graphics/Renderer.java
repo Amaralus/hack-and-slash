@@ -37,9 +37,9 @@ public class Renderer {
                     var renderComponent = entity.getRenderComponent();
 
                     if (renderComponent instanceof SpriteRenderComponent)
-                        spriteRenderer.render(scene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getPosition());
+                        spriteRenderer.render(scene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getGlobalPosition());
                     if (renderComponent instanceof Primitive)
-                        primitiveRender.render(scene.getCamera(), renderComponent.wrapTo(Primitive.class), entity.getPosition());
+                        primitiveRender.render(scene.getCamera(), renderComponent.wrapTo(Primitive.class), entity.getGlobalPosition());
                 }
 
         window.swapBuffers();

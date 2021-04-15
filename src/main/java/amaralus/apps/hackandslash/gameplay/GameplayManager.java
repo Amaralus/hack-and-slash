@@ -76,7 +76,7 @@ public class GameplayManager {
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
                 vec2());
 
-        var entityList = List.of(triangle, player, entity);
+        var entityList = List.of(triangle, line, player, entity);
         triangle.addChildren(player, entity);
         scene.addChildren(triangle, line);
 
