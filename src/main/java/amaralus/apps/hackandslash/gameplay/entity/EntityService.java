@@ -43,7 +43,12 @@ public class EntityService {
         }
     }
 
-    public void removeEntities(List<Entity> entities) {
+    public void removeAllEntities() {
+        updateService.removeAll();
+        removeEntities(allEntities);
+    }
+
+    public void removeEntities(Collection<Entity> entities) {
         for (var entity : entities) {
             if (entity.getRemovingStrategy() == SINGLE) {
                 entity.getParent().addChildren(entity.getChildren().toArray(Node[]::new));
@@ -77,19 +82,19 @@ public class EntityService {
         this.updateService = updateService;
     }
 
+    public Set<Entity> getAllEntities() {
+        return Collections.unmodifiableSet(allEntities);
+    }
+
     private static class RegisteredInfo {
         Entity entity;
         Node targetNode;
-        EntityStatus targetStatus;
 
+        EntityStatus targetStatus;
         public RegisteredInfo(Entity entity, Node targetNode, EntityStatus targetStatus) {
             this.entity = entity;
             this.targetNode = targetNode;
             this.targetStatus = targetStatus;
         }
-    }
-
-    public Set<Entity> getAllEntities() {
-        return Collections.unmodifiableSet(allEntities);
     }
 }

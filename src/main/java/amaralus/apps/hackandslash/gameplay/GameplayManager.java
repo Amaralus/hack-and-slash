@@ -32,7 +32,6 @@ public class GameplayManager {
     private final RendererService rendererService;
 
     private Entity player;
-    private Entity entity;
     private Entity triangle;
 
     public GameplayManager(Window window,
@@ -92,7 +91,7 @@ public class GameplayManager {
                 .produce();
         player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
-        entity = entityFactory.sprite("testTextureSheet")
+        var entity = entityFactory.sprite("testTextureSheet")
                 .position(20, 20)
                 .speed(200)
                 .produce();

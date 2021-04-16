@@ -61,6 +61,11 @@ public class UpdateService implements Updateable {
         sleepingEntities.addAll(toSleep);
     }
 
+    public void removeAll() {
+        updatingEntities.clear();
+        sleepingEntities.clear();
+    }
+
     private void moveUpdatingEntities() {
         var toUpdate = sleepingEntities.stream()
                 .filter(entity -> entity.getStatus() == UPDATING)
