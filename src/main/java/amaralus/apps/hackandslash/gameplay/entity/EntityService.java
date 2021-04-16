@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class EntityService {
@@ -36,16 +37,16 @@ public class EntityService {
 
     public void activateNewEntities() {
         if (!newEntities.isEmpty()) {
-            newEntities.forEach(this::activateEntity);
+            updateService.addEntities(newEntities.stream()
+                    .map(this::activateEntity)
+                    .collect(Collectors.toList()));
             newEntities.clear();
         }
     }
 
-    private void activateEntity(RegisteredInfo registeredInfo) {
+    private Entity activateEntity(RegisteredInfo registeredInfo) {
         var entity = registeredInfo.entity;
         entity.setStatus(registeredInfo.targetStatus);
-
-        updateService.addEntity(entity);
 
         if (registeredInfo.targetNode == null)
             rendererService.getActiveScene().addChildren(entity);
@@ -53,6 +54,7 @@ public class EntityService {
             registeredInfo.targetNode.addChildren(entity);
 
         log.debug("Сущность id={} добавлена в обработку", entity.getEntityId());
+        return entity;
     }
 
     @Autowired

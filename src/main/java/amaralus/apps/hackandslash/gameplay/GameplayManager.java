@@ -14,7 +14,8 @@ import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
-import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.ACTIVE;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.SLEEPING;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.UPDATING;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
@@ -108,9 +109,9 @@ public class GameplayManager {
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
                 vec2());
 
-        entityService.registerEntity(triangle, null, ACTIVE);
-        entityService.registerEntity(line, null, ACTIVE);
-        entityService.registerEntity(player, triangle, ACTIVE);
-        entityService.registerEntity(entity, triangle, ACTIVE);
+        entityService.registerEntity(triangle, null, UPDATING);
+        entityService.registerEntity(line, null, SLEEPING);
+        entityService.registerEntity(player, triangle, UPDATING);
+        entityService.registerEntity(entity, triangle, UPDATING);
     }
 }
