@@ -3,6 +3,7 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
 import amaralus.apps.hackandslash.gameplay.entity.EntityService;
+import amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
@@ -14,8 +15,7 @@ import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
-import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.SLEEPING;
-import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.UPDATING;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
@@ -32,6 +32,7 @@ public class GameplayManager {
     private final RendererService rendererService;
 
     private Entity player;
+    private Entity entity;
     private Entity triangle;
 
     public GameplayManager(Window window,
@@ -73,6 +74,8 @@ public class GameplayManager {
         inputHandler.addAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1));
         inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
 
+        inputHandler.addAction(R, () -> triangle.setStatus(REMOVE));
+
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
                 rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
@@ -89,7 +92,7 @@ public class GameplayManager {
                 .produce();
         player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
-        var entity = entityFactory.sprite("testTextureSheet")
+        entity = entityFactory.sprite("testTextureSheet")
                 .position(20, 20)
                 .speed(200)
                 .produce();
@@ -103,7 +106,7 @@ public class GameplayManager {
                 vec2(0f, -40f),
                 vec2(40f, 40f),
                 vec2(-40f, 40f)
-        ), vec2());
+        ), vec2(), RemovingStrategy.CASCADE);
 
         var line = new Entity(resourceFactory
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),

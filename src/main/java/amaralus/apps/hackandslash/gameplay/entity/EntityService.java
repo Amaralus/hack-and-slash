@@ -8,11 +8,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy.SINGLE;
 
 @Service
 public class EntityService {
@@ -44,6 +43,22 @@ public class EntityService {
         }
     }
 
+    public void removeEntities(List<Entity> entities) {
+        for (var entity : entities) {
+            if (entity.getRemovingStrategy() == SINGLE) {
+                entity.getParent().addChildren(entity.getChildren().toArray(Node[]::new));
+            }
+
+            entity.getParent().getChildren().remove(entity);
+            entity.setParent(null);
+            entity.getChildren().clear();
+
+            log.debug("Удалена сущность id={}", entity.getEntityId());
+        }
+
+        allEntities.removeAll(entities);
+    }
+
     private Entity activateEntity(RegisteredInfo registeredInfo) {
         var entity = registeredInfo.entity;
         entity.setStatus(registeredInfo.targetStatus);
@@ -72,5 +87,9 @@ public class EntityService {
             this.targetNode = targetNode;
             this.targetStatus = targetStatus;
         }
+    }
+
+    public Set<Entity> getAllEntities() {
+        return Collections.unmodifiableSet(allEntities);
     }
 }

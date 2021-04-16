@@ -20,8 +20,8 @@ public class UpdateService implements Updateable {
 
     private EntityService entityService;
 
-    private final List<Entity> updatingEntities = new ArrayList<>();
-    private final List<Entity> sleepingEntities = new ArrayList<>();
+    private final List<Entity> updatingEntities = new ArrayList<>(10000);
+    private final List<Entity> sleepingEntities = new ArrayList<>(10000);
 
     @Override
     public void update(long elapsedTime) {
@@ -30,6 +30,8 @@ public class UpdateService implements Updateable {
         entityService.activateNewEntities();
 
         updatingEntities.forEach(entity -> entity.update(elapsedTime));
+
+        removeEntities();
 
         moveSleepingEntities();
     }
@@ -73,6 +75,23 @@ public class UpdateService implements Updateable {
                 .collect(Collectors.toList());
         sleepingEntities.addAll(toSleep);
         updatingEntities.removeAll(toSleep);
+    }
+
+    private void removeEntities() {
+        var fromUpdate = updatingEntities.stream()
+                .filter(entity -> entity.getStatus() == REMOVE)
+                .collect(Collectors.toList());
+        updatingEntities.removeAll(fromUpdate);
+
+        var toRemove = new ArrayList<>(fromUpdate);
+
+        var fromSleep = sleepingEntities.stream()
+                .filter(entity -> entity.getStatus() == REMOVE)
+                .collect(Collectors.toList());
+        sleepingEntities.removeAll(fromSleep);
+        toRemove.addAll(fromSleep);
+
+        entityService.removeEntities(toRemove);
     }
 
     @Autowired
