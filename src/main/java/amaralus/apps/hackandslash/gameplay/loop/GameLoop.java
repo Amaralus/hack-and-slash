@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.gameplay.loop;
 
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.utils.FpsMeter;
@@ -11,9 +11,9 @@ public abstract class GameLoop {
 
     private final FpsMeter fpsMeter;
 
-    protected GameLoop(Window window, long msPerUpdate) {
+    protected GameLoop(Window window, long frameRate) {
         this.window = window;
-        this.msPerUpdate = msPerUpdate;
+        this.msPerUpdate = 1000L / frameRate;
         fpsMeter = new FpsMeter();
     }
 

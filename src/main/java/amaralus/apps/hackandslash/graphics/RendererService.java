@@ -1,34 +1,35 @@
 package amaralus.apps.hackandslash.graphics;
 
-import amaralus.apps.hackandslash.gameplay.Entity;
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.resources.ResourceManager;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
 import static org.lwjgl.opengl.GL11.*;
 
 @Service
-public class Renderer {
+public class RendererService {
 
-    @Lazy
     private final Window window;
     private final SpriteRenderer spriteRenderer;
     private final PrimitiveRender primitiveRender;
 
-    public Renderer(Window window, PrimitiveRender primitiveRender, ResourceManager resourceManager) {
+    private final Scene activeScene;
+
+    public RendererService(Window window, PrimitiveRender primitiveRender, ResourceManager resourceManager) {
         this.window = window;
+        activeScene = new Scene(window.getWidth(), window.getHeight());
 
         spriteRenderer = new SpriteRenderer(resourceManager);
         this.primitiveRender = primitiveRender;
     }
 
-    public void render(Scene scene) {
+    public void render() {
         clear();
 
-        var sceneLayers = scene.buildSceneGraphLayers();
+        var sceneLayers = activeScene.buildSceneGraphLayers();
 
         for (int i = sceneLayers.size() - 1; i >= 0; i--)
             for (var node : sceneLayers.get(i).getNodes())
@@ -37,9 +38,9 @@ public class Renderer {
                     var renderComponent = entity.getRenderComponent();
 
                     if (renderComponent instanceof SpriteRenderComponent)
-                        spriteRenderer.render(scene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getGlobalPosition());
+                        spriteRenderer.render(activeScene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getGlobalPosition());
                     if (renderComponent instanceof Primitive)
-                        primitiveRender.render(scene.getCamera(), renderComponent.wrapTo(Primitive.class), entity.getGlobalPosition());
+                        primitiveRender.render(activeScene.getCamera(), renderComponent.wrapTo(Primitive.class), entity.getGlobalPosition());
                 }
 
         window.swapBuffers();
@@ -48,5 +49,9 @@ public class Renderer {
     private void clear() {
         glClearColor(0f, 0f, 0f, 1f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    }
+
+    public Scene getActiveScene() {
+        return activeScene;
     }
 }

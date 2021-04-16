@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;

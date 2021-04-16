@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
+
 import java.util.ArrayList;
 import java.util.List;
 

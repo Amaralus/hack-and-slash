@@ -6,6 +6,7 @@
     </appender>
 
     <logger level="debug" name="amaralus.apps.hackandslash"/>
+    <logger level="info" name="org.springframework"/>
 
     <root level="error">
         <appender-ref ref="console"/>

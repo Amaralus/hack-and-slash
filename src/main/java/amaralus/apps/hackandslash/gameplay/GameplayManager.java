@@ -1,86 +1,59 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
+import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
+import amaralus.apps.hackandslash.gameplay.entity.EntityService;
+import amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy;
+import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
+import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.Renderer;
 import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
-import static org.lwjgl.glfw.GLFW.*;
 
 @Service
 public class GameplayManager {
 
-    private static final Logger log = LoggerFactory.getLogger(GameplayManager.class);
-
-    @Lazy
     private final Window window;
-    private final Renderer renderer;
     private final InputHandler inputHandler;
+    private final EntityService entityService;
     private final EntityFactory entityFactory;
     private final ResourceFactory resourceFactory;
-
-    private final Scene scene;
-    private List<Entity> entityList;
+    private final GameLoop gameLoop;
+    private final RendererService rendererService;
 
     private Entity player;
     private Entity triangle;
 
-    public GameplayManager(Window window, Renderer renderer, EntityFactory entityFactory, ResourceFactory resourceFactory) {
+    public GameplayManager(Window window,
+                           InputHandler inputHandler,
+                           EntityService entityService,
+                           EntityFactory entityFactory,
+                           ResourceFactory resourceFactory,
+                           GameLoop gameLoop,
+                           RendererService rendererService) {
         this.window = window;
-        this.renderer = renderer;
-        scene = new Scene(window.getWidth(), window.getHeight());
+        this.inputHandler = inputHandler;
+        this.entityService = entityService;
         this.entityFactory = entityFactory;
         this.resourceFactory = resourceFactory;
-        inputHandler = new InputHandler();
-        inputHandler.setUpInputHandling(window);
-        setUpInput();
+        this.gameLoop = gameLoop;
+
+        this.rendererService = rendererService;
     }
 
     public void runGameLoop() {
+        setUpInput();
         setUpEntities();
-
-        var gameLoop = new GameLoop(window, 16L) {
-
-            @Override
-            public void onEnable() {
-                log.info("Игровой цикл включён");
-            }
-
-            @Override
-            public void onDisable() {
-                log.info("Игровой цикл отключён");
-            }
-
-            @Override
-            public void processInput() {
-                glfwPollEvents();
-                inputHandler.executeActions();
-            }
-
-            @Override
-            public void update(long elapsedTime) {
-                entityList.forEach(entity -> entity.update(elapsedTime));
-            }
-
-            @Override
-            public void render(double timeShift) {
-                renderer.render(scene);
-            }
-        };
 
         gameLoop.enable();
     }
@@ -100,12 +73,15 @@ public class GameplayManager {
         inputHandler.addAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1));
         inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
 
+        inputHandler.addAction(R, () -> triangle.setStatus(REMOVE));
+
         inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
-                scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+                rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(scene.getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(
+                rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.setScrollAction((xOfsset, yOffset) -> scene.getCamera().addScale(yOffset));
+        inputHandler.setScrollAction((xOfsset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 
     private void setUpEntities() {
@@ -129,14 +105,15 @@ public class GameplayManager {
                 vec2(0f, -40f),
                 vec2(40f, 40f),
                 vec2(-40f, 40f)
-        ), vec2());
+        ), vec2(), RemovingStrategy.CASCADE);
 
         var line = new Entity(resourceFactory
                 .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
                 vec2());
 
-        entityList = List.of(triangle, line, player, entity);
-        triangle.addChildren(player, entity);
-        scene.addChildren(triangle, line);
+        entityService.registerEntity(triangle, null, UPDATING);
+        entityService.registerEntity(line, null, SLEEPING);
+        entityService.registerEntity(player, triangle, UPDATING);
+        entityService.registerEntity(entity, triangle, UPDATING);
     }
 }

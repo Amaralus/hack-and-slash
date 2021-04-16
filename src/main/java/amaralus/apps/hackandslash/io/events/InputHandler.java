@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.io.events;
 
 import amaralus.apps.hackandslash.graphics.Window;
+import org.springframework.stereotype.Service;
 
 import java.util.EnumMap;
 import java.util.EnumSet;
@@ -10,6 +11,7 @@ import java.util.function.BiConsumer;
 import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
 import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
+@Service
 public class InputHandler {
 
     private final EnumSet<KeyCode> pressedKeys;
@@ -23,12 +25,14 @@ public class InputHandler {
     private float scrollXOffset;
     private float scrollYOffset;
 
-    public InputHandler() {
+    public InputHandler(Window window) {
         pressedKeys = EnumSet.noneOf(KeyCode.class);
         pressedButtons = EnumSet.noneOf(MouseButton.class);
 
         keyActions = new EnumMap<>(KeyCode.class);
         buttonActions = new EnumMap<>(MouseButton.class);
+
+        setUpInputHandling(window);
     }
 
     public void setUpInputHandling(Window window) {

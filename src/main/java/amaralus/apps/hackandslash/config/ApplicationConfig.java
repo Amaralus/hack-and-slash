@@ -16,7 +16,7 @@ public class ApplicationConfig {
 
     @Bean
     public Window window(WindowProperties properties) {
-        var window = new Window(properties.getWidth(), properties.getHeight(), properties.getTitle() + " v-0.1.15");
+        var window = new Window(properties.getWidth(), properties.getHeight(), properties.getTitle() + " v-0.1.16");
         window.show();
         return window;
     }
