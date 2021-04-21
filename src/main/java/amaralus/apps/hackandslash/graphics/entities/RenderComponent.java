@@ -7,4 +7,11 @@ public interface RenderComponent extends Updateable {
     default <C extends RenderComponent> C wrapTo(Class<C> clazz) {
         return clazz.cast(this);
     }
+
+    RenderComponentType getRenderComponentType();
+
+    enum RenderComponentType {
+        SPRITE,
+        PRIMITIVE
+    }
 }

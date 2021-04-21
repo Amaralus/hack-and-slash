@@ -7,6 +7,8 @@ import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.springframework.stereotype.Service;
 
+import static amaralus.apps.hackandslash.graphics.entities.RenderComponent.RenderComponentType.PRIMITIVE;
+import static amaralus.apps.hackandslash.graphics.entities.RenderComponent.RenderComponentType.SPRITE;
 import static org.lwjgl.opengl.GL11.*;
 
 @Service
@@ -37,9 +39,9 @@ public class RendererService {
                     var entity = (Entity) node;
                     var renderComponent = entity.getRenderComponent();
 
-                    if (renderComponent instanceof SpriteRenderComponent)
+                    if (renderComponent.getRenderComponentType() == SPRITE)
                         spriteRenderer.render(activeScene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getGlobalPosition());
-                    if (renderComponent instanceof Primitive)
+                    if (renderComponent.getRenderComponentType() == PRIMITIVE)
                         primitiveRender.render(activeScene.getCamera(), renderComponent.wrapTo(Primitive.class), entity.getGlobalPosition());
                 }
 

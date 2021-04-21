@@ -2,8 +2,6 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
-import amaralus.apps.hackandslash.gameplay.entity.EntityService;
-import amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
@@ -16,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
+import static amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
@@ -25,7 +24,6 @@ public class GameplayManager {
 
     private final Window window;
     private final InputHandler inputHandler;
-    private final EntityService entityService;
     private final EntityFactory entityFactory;
     private final ResourceFactory resourceFactory;
     private final GameLoop gameLoop;
@@ -36,14 +34,12 @@ public class GameplayManager {
 
     public GameplayManager(Window window,
                            InputHandler inputHandler,
-                           EntityService entityService,
                            EntityFactory entityFactory,
                            ResourceFactory resourceFactory,
                            GameLoop gameLoop,
                            RendererService rendererService) {
         this.window = window;
         this.inputHandler = inputHandler;
-        this.entityService = entityService;
         this.entityFactory = entityFactory;
         this.resourceFactory = resourceFactory;
         this.gameLoop = gameLoop;
@@ -85,35 +81,45 @@ public class GameplayManager {
     }
 
     private void setUpEntities() {
-        player = entityFactory.sprite("testTextureSheet")
-                .position(0, 0)
-                .speed(200)
-                .produce();
+
+        triangle = entityFactory.newEntity()
+                .renderComponent(resourceFactory.produceTriangle(
+                        "triangle",
+                        Color.WHITE,
+                        vec2(0f, -40f),
+                        vec2(40f, 40f),
+                        vec2(-40f, 40f)))
+                .startPosition(vec2())
+                .startEntityStatus(UPDATING)
+                .removingStrategy(CASCADE)
+                .register();
+
+        player = entityFactory.newEntity()
+                .sprite("testTextureSheet")
+                .startPosition(vec2())
+                .movementSpeed(200)
+                .targetNode(triangle)
+                .startEntityStatus(UPDATING)
+                .register();
+
         player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
-        var entity = entityFactory.sprite("testTextureSheet")
-                .position(20, 20)
-                .speed(200)
-                .produce();
+        var entity = entityFactory.newEntity()
+                .sprite("testTextureSheet")
+                .startPosition(20, 20)
+                .movementSpeed(200)
+                .targetNode(triangle)
+                .startEntityStatus(UPDATING)
+                .register();
 
         entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2);
         entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
-        triangle = new Entity(resourceFactory.produceTriangle(
-                "triangle",
-                Color.WHITE,
-                vec2(0f, -40f),
-                vec2(40f, 40f),
-                vec2(-40f, 40f)
-        ), vec2(), RemovingStrategy.CASCADE);
+        entityFactory.newEntity()
+                .renderComponent(resourceFactory.produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)))
+                .startPosition(vec2())
+                .startEntityStatus(SLEEPING)
+                .register();
 
-        var line = new Entity(resourceFactory
-                .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
-                vec2());
-
-        entityService.registerEntity(triangle, null, UPDATING);
-        entityService.registerEntity(line, null, SLEEPING);
-        entityService.registerEntity(player, triangle, UPDATING);
-        entityService.registerEntity(entity, triangle, UPDATING);
     }
 }
