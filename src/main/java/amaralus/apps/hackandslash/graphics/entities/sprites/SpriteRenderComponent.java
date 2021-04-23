@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
+import static amaralus.apps.hackandslash.graphics.entities.RenderComponent.RenderComponentType.SPRITE;
+
 public class SpriteRenderComponent implements RenderComponent {
 
     private final Sprite sprite;
@@ -79,5 +81,10 @@ public class SpriteRenderComponent implements RenderComponent {
 
     public void addSpriteRotateAngle(float spriteRotateAngle) {
         setSpriteRotateAngle(this.spriteRotateAngle + spriteRotateAngle);
+    }
+
+    @Override
+    public RenderComponentType getRenderComponentType() {
+        return SPRITE;
     }
 }

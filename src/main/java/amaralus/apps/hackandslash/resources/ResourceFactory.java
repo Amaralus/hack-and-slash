@@ -56,8 +56,9 @@ public class ResourceFactory {
         return new Line(primitiveVao(name, color, start, end), color, start, end);
     }
 
-    public Triangle produceTriangle(String name, Color color, Vector2f first, Vector2f second, Vector2f third) {
-        return new Triangle(primitiveVao(name, color, first, second, third), color, first, second, third);
+    public Triangle produceTriangle(String name, Color color, Vector2f topPoint, Vector2f bottomRightPoint, Vector2f bottomLeftPoint) {
+        var vao = primitiveVao(name, color, topPoint, bottomRightPoint, bottomLeftPoint);
+        return new Triangle(vao, color, topPoint, bottomRightPoint, bottomLeftPoint);
     }
 
     private VertexArraysObject primitiveVao(String name, Color color, Vector2f... vectors) {

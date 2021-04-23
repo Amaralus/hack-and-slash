@@ -1,10 +1,12 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
+import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.resources.ResourceManager;
+import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -14,16 +16,16 @@ public class RendererService {
 
     private final Window window;
     private final SpriteRenderer spriteRenderer;
-    private final PrimitiveRender primitiveRender;
+    private final PrimitiveRenderer primitiveRenderer;
 
     private final Scene activeScene;
 
-    public RendererService(Window window, PrimitiveRender primitiveRender, ResourceManager resourceManager) {
+    public RendererService(Window window, PrimitiveRenderer primitiveRenderer, ResourceManager resourceManager) {
         this.window = window;
         activeScene = new Scene(window.getWidth(), window.getHeight());
 
         spriteRenderer = new SpriteRenderer(resourceManager);
-        this.primitiveRender = primitiveRender;
+        this.primitiveRenderer = primitiveRenderer;
     }
 
     public void render() {
@@ -37,13 +39,24 @@ public class RendererService {
                     var entity = (Entity) node;
                     var renderComponent = entity.getRenderComponent();
 
-                    if (renderComponent instanceof SpriteRenderComponent)
-                        spriteRenderer.render(activeScene.getCamera(), renderComponent.wrapTo(SpriteRenderComponent.class), entity.getGlobalPosition());
-                    if (renderComponent instanceof Primitive)
-                        primitiveRender.render(activeScene.getCamera(), renderComponent.wrapTo(Primitive.class), entity.getGlobalPosition());
+                    doRender(renderComponent, entity.getGlobalPosition());
                 }
 
         window.swapBuffers();
+    }
+
+    private void doRender(RenderComponent renderComponent, Vector2f globalPosition) {
+        var camera = activeScene.getCamera();
+
+        switch (renderComponent.getRenderComponentType()) {
+            case PRIMITIVE:
+                primitiveRenderer.render(camera, renderComponent.wrapTo(Primitive.class), globalPosition);
+                break;
+            case SPRITE:
+                spriteRenderer.render(camera, renderComponent.wrapTo(SpriteRenderComponent.class), globalPosition);
+                break;
+            default:
+        }
     }
 
     private void clear() {

@@ -16,11 +16,11 @@ import static org.lwjgl.opengl.GL11.*;
 
 @Component
 @DependsOn("applicationLoader")
-public class PrimitiveRender {
+public class PrimitiveRenderer {
 
     private final Shader primitiveShader;
 
-    public PrimitiveRender(ResourceManager resourceManager) {
+    public PrimitiveRenderer(ResourceManager resourceManager) {
         primitiveShader = resourceManager.getResource("primitive", Shader.class);
     }
 

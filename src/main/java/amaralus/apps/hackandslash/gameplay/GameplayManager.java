@@ -2,20 +2,18 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
-import amaralus.apps.hackandslash.gameplay.entity.EntityService;
-import amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.io.events.InputHandler;
-import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
+import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
+import static amaralus.apps.hackandslash.graphics.entities.Color.CYAN;
+import static amaralus.apps.hackandslash.graphics.entities.Color.WHITE;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
@@ -25,9 +23,7 @@ public class GameplayManager {
 
     private final Window window;
     private final InputHandler inputHandler;
-    private final EntityService entityService;
     private final EntityFactory entityFactory;
-    private final ResourceFactory resourceFactory;
     private final GameLoop gameLoop;
     private final RendererService rendererService;
 
@@ -36,16 +32,12 @@ public class GameplayManager {
 
     public GameplayManager(Window window,
                            InputHandler inputHandler,
-                           EntityService entityService,
                            EntityFactory entityFactory,
-                           ResourceFactory resourceFactory,
                            GameLoop gameLoop,
                            RendererService rendererService) {
         this.window = window;
         this.inputHandler = inputHandler;
-        this.entityService = entityService;
         this.entityFactory = entityFactory;
-        this.resourceFactory = resourceFactory;
         this.gameLoop = gameLoop;
 
         this.rendererService = rendererService;
@@ -85,35 +77,43 @@ public class GameplayManager {
     }
 
     private void setUpEntities() {
-        player = entityFactory.sprite("testTextureSheet")
-                .position(0, 0)
-                .speed(200)
-                .produce();
-        player.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
 
-        var entity = entityFactory.sprite("testTextureSheet")
+        triangle = entityFactory.entity()
+                .renderComponent(entityFactory.primitiveRenderComponent()
+                        .triangle(vec2(0f, -40f), vec2(40f, 40f), vec2(-40f, 40f))
+                        .primitiveName("triangle")
+                        .color(WHITE)
+                        .produce())
+                .removingStrategy(CASCADE)
+                .register();
+
+        player = entityFactory.entity()
+                .renderComponent(entityFactory.spriteRenderComponent()
+                        .spriteName("testTextureSheet")
+                        .runAnimation()
+                        .produce())
+                .movementSpeed(200)
+                .targetNode(triangle)
+                .register();
+
+        entityFactory.entity()
+                .renderComponent(entityFactory.spriteRenderComponent()
+                        .spriteName("testTextureSheet")
+                        .frameStrip(2)
+                        .runAnimation()
+                        .produce())
                 .position(20, 20)
-                .speed(200)
-                .produce();
+                .movementSpeed(200)
+                .targetNode(triangle)
+                .register();
 
-        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2);
-        entity.getRenderComponent().wrapTo(SpriteRenderComponent.class).computeAnimation(Animation::start);
-
-        triangle = new Entity(resourceFactory.produceTriangle(
-                "triangle",
-                Color.WHITE,
-                vec2(0f, -40f),
-                vec2(40f, 40f),
-                vec2(-40f, 40f)
-        ), vec2(), RemovingStrategy.CASCADE);
-
-        var line = new Entity(resourceFactory
-                .produceLine("line", Color.CYAN, vec2(-50, -50), vec2(50, 50)),
-                vec2());
-
-        entityService.registerEntity(triangle, null, UPDATING);
-        entityService.registerEntity(line, null, SLEEPING);
-        entityService.registerEntity(player, triangle, UPDATING);
-        entityService.registerEntity(entity, triangle, UPDATING);
+        entityFactory.entity()
+                .renderComponent(entityFactory.primitiveRenderComponent()
+                        .line(vec2(-50, -50), vec2(50, 50))
+                        .primitiveName("line")
+                        .color(CYAN)
+                        .produce())
+                .entityStatus(SLEEPING)
+                .register();
     }
 }

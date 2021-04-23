@@ -3,12 +3,15 @@ package amaralus.apps.hackandslash.graphics.scene;
 import java.util.ArrayList;
 import java.util.List;
 
+import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SINGLE;
+
 public abstract class Node {
 
     private final List<Node> children = new ArrayList<>();
 
     private Node parent;
     private int nodeLayerNumber;
+    protected NodeRemovingStrategy nodeRemovingStrategy = SINGLE;
 
     public void addChildren(Node... children) {
         for (var child : children) {
@@ -42,5 +45,13 @@ public abstract class Node {
 
     public void setNodeLayerNumber(int nodeLayerNumber) {
         this.nodeLayerNumber = nodeLayerNumber;
+    }
+
+    public NodeRemovingStrategy getRemovingStrategy() {
+        return nodeRemovingStrategy;
+    }
+
+    public void setRemovingStrategy(NodeRemovingStrategy nodeRemovingStrategy) {
+        this.nodeRemovingStrategy = nodeRemovingStrategy;
     }
 }

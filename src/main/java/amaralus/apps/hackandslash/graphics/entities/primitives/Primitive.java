@@ -7,6 +7,7 @@ import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
 
 import java.nio.FloatBuffer;
 
+import static amaralus.apps.hackandslash.graphics.entities.RenderComponent.RenderComponentType.PRIMITIVE;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 public abstract class Primitive implements RenderComponent {
@@ -40,5 +41,10 @@ public abstract class Primitive implements RenderComponent {
 
     public Color getColor() {
         return color;
+    }
+
+    @Override
+    public RenderComponentType getRenderComponentType() {
+        return PRIMITIVE;
     }
 }

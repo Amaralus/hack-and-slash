@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy.SINGLE;
+import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SINGLE;
 
 @Service
 public class EntityService {
