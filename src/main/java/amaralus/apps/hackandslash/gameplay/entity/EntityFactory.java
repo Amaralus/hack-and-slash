@@ -6,13 +6,14 @@ import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.scene.Node;
+import amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.UPDATING;
-import static amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy.SINGLE;
+import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SINGLE;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Component
@@ -44,14 +45,15 @@ public class EntityFactory {
 
         private RenderComponent renderComponent;
         private Vector2f startPosition = vec2();
-        private RemovingStrategy removingStrategy = SINGLE;
+        private NodeRemovingStrategy nodeRemovingStrategy = SINGLE;
         private float movementSpeed = 100f;
         private Node targetNode;
         private EntityStatus entityStatus = UPDATING;
 
         public Entity produce() {
-            var entity = new Entity(renderComponent, startPosition, removingStrategy);
+            var entity = new Entity(renderComponent, startPosition);
             entity.setSpeedPerSec(movementSpeed);
+            entity.setRemovingStrategy(nodeRemovingStrategy);
             return entity;
         }
 
@@ -75,8 +77,8 @@ public class EntityFactory {
             return this;
         }
 
-        public EntityBuilder removingStrategy(RemovingStrategy removingStrategy) {
-            this.removingStrategy = removingStrategy;
+        public EntityBuilder removingStrategy(NodeRemovingStrategy nodeRemovingStrategy) {
+            this.nodeRemovingStrategy = nodeRemovingStrategy;
             return this;
         }
 

@@ -20,8 +20,8 @@ public class UpdateService implements Updateable {
 
     private EntityService entityService;
 
-    private final List<Entity> updatingEntities = new ArrayList<>(10000);
-    private final List<Entity> sleepingEntities = new ArrayList<>(10000);
+    private final List<Entity> updatingEntities = new ArrayList<>(1000);
+    private final List<Entity> sleepingEntities = new ArrayList<>(1000);
 
     @Override
     public void update(long elapsedTime) {

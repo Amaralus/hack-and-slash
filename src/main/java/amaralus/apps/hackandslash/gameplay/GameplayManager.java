@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
-import static amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy.CASCADE;
+import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.graphics.entities.Color.CYAN;
 import static amaralus.apps.hackandslash.graphics.entities.Color.WHITE;
 import static amaralus.apps.hackandslash.io.events.KeyCode.*;
