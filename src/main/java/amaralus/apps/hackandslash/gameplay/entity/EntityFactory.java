@@ -11,6 +11,8 @@ import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.UPDATING;
+import static amaralus.apps.hackandslash.gameplay.entity.RemovingStrategy.SINGLE;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Component
@@ -41,11 +43,11 @@ public class EntityFactory {
     public class EntityBuilder {
 
         private RenderComponent renderComponent;
-        private Vector2f startPosition;
-        private RemovingStrategy removingStrategy;
-        private float movementSpeed;
+        private Vector2f startPosition = vec2();
+        private RemovingStrategy removingStrategy = SINGLE;
+        private float movementSpeed = 100f;
         private Node targetNode;
-        private EntityStatus startEntityStatus;
+        private EntityStatus entityStatus = UPDATING;
 
         public Entity produce() {
             var entity = new Entity(renderComponent, startPosition, removingStrategy);
@@ -55,7 +57,7 @@ public class EntityFactory {
 
         public Entity register() {
             var entity = produce();
-            entityService.registerEntity(entity, targetNode, startEntityStatus);
+            entityService.registerEntity(entity, targetNode, entityStatus);
             return entity;
         }
 
@@ -89,7 +91,7 @@ public class EntityFactory {
         }
 
         public EntityBuilder entityStatus(EntityStatus startEntityStatus) {
-            this.startEntityStatus = startEntityStatus;
+            this.entityStatus = startEntityStatus;
             return this;
         }
     }
@@ -97,8 +99,8 @@ public class EntityFactory {
     public class SpriteRenderComponentBuilder {
 
         private String spriteName;
-        private int frameStrip;
-        private boolean runAnimation;
+        private int frameStrip = 0;
+        private boolean runAnimation = false;
 
         public RenderComponent produce() {
             var renderComponent = new SpriteRenderComponent(getSprite(spriteName));

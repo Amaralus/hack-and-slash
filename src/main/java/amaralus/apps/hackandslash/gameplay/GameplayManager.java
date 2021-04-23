@@ -84,21 +84,16 @@ public class GameplayManager {
                         .primitiveName("triangle")
                         .color(WHITE)
                         .produce())
-                .position(vec2())
-                .entityStatus(UPDATING)
                 .removingStrategy(CASCADE)
                 .register();
 
         player = entityFactory.entity()
                 .renderComponent(entityFactory.spriteRenderComponent()
                         .spriteName("testTextureSheet")
-                        .frameStrip(0)
                         .runAnimation()
                         .produce())
-                .position(vec2())
                 .movementSpeed(200)
                 .targetNode(triangle)
-                .entityStatus(UPDATING)
                 .register();
 
         entityFactory.entity()
@@ -110,7 +105,6 @@ public class GameplayManager {
                 .position(20, 20)
                 .movementSpeed(200)
                 .targetNode(triangle)
-                .entityStatus(UPDATING)
                 .register();
 
         entityFactory.entity()
@@ -119,9 +113,7 @@ public class GameplayManager {
                         .primitiveName("line")
                         .color(CYAN)
                         .produce())
-                .position(vec2())
                 .entityStatus(SLEEPING)
                 .register();
-
     }
 }
