@@ -67,10 +67,10 @@ public class GameplayManager {
 
         inputHandler.addAction(R, () -> triangle.setStatus(REMOVE));
 
-        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
+        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.getPhysicalComponent().setPosition(
                 rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(
                 rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
