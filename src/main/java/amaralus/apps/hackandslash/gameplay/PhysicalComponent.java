@@ -3,24 +3,32 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.common.Updateable;
 import org.joml.Vector2f;
 
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
+
 public class PhysicalComponent implements Updateable {
 
     private Vector2f position;
+    private Vector2f movementDirection;
 
     private float speed;
-    private float speedCoef;
 
     public PhysicalComponent(Vector2f position) {
         this.position = position;
+        movementDirection = vec2();
     }
 
     @Override
     public void update(long elapsedTime) {
-        speedCoef = speed * elapsedTime * 0.001f;
+        if (!movementDirection.equals(0f, 0f)) {
+            var speedCoef = speed * elapsedTime * 0.001f;
+
+            position.add(movementDirection.mul(speedCoef));
+            movementDirection = vec2();
+        }
     }
 
     public void move(Vector2f direction) {
-        position.add(direction.mul(speedCoef));
+        movementDirection.add(direction);
     }
 
     public Vector2f getPosition() {
