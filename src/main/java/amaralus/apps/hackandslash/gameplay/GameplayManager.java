@@ -58,19 +58,16 @@ public class GameplayManager {
         inputHandler.addAction(A, () -> player.getInputComponent().addCommand(ENTITY_MOVE_LEFT));
         inputHandler.addAction(D, () -> player.getInputComponent().addCommand(ENTITY_MOVE_RIGHT));
 
-        inputHandler.addAction(Q, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).addSpriteRotateAngle(-5f));
-        inputHandler.addAction(E, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).addSpriteRotateAngle(5f));
-
         inputHandler.addAction(DIG1, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(0));
         inputHandler.addAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1));
         inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
 
         inputHandler.addAction(R, () -> triangle.setStatus(REMOVE));
 
-        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.setPosition(
+        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.getPhysicalComponent().setPosition(
                 rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.setPosition(
+        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(
                 rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
         inputHandler.setScrollAction((xOfsset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));

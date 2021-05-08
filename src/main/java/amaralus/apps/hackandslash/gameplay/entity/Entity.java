@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.gameplay.InputComponent;
+import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Vector2f;
@@ -21,29 +22,27 @@ public class Entity extends Node implements Updateable {
 
     private final long entityId;
     private final InputComponent inputComponent;
+    private final PhysicalComponent physicalComponent;
     private final RenderComponent renderComponent;
-    private Vector2f position;
     private Vector2f globalPosition;
 
     private EntityStatus status;
-
-    private float speedPerSec;
-    private float speedCoef;
 
     public Entity(RenderComponent renderComponent, Vector2f position) {
         entityId = entityIdSource.incrementAndGet();
         status = NEW;
         inputComponent = new InputComponent();
+        physicalComponent = new PhysicalComponent(position);
         this.renderComponent = renderComponent;
-        this.position = position;
         globalPosition = vec2();
     }
 
     @Override
     public void update(long elapsedTime) {
-        speedCoef = speedPerSec * elapsedTime * 0.001f;
 
         inputComponent.executeCommands(this);
+        physicalComponent.update(elapsedTime);
+
         updateGlobalPosition();
 
         renderComponent.update(elapsedTime);
@@ -52,13 +51,13 @@ public class Entity extends Node implements Updateable {
     private void updateGlobalPosition() {
         var parent = getParent();
         if (parent instanceof Entity)
-            globalPosition = copy(((Entity) parent).globalPosition).add(position);
+            globalPosition = copy(((Entity) parent).globalPosition).add(physicalComponent.getPosition());
         else
-            globalPosition = position;
+            globalPosition = physicalComponent.getPosition();
     }
 
     public void move(Vector2f direction) {
-        position.add(direction.mul(speedCoef));
+        physicalComponent.move(direction);
     }
 
     public long getEntityId() {
@@ -69,12 +68,12 @@ public class Entity extends Node implements Updateable {
         return inputComponent;
     }
 
-    public RenderComponent getRenderComponent() {
-        return renderComponent;
+    public PhysicalComponent getPhysicalComponent() {
+        return physicalComponent;
     }
 
-    public Vector2f getPosition() {
-        return position;
+    public RenderComponent getRenderComponent() {
+        return renderComponent;
     }
 
     public Vector2f getGlobalPosition() {
@@ -83,18 +82,6 @@ public class Entity extends Node implements Updateable {
 
     public void setGlobalPosition(Vector2f globalPosition) {
         this.globalPosition = globalPosition;
-    }
-
-    public void setPosition(Vector2f position) {
-        this.position = position;
-    }
-
-    public float getSpeedPerSec() {
-        return speedPerSec;
-    }
-
-    public void setSpeedPerSec(float speedPerSec) {
-        this.speedPerSec = speedPerSec;
     }
 
     public EntityStatus getStatus() {

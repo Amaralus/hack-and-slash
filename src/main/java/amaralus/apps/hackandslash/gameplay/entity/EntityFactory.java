@@ -52,7 +52,7 @@ public class EntityFactory {
 
         public Entity produce() {
             var entity = new Entity(renderComponent, startPosition);
-            entity.setSpeedPerSec(movementSpeed);
+            entity.getPhysicalComponent().setSpeed(movementSpeed);
             entity.setRemovingStrategy(nodeRemovingStrategy);
             return entity;
         }
