@@ -1,13 +1,14 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.common.Destroyable;
+import amaralus.apps.hackandslash.common.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public final class ResourceBundle<R extends Resource> implements Destroyable {
+class ResourceBundle<R extends Resource> implements Destroyable, Nullable {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceBundle.class);
 
@@ -46,5 +47,42 @@ public final class ResourceBundle<R extends Resource> implements Destroyable {
 
     public Class<R> getResourcesClass() {
         return resourcesClass;
+    }
+
+    static final class NullResourceBundle extends ResourceBundle {
+
+        public NullResourceBundle() {
+            super(null);
+        }
+
+        @Override
+        public boolean isNull() {
+            return true;
+        }
+
+        @Override
+        public void addResource(Resource resource) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void removeResource(Resource resource) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Resource getResource(String name) {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public void destroy() {
+            throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public Class getResourcesClass() {
+            throw new UnsupportedOperationException();
+        }
     }
 }
