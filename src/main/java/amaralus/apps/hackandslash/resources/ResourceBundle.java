@@ -41,19 +41,10 @@ public final class ResourceBundle<R extends Resource> implements Destroyable {
 
     @Override
     public void destroy() {
-        for (var resource : resourceMap.values()) {
-            resource.destroy();
-            var resourceInfo = resource.resourceInfoName();
-            log.debug("Ресурс освобождён: {}", resourceInfo);
-        }
-    }
-
-    public boolean isEmpty() {
-        return resourceMap.isEmpty();
+        resourceMap.values().forEach(this::removeResource);
     }
 
     public Class<R> getResourcesClass() {
         return resourcesClass;
     }
-
 }
