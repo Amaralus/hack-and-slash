@@ -29,7 +29,7 @@ public class ShaderFactory {
 
         linkShader(program, vertexShaderId, fragmentShaderId);
 
-        return new Shader(program);
+        return new Shader(name, program);
     }
 
     private int loadShader(int type, String name) {

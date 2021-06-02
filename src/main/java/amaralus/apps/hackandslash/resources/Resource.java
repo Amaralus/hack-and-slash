@@ -2,30 +2,25 @@ package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 
-public class Resource<R extends Destroyable> implements Destroyable {
+import java.util.Objects;
 
-    private final R resourceData;
-    private final String name;
+public abstract class Resource implements Destroyable {
 
-    public Resource(String name, R resourceData) {
-        this.resourceData = resourceData;
-        this.name = name;
+    private final String resourceName;
+
+    public Resource(String resourceName) {
+        this.resourceName = Objects.requireNonNull(resourceName);
     }
 
     public static String resourceInfoName(Class<?> clazz, String name) {
         return clazz.getSimpleName() + "#" + name;
     }
 
-    @Override
-    public void destroy() {
-        resourceData.destroy();
+    public String resourceInfoName() {
+        return resourceInfoName(getClass(), resourceName);
     }
 
-    public R getResourceData() {
-        return resourceData;
-    }
-
-    public String getName() {
-        return name;
+    public String getResourceName() {
+        return resourceName;
     }
 }

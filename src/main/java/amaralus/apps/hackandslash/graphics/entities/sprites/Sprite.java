@@ -1,9 +1,9 @@
 package amaralus.apps.hackandslash.graphics.entities.sprites;
 
-import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
 import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
+import amaralus.apps.hackandslash.resources.Resource;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -12,14 +12,15 @@ import java.util.List;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class Sprite implements Destroyable {
+public class Sprite extends Resource {
 
     private final Texture texture;
     private final VertexArraysObject vao;
     private final Vector2f offsetToSpriteCenter;
     private final List<FramesStrip> framesStrips;
 
-    public Sprite(Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
+    public Sprite(String resourceName, Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
+        super(resourceName);
         this.texture = texture;
         this.vao = vao;
 

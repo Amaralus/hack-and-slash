@@ -1,24 +1,25 @@
 package amaralus.apps.hackandslash.graphics.entities.gpu;
 
-import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.graphics.entities.Bindable;
+import amaralus.apps.hackandslash.resources.Resource;
 
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class VertexArraysObject implements Bindable, Destroyable {
+public class VertexArraysObject extends Resource implements Bindable {
 
     private final int id;
 
     private List<VertexBufferObject> buffers;
 
-    private VertexArraysObject() {
+    private VertexArraysObject(String resourceName) {
+        super(resourceName);
         id = glGenVertexArrays();
     }
 
-    public VertexArraysObject(List<VertexBufferObject> buffers) {
-        this();
+    public VertexArraysObject(String resourceName, List<VertexBufferObject> buffers) {
+        this(resourceName);
         this.buffers = buffers;
         init();
     }
@@ -41,7 +42,7 @@ public class VertexArraysObject implements Bindable, Destroyable {
 
     @Override
     public int id() {
-        return 0;
+        return id;
     }
 
     @Override

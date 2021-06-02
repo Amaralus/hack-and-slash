@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics.entities.gpu;
 
-import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.graphics.entities.Bindable;
+import amaralus.apps.hackandslash.resources.Resource;
 
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -11,7 +11,7 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-public abstract class VertexBufferObject<B extends Buffer> implements Bindable, Destroyable {
+public abstract class VertexBufferObject<B extends Buffer> extends Resource implements Bindable {
 
     private final int id;
     private final int size;
@@ -22,7 +22,8 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
 
     private List<DataFormat> dataFormats;
 
-    private VertexBufferObject(BufferType type, BufferUsage usage, int size, int dataTypeBytes) {
+    private VertexBufferObject(String resourceName, BufferType type, BufferUsage usage, int size, int dataTypeBytes) {
+        super(resourceName);
         id = glGenBuffers();
         dataFormats = new ArrayList<>();
         this.type = type;
@@ -31,8 +32,8 @@ public abstract class VertexBufferObject<B extends Buffer> implements Bindable, 
         this.dataTypeBytes = dataTypeBytes;
     }
 
-    protected VertexBufferObject(BufferType type, BufferUsage usage, B buffer, int dataTypeBytes) {
-        this(type, usage, buffer.capacity(), dataTypeBytes);
+    protected VertexBufferObject(String resourceName, BufferType type, BufferUsage usage, B buffer, int dataTypeBytes) {
+        this(resourceName, type, usage, buffer.capacity(), dataTypeBytes);
         bind();
         initBuffer(buffer);
         unbind();

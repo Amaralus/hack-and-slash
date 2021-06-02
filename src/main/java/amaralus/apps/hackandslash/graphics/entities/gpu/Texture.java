@@ -1,17 +1,18 @@
 package amaralus.apps.hackandslash.graphics.entities.gpu;
 
-import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.graphics.entities.Bindable;
+import amaralus.apps.hackandslash.resources.Resource;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Texture implements Bindable, Destroyable {
+public class Texture extends Resource implements Bindable {
 
     private final int id;
     private final int width;
     private final int height;
 
-    public Texture(int id, int width, int height) {
+    public Texture(String resourceName, int id, int width, int height) {
+        super(resourceName);
         this.id = id;
         this.width = width;
         this.height = height;

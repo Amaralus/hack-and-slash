@@ -7,12 +7,12 @@ import static org.lwjgl.opengl.GL15.glBufferSubData;
 
 public class FloatVertexBufferObject extends VertexBufferObject<FloatBuffer> {
 
-    public FloatVertexBufferObject(BufferType type, BufferUsage usage, float[] buffer) {
-        this(type, usage, FloatBuffer.wrap(buffer));
+    public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, float[] buffer) {
+        this(resourceName, type, usage, FloatBuffer.wrap(buffer));
     }
 
-    public FloatVertexBufferObject(BufferType type, BufferUsage usage, FloatBuffer buffer) {
-        super(type, usage, buffer, Float.BYTES);
+    public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, FloatBuffer buffer) {
+        super(resourceName, type, usage, buffer, Float.BYTES);
     }
 
     @Override

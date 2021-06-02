@@ -51,9 +51,9 @@ public class VaoFactory {
                 .collect(Collectors.toList());
 
         vbos.addAll(vertexBufferObjects);
-        var vao = new VertexArraysObject(vbos);
+        var vao = new VertexArraysObject(resourceName, vbos);
 
-        if (resourceManager != null) resourceManager.addResource(resourceName, vao);
+        if (resourceManager != null) resourceManager.addResource(vao);
         return vao;
     }
 }

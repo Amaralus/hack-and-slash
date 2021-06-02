@@ -9,11 +9,11 @@ import java.util.Map;
 
 import static amaralus.apps.hackandslash.resources.Resource.resourceInfoName;
 
-public final class ResourceBundle<R extends Destroyable> implements Destroyable {
+public final class ResourceBundle<R extends Resource> implements Destroyable {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceBundle.class);
 
-    private final Map<String, Resource<R>> resourceMap;
+    private final Map<String, R> resourceMap;
     private final Class<R> resourcesClass;
 
     ResourceBundle(Class<R> resourcesClass) {
@@ -21,18 +21,14 @@ public final class ResourceBundle<R extends Destroyable> implements Destroyable 
         resourceMap = new HashMap<>();
     }
 
-    public void addResource(String name, R resource) {
-        addResource(new Resource<>(name, resource));
-    }
-
-    public void addResource(Resource<R> resource) {
-        if (resourceMap.putIfAbsent(resource.getName(), resource) != null) {
+    public void addResource(R resource) {
+        if (resourceMap.putIfAbsent(resource.getResourceName(), resource) != null) {
             resource.destroy();
-            throw new IllegalArgumentException("resource " + resourceInfoName(resourcesClass, resource.getName()) + " already exist!");
+            throw new IllegalArgumentException("resource " + resource.resourceInfoName() + " already exist!");
         }
     }
 
-    public Resource<R> getResource(String name) {
+    public R getResource(String name) {
         var resource = resourceMap.get(name);
         if (resource == null) throw new ResourceNotFoundException("resource " + resourceInfoName(resourcesClass, name) + " not found!");
         return resource;
@@ -40,9 +36,9 @@ public final class ResourceBundle<R extends Destroyable> implements Destroyable 
 
     @Override
     public void destroy() {
-        for (Resource<R> resource : resourceMap.values()) {
+        for (var resource : resourceMap.values()) {
             resource.destroy();
-            var resourceInfo = resourceInfoName(resourcesClass, resource.getName());
+            var resourceInfo = resource.resourceInfoName();
             log.debug("Ресурс освобождён: {}", resourceInfo);
         }
     }
