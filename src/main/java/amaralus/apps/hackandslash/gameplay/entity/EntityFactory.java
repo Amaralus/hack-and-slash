@@ -43,7 +43,7 @@ public class EntityFactory {
 
     public class EntityBuilder {
 
-        private RenderComponent renderComponent;
+        private RenderComponent renderComponent = new RenderComponent.NullRenderComponent();
         private Vector2f startPosition = vec2();
         private NodeRemovingStrategy nodeRemovingStrategy = SINGLE;
         private float movementSpeed = 100f;

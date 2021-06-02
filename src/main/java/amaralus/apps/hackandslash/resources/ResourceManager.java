@@ -33,20 +33,20 @@ public class ResourceManager implements Destroyable {
 
     public <R extends Resource> void removeResource(R resource) {
         var bundle = (ResourceBundle<R>) getResourceBundle(resource.getClass());
-        if (bundle != null)
+        if (bundle.notNull())
             bundle.removeResource(resource);
     }
 
     public <R extends Resource> R getResource(String name, Class<R> resourceClass) {
         var bundle = getResourceBundle(resourceClass);
-        if (bundle == null)
+        if (bundle.isNull())
             throw new ResourceNotFoundException(resourceClass, name);
         return bundle.getResource(name);
     }
 
     private <R extends Resource> ResourceBundle<R> getOrCreateResourceBundle(Class<R> resourceClass) {
         var bundle = getResourceBundle(resourceClass);
-        if (bundle != null) return bundle;
+        if (bundle.notNull()) return bundle;
 
         bundle = new ResourceBundle<>(resourceClass);
         resourceBundleMap.put(resourceClass, bundle);
@@ -57,6 +57,6 @@ public class ResourceManager implements Destroyable {
     }
 
     private <R extends Resource> ResourceBundle<R> getResourceBundle(Class<R> resourceClass) {
-        return (ResourceBundle<R>) resourceBundleMap.get(resourceClass);
+        return (ResourceBundle<R>) resourceBundleMap.getOrDefault(resourceClass, new ResourceBundle.NullResourceBundle());
     }
 }

@@ -46,6 +46,9 @@ public class RendererService {
     }
 
     private void doRender(RenderComponent renderComponent, Vector2f globalPosition) {
+        if (renderComponent.isNull())
+            return;
+
         var camera = activeScene.getCamera();
 
         switch (renderComponent.getRenderComponentType()) {
