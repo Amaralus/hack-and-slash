@@ -4,10 +4,8 @@ import amaralus.apps.hackandslash.common.Destroyable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
-
-import static amaralus.apps.hackandslash.resources.Resource.resourceInfoName;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class ResourceBundle<R extends Resource> implements Destroyable {
 
@@ -18,7 +16,7 @@ public final class ResourceBundle<R extends Resource> implements Destroyable {
 
     ResourceBundle(Class<R> resourcesClass) {
         this.resourcesClass = resourcesClass;
-        resourceMap = new HashMap<>();
+        resourceMap = new ConcurrentHashMap<>();
     }
 
     public void addResource(R resource) {
@@ -30,7 +28,7 @@ public final class ResourceBundle<R extends Resource> implements Destroyable {
 
     public R getResource(String name) {
         var resource = resourceMap.get(name);
-        if (resource == null) throw new ResourceNotFoundException("resource " + resourceInfoName(resourcesClass, name) + " not found!");
+        if (resource == null) throw new ResourceNotFoundException(resourcesClass, name);
         return resource;
     }
 

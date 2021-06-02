@@ -8,8 +8,6 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static amaralus.apps.hackandslash.resources.Resource.resourceInfoName;
-
 @Service
 public class ResourceManager implements Destroyable {
 
@@ -36,7 +34,7 @@ public class ResourceManager implements Destroyable {
     public <R extends Resource> R getResource(String name, Class<R> resourceClass) {
         var bundle = getResourceBundle(resourceClass);
         if (bundle == null)
-            throw new ResourceNotFoundException("resource bundle for resource " + resourceInfoName(resourceClass, name) + " doesn`t exist!");
+            throw new ResourceNotFoundException(resourceClass, name);
         return bundle.getResource(name);
     }
 
