@@ -25,10 +25,16 @@ public class ResourceManager implements Destroyable {
     }
 
     public <R extends Resource> void addResource(R resource) {
-        ResourceBundle<R> bundle = (ResourceBundle<R>) getOrCreateResourceBundle(resource.getClass());
+        var bundle = (ResourceBundle<R>) getOrCreateResourceBundle(resource.getClass());
         bundle.addResource(resource);
         var resourceInfo = resource.resourceInfoName();
         log.debug("Добавлен ресурс {}", resourceInfo);
+    }
+
+    public <R extends Resource> void removeResource(R resource) {
+        var bundle = (ResourceBundle<R>) getResourceBundle(resource.getClass());
+        if (bundle != null)
+            bundle.removeResource(resource);
     }
 
     public <R extends Resource> R getResource(String name, Class<R> resourceClass) {

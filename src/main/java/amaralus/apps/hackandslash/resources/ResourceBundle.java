@@ -26,6 +26,13 @@ public final class ResourceBundle<R extends Resource> implements Destroyable {
         }
     }
 
+    public void removeResource(R resource) {
+        resourceMap.remove(resource.getResourceName());
+        resource.destroy();
+        var resourceInfo = resource.resourceInfoName();
+        log.debug("Ресурс освобождён: {}", resourceInfo);
+    }
+
     public R getResource(String name) {
         var resource = resourceMap.get(name);
         if (resource == null) throw new ResourceNotFoundException(resourcesClass, name);
@@ -39,6 +46,10 @@ public final class ResourceBundle<R extends Resource> implements Destroyable {
             var resourceInfo = resource.resourceInfoName();
             log.debug("Ресурс освобождён: {}", resourceInfo);
         }
+    }
+
+    public boolean isEmpty() {
+        return resourceMap.isEmpty();
     }
 
     public Class<R> getResourcesClass() {
