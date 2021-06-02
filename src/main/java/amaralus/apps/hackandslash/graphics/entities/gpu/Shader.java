@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.graphics.entities.gpu;
 
-import amaralus.apps.hackandslash.common.Destroyable;
+import amaralus.apps.hackandslash.resources.Resource;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
@@ -8,11 +8,12 @@ import org.lwjgl.BufferUtils;
 import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
-public class Shader implements Destroyable {
+public class Shader extends Resource {
 
     private final int program;
 
-    public Shader(int shaderProgramId) {
+    public Shader(String resourceName, int shaderProgramId) {
+        super(resourceName);
         program = shaderProgramId;
     }
 

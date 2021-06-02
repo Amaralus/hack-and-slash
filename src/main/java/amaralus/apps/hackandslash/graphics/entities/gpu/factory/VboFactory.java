@@ -75,12 +75,12 @@ public class VboFactory {
 
     public VertexBufferObject build() {
         var buffer = intBuffer != null ?
-                new IntVertexBufferObject(type, usage, intBuffer) :
-                new FloatVertexBufferObject(type, usage, floatBuffer);
+                new IntVertexBufferObject(resourceName, type, usage, intBuffer) :
+                new FloatVertexBufferObject(resourceName, type, usage, floatBuffer);
 
         buffer.setDataFormats(dataFormats);
 
-        if (resourceManager != null) resourceManager.addResource(resourceName, buffer);
+        if (resourceManager != null) resourceManager.addResource(buffer);
         return buffer;
     }
 }

@@ -44,12 +44,12 @@ public class ResourceFactory {
 
     public void produceShader(String shaderName) {
         var shader = shaderFactory.produce(shaderName);
-        resourceManager.addResource(shaderName, shader);
+        resourceManager.addResource(shader);
     }
 
     public void produceTexture(String textureName) {
         var texture = textureFactory.produce(textureName);
-        resourceManager.addResource(textureName, texture);
+        resourceManager.addResource(texture);
     }
 
     public Line produceLine(String name, Color color, Vector2f start, Vector2f end) {
@@ -105,8 +105,8 @@ public class ResourceFactory {
                 .saveAsVao(spriteName, resourceManager)
                 .build();
 
-        var sprite = new Sprite(texture, vao, spriteSheetData);
-        resourceManager.addResource(spriteName, sprite);
+        var sprite = new Sprite(spriteName, texture, vao, spriteSheetData);
+        resourceManager.addResource(sprite);
     }
 
     private float[] textureData(Texture texture, SpriteSheetData spriteSheetData) {

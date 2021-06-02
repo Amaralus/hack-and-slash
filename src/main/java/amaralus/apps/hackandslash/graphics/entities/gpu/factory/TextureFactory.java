@@ -25,7 +25,7 @@ public class TextureFactory {
 
         var imageData = fileLoadService.loadImageData("sprites/" + name + ".png");
 
-        var texture = new Texture(glGenTextures(), imageData.getWidth(), imageData.getHeight());
+        var texture = new Texture(name, glGenTextures(), imageData.getWidth(), imageData.getHeight());
         texture.bind();
 
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
