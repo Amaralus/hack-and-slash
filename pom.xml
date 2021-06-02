@@ -6,7 +6,7 @@
 
     <groupId>amaralus.apps</groupId>
     <artifactId>hack-and-slash</artifactId>
-    <version>0.1.18</version>
+    <version>0.2.1</version>
 
     <properties>
         <lwjgl.version>3.2.3</lwjgl.version>
