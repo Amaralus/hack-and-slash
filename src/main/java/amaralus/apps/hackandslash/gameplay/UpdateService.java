@@ -1,7 +1,6 @@
 package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.common.TaskManager;
-import amaralus.apps.hackandslash.common.UnexpectedInterruptedException;
 import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityService;
@@ -12,8 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
@@ -27,6 +24,7 @@ public class UpdateService implements Updateable {
     private EntityService entityService;
 
     private final List<Entity> updatingEntities = new ArrayList<>(1000);
+    private final List<Entity> newEntities = new ArrayList<>(100);
     private final List<Entity> sleepingEntities = new ArrayList<>(1000);
 
     public UpdateService(TaskManager taskManager) {
@@ -35,42 +33,58 @@ public class UpdateService implements Updateable {
 
     @Override
     public void update(long elapsedTime) {
-        moveUpdatingEntities();
-
-        entityService.activateNewEntities();
-
-        updateEntities(elapsedTime);
-
-        removeEntities();
-
-        moveSleepingEntities();
+        asyncUpdate(elapsedTime);
     }
 
-    private void updateEntities(long elapsedTime) {
-        taskManager.addTasks(updatingEntities.stream()
-                .map(entity -> toCallable(entity, elapsedTime))
-                .collect(Collectors.toList()))
-                .forEach(future -> {
-                    try {
-                        future.get();
-                    } catch (InterruptedException | ExecutionException e) {
-                        throw new UnexpectedInterruptedException(e);
-                    }
+    public void asyncUpdate(long elapsedTime) {
+        //sleep -> update
+        var sleepToUpdateFuture = taskManager.executeTask(() -> filterByStatus(sleepingEntities, UPDATING))
+                .thenAccept(toUpdate -> {
+                    updatingEntities.addAll(toUpdate);
+                    sleepingEntities.removeAll(toUpdate);
                 });
+
+        // getNewEntities
+        entityService.activateNewEntities();
+        sleepToUpdateFuture.join();
+        processNewEntities();
+
+        var updatedToRemoveFuture = taskManager.executeTasks(updatingEntities, entity -> updateEntity(entity, elapsedTime))
+                .thenApply(updated -> filterByStatus(updated, REMOVE))
+                .thenApply(toRemove -> {
+                    updatingEntities.removeAll(toRemove);
+                    return toRemove;
+                });
+
+        var sleepingToRemoveFuture = taskManager.executeTask(() -> filterByStatus(sleepingEntities, REMOVE))
+                .thenApply(toRemove -> {
+                    sleepingEntities.removeAll(toRemove);
+                    return toRemove;
+                });
+
+        updatedToRemoveFuture.thenCombine(sleepingToRemoveFuture, (fromUpdate, fromSleep) -> {
+            fromUpdate.addAll(fromSleep);
+            entityService.removeEntities(fromUpdate);
+            return updatingEntities;
+        })
+                .thenApply(updated -> filterByStatus(updated, SLEEPING))
+                .thenAccept(toSleep -> {
+                    sleepingEntities.addAll(toSleep);
+                    updatingEntities.removeAll(toSleep);
+                })
+                .join();
     }
 
-    private Callable<?> toCallable(Entity entity, long elapsedTime) {
-        return () -> {
-            entity.update(elapsedTime);
-            return null;
-        };
+    private Entity updateEntity(Entity entity, long elapsedTime) {
+        entity.update(elapsedTime);
+        return entity;
     }
 
-    public void addEntities(List<Entity> entities) {
+    public void processNewEntities() {
         var toUpdate = new ArrayList<Entity>();
         var toSleep = new ArrayList<Entity>();
 
-        for (var entity : entities)
+        for (var entity : newEntities)
             switch (entity.getStatus()) {
                 case NEW:
                     entity.setStatus(UPDATING);
@@ -89,6 +103,7 @@ public class UpdateService implements Updateable {
 
         updatingEntities.addAll(toUpdate);
         sleepingEntities.addAll(toSleep);
+        newEntities.clear();
     }
 
     public void removeAll() {
@@ -96,35 +111,14 @@ public class UpdateService implements Updateable {
         sleepingEntities.clear();
     }
 
-    private void moveUpdatingEntities() {
-        var toUpdate = filterByStatus(sleepingEntities, UPDATING);
-        updatingEntities.addAll(toUpdate);
-        sleepingEntities.removeAll(toUpdate);
-    }
-
-    private void moveSleepingEntities() {
-        var toSleep = filterByStatus(updatingEntities, SLEEPING);
-        sleepingEntities.addAll(toSleep);
-        updatingEntities.removeAll(toSleep);
-    }
-
-    private void removeEntities() {
-        var fromUpdate = filterByStatus(updatingEntities, REMOVE);
-        updatingEntities.removeAll(fromUpdate);
-
-        var toRemove = new ArrayList<>(fromUpdate);
-
-        var fromSleep = filterByStatus(sleepingEntities, REMOVE);
-        sleepingEntities.removeAll(fromSleep);
-        toRemove.addAll(fromSleep);
-
-        entityService.removeEntities(toRemove);
-    }
-
     private List<Entity> filterByStatus(List<Entity> entityList, EntityStatus status) {
         return entityList.stream()
-                .filter(entity ->  entity.getStatus() == status)
+                .filter(entity -> entity.getStatus() == status)
                 .collect(Collectors.toList());
+    }
+
+    public void addEntities(List<Entity> entities) {
+        newEntities.addAll(entities);
     }
 
     @Autowired

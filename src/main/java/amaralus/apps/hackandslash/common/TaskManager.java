@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
+import java.util.function.UnaryOperator;
+import java.util.stream.Collectors;
 
 @Service
 public class TaskManager {
@@ -28,6 +28,25 @@ public class TaskManager {
         } catch (InterruptedException e) {
             throw new UnexpectedInterruptedException(e);
         }
+    }
+
+    public <E> CompletableFuture<E> executeTask(Supplier<E> supplier) {
+        return CompletableFuture.supplyAsync(supplier, executorService);
+    }
+
+    public <E> CompletableFuture<List<E>> executeTasks(List<E> entities, UnaryOperator<E> action) {
+        var futures = entities.stream()
+                .map(entity -> CompletableFuture.supplyAsync(() -> action.apply(entity), executorService))
+                .collect(Collectors.toList());
+
+        return CompletableFuture.allOf(futures.toArray(new CompletableFuture[0]))
+                .thenApply(v -> futures.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList()));
+    }
+
+    public Executor getExecutor() {
+        return Executors.unconfigurableExecutorService(executorService);
     }
 
     @PreDestroy
