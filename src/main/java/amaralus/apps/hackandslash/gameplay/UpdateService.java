@@ -34,10 +34,6 @@ public class UpdateService implements Updateable {
 
     @Override
     public void update(long elapsedTime) {
-        asyncUpdate(elapsedTime);
-    }
-
-    public void asyncUpdate(long elapsedTime) {
         // синхронизируем sleep -> update
         var sleepToUpdateFuture = sleepToUpdate();
 
