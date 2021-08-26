@@ -70,7 +70,7 @@ public class GameplayManager {
         inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(
                 rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
 
-        inputHandler.setScrollAction((xOfsset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
+        inputHandler.setScrollAction((xOffset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 
     private void setUpEntities() {

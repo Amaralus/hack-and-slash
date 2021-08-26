@@ -1,14 +1,17 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.common.TaskManager;
 import amaralus.apps.hackandslash.common.Updateable;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityService;
+import amaralus.apps.hackandslash.gameplay.entity.EntityStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
@@ -18,29 +21,58 @@ public class UpdateService implements Updateable {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateService.class);
 
+    private final TaskManager taskManager;
     private EntityService entityService;
 
     private final List<Entity> updatingEntities = new ArrayList<>(1000);
+    private final List<Entity> newEntities = new ArrayList<>(100);
     private final List<Entity> sleepingEntities = new ArrayList<>(1000);
+
+    public UpdateService(TaskManager taskManager) {
+        this.taskManager = taskManager;
+    }
 
     @Override
     public void update(long elapsedTime) {
-        moveUpdatingEntities();
+        // синхронизируем sleep -> update
+        var sleepToUpdateFuture = sleepToUpdate();
 
+        // получение новых сущностей
         entityService.activateNewEntities();
+        sleepToUpdateFuture.join();
+        // синхронизация new -> sleep, update
+        processNewEntities();
 
-        updatingEntities.forEach(entity -> entity.update(elapsedTime));
+        // обновление сущностей
+        taskManager.executeTasks(updatingEntities, entity -> updateEntity(entity, elapsedTime)).join();
 
-        removeEntities();
+        // в будущем тут будет фаза распространения изменений
 
-        moveSleepingEntities();
+        // удаление сущностей
+        removeAfterUpdate().join();
+
+        // синхронизация update -> sleep
+        updateToSleep().join();
     }
 
-    public void addEntities(List<Entity> entities) {
+    private Entity updateEntity(Entity entity, long elapsedTime) {
+        entity.update(elapsedTime);
+        return entity;
+    }
+
+    private CompletableFuture<Void> sleepToUpdate() {
+        var sleepFiltered = taskManager.supplyAsync(() -> filterByStatus(sleepingEntities, UPDATING));
+
+        return CompletableFuture.allOf(
+                taskManager.acceptAsync(sleepFiltered, updatingEntities::addAll),
+                taskManager.acceptAsync(sleepFiltered, sleepingEntities::removeAll));
+    }
+
+    public void processNewEntities() {
         var toUpdate = new ArrayList<Entity>();
         var toSleep = new ArrayList<Entity>();
 
-        for (var entity : entities)
+        for (var entity : newEntities)
             switch (entity.getStatus()) {
                 case NEW:
                     entity.setStatus(UPDATING);
@@ -59,44 +91,47 @@ public class UpdateService implements Updateable {
 
         updatingEntities.addAll(toUpdate);
         sleepingEntities.addAll(toSleep);
+        newEntities.clear();
+    }
+
+    public CompletableFuture<Void> removeAfterUpdate() {
+        var updateFiltered = taskManager.supplyAsync(() -> filterByStatus(updatingEntities, REMOVE));
+        var sleepFiltered = taskManager.supplyAsync(() -> filterByStatus(sleepingEntities, REMOVE));
+        var updateRemove = taskManager.acceptAsync(updateFiltered, updatingEntities::removeAll);
+        var sleepRemove = taskManager.acceptAsync(sleepFiltered, sleepingEntities::removeAll);
+
+        var combine = updateFiltered.thenCombine(sleepFiltered, (fromUpdate, fromSleep) -> {
+            fromUpdate.addAll(fromSleep);
+            entityService.removeEntities(fromUpdate);
+            return null;
+        });
+
+        return CompletableFuture.allOf(updateRemove, sleepRemove, combine);
+    }
+
+    private CompletableFuture<Void> updateToSleep() {
+        var updateFiltered = taskManager.supplyAsync(() -> filterByStatus(updatingEntities, SLEEPING));
+
+        return CompletableFuture.allOf(
+                taskManager.acceptAsync(updateFiltered, sleepingEntities::addAll),
+                taskManager.acceptAsync(updateFiltered, updatingEntities::removeAll)
+        );
+    }
+
+    private List<Entity> filterByStatus(List<Entity> entityList, EntityStatus status) {
+        return entityList.stream()
+                .filter(entity -> entity.getStatus() == status)
+                .collect(Collectors.toList());
+    }
+
+    public void addEntities(List<Entity> entities) {
+        newEntities.addAll(entities);
     }
 
     public void removeAll() {
+        newEntities.clear();
         updatingEntities.clear();
         sleepingEntities.clear();
-    }
-
-    private void moveUpdatingEntities() {
-        var toUpdate = sleepingEntities.stream()
-                .filter(entity -> entity.getStatus() == UPDATING)
-                .collect(Collectors.toList());
-        updatingEntities.addAll(toUpdate);
-        sleepingEntities.removeAll(toUpdate);
-    }
-
-    private void moveSleepingEntities() {
-        var toSleep = updatingEntities.stream()
-                .filter(entity -> entity.getStatus() == SLEEPING)
-                .collect(Collectors.toList());
-        sleepingEntities.addAll(toSleep);
-        updatingEntities.removeAll(toSleep);
-    }
-
-    private void removeEntities() {
-        var fromUpdate = updatingEntities.stream()
-                .filter(entity -> entity.getStatus() == REMOVE)
-                .collect(Collectors.toList());
-        updatingEntities.removeAll(fromUpdate);
-
-        var toRemove = new ArrayList<>(fromUpdate);
-
-        var fromSleep = sleepingEntities.stream()
-                .filter(entity -> entity.getStatus() == REMOVE)
-                .collect(Collectors.toList());
-        sleepingEntities.removeAll(fromSleep);
-        toRemove.addAll(fromSleep);
-
-        entityService.removeEntities(toRemove);
     }
 
     @Autowired
