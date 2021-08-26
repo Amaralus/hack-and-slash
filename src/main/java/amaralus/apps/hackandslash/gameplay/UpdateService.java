@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
@@ -37,47 +38,38 @@ public class UpdateService implements Updateable {
     }
 
     public void asyncUpdate(long elapsedTime) {
-        //sleep -> update
-        var sleepToUpdateFuture = taskManager.executeTask(() -> filterByStatus(sleepingEntities, UPDATING))
-                .thenAccept(toUpdate -> {
-                    updatingEntities.addAll(toUpdate);
-                    sleepingEntities.removeAll(toUpdate);
-                });
+        // синхронизируем sleep -> update
+        var sleepToUpdateFuture = sleepToUpdate();
 
-        // getNewEntities
+        // получение новых сущностей
         entityService.activateNewEntities();
         sleepToUpdateFuture.join();
+        // синхронизация new -> sleep, update
         processNewEntities();
 
-        var updatedToRemoveFuture = taskManager.executeTasks(updatingEntities, entity -> updateEntity(entity, elapsedTime))
-                .thenApply(updated -> filterByStatus(updated, REMOVE))
-                .thenApply(toRemove -> {
-                    updatingEntities.removeAll(toRemove);
-                    return toRemove;
-                });
+        // обновление сущностей
+        taskManager.executeTasks(updatingEntities, entity -> updateEntity(entity, elapsedTime)).join();
 
-        var sleepingToRemoveFuture = taskManager.executeTask(() -> filterByStatus(sleepingEntities, REMOVE))
-                .thenApply(toRemove -> {
-                    sleepingEntities.removeAll(toRemove);
-                    return toRemove;
-                });
+        // в будущем тут будет фаза распространения изменений
 
-        updatedToRemoveFuture.thenCombine(sleepingToRemoveFuture, (fromUpdate, fromSleep) -> {
-            fromUpdate.addAll(fromSleep);
-            entityService.removeEntities(fromUpdate);
-            return updatingEntities;
-        })
-                .thenApply(updated -> filterByStatus(updated, SLEEPING))
-                .thenAccept(toSleep -> {
-                    sleepingEntities.addAll(toSleep);
-                    updatingEntities.removeAll(toSleep);
-                })
-                .join();
+        // удаление сущностей
+        removeAfterUpdate().join();
+
+        // синхронизация update -> sleep
+        updateToSleep().join();
     }
 
     private Entity updateEntity(Entity entity, long elapsedTime) {
         entity.update(elapsedTime);
         return entity;
+    }
+
+    private CompletableFuture<Void> sleepToUpdate() {
+        var sleepFiltered = taskManager.supplyAsync(() -> filterByStatus(sleepingEntities, UPDATING));
+
+        return CompletableFuture.allOf(
+                taskManager.acceptAsync(sleepFiltered, updatingEntities::addAll),
+                taskManager.acceptAsync(sleepFiltered, sleepingEntities::removeAll));
     }
 
     public void processNewEntities() {
@@ -106,9 +98,28 @@ public class UpdateService implements Updateable {
         newEntities.clear();
     }
 
-    public void removeAll() {
-        updatingEntities.clear();
-        sleepingEntities.clear();
+    public CompletableFuture<Void> removeAfterUpdate() {
+        var updateFiltered = taskManager.supplyAsync(() -> filterByStatus(updatingEntities, REMOVE));
+        var sleepFiltered = taskManager.supplyAsync(() -> filterByStatus(sleepingEntities, REMOVE));
+        var updateRemove = taskManager.acceptAsync(updateFiltered, updatingEntities::removeAll);
+        var sleepRemove = taskManager.acceptAsync(sleepFiltered, sleepingEntities::removeAll);
+
+        var combine = updateFiltered.thenCombine(sleepFiltered, (fromUpdate, fromSleep) -> {
+            fromUpdate.addAll(fromSleep);
+            entityService.removeEntities(fromUpdate);
+            return null;
+        });
+
+        return CompletableFuture.allOf(updateRemove, sleepRemove, combine);
+    }
+
+    private CompletableFuture<Void> updateToSleep() {
+        var updateFiltered = taskManager.supplyAsync(() -> filterByStatus(updatingEntities, SLEEPING));
+
+        return CompletableFuture.allOf(
+                taskManager.acceptAsync(updateFiltered, sleepingEntities::addAll),
+                taskManager.acceptAsync(updateFiltered, updatingEntities::removeAll)
+        );
     }
 
     private List<Entity> filterByStatus(List<Entity> entityList, EntityStatus status) {
@@ -119,6 +130,12 @@ public class UpdateService implements Updateable {
 
     public void addEntities(List<Entity> entities) {
         newEntities.addAll(entities);
+    }
+
+    public void removeAll() {
+        newEntities.clear();
+        updatingEntities.clear();
+        sleepingEntities.clear();
     }
 
     @Autowired

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
@@ -30,8 +31,16 @@ public class TaskManager {
         }
     }
 
-    public <E> CompletableFuture<E> executeTask(Supplier<E> supplier) {
+    public <E> CompletableFuture<E> supplyAsync(Supplier<E> supplier) {
         return CompletableFuture.supplyAsync(supplier, executorService);
+    }
+
+    public <E> CompletableFuture<E> applyAsync(CompletableFuture<E> future, UnaryOperator<E> unaryOperator) {
+        return future.thenApplyAsync(unaryOperator, executorService);
+    }
+
+    public <E> CompletableFuture<Void> acceptAsync(CompletableFuture<E> future, Consumer<E> consumer) {
+        return future.thenAcceptAsync(consumer, executorService);
     }
 
     public <E> CompletableFuture<List<E>> executeTasks(List<E> entities, UnaryOperator<E> action) {
