@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.common;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
+import amaralus.apps.hackandslash.io.entities.SceneData;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +24,7 @@ public class ApplicationLoader {
         loadShades();
         loadTextures();
         loadSprites();
+        loadScene();
     }
 
     private void loadShades() {
@@ -47,4 +49,9 @@ public class ApplicationLoader {
                 .forEach(resourceFactory::produceSprite);
     }
 
+    private void loadScene() {
+        log.info("Загрузка сцены...");
+        var scene = fileLoadService.loadFromJson("scene-info.json", SceneData.class);
+        log.info("done");
+    }
 }

@@ -1,0 +1,35 @@
+{
+  "name": "",
+  "resources": {
+    "sprites": [
+      {
+        "name" : "",
+        "frameWidth": 0,
+        "frameHeight": 0,
+        "frameStrips": [
+          {
+            "framesCount": 0,
+            "animated": true,
+            "animationTime": 0
+          }
+        ]
+      }
+    ]
+  },
+  "entities": [
+    {
+      "positionX": 0.0,
+      "positionY": 0.0,
+      "movementSpeed": 0,
+      "renderComponent": {
+        "resource": "",
+        "frameStrip": 0,
+        "runAnimation": true
+      }
+    }
+  ],
+  "camera": {
+    "positionX": 0.0,
+    "positionY": 0.0
+  }
+}

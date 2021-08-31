@@ -4,6 +4,7 @@ import java.util.List;
 
 public class SpriteSheetData {
 
+    private String name;
     private final int frameWidth;
     private final int frameHeight;
     private final List<FrameStripData> frameStrips;
@@ -12,6 +13,14 @@ public class SpriteSheetData {
         this.frameWidth = frameWidth;
         this.frameHeight = frameHeight;
         this.frameStrips = frameStrips;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getFrameWidth() {
