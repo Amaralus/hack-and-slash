@@ -17,7 +17,6 @@ public class MessageBroker {
     }
 
     public MessageClient register(long id) {
-        // возможно не атомарно
         var client = new MessageClient(id, this);
         clientMap.put(id, client);
         return client;
@@ -27,7 +26,6 @@ public class MessageBroker {
         clientMap.remove(id);
     }
 
-    // в отдельный поток
     public void send(Request request) {
         taskManager.runAsync(() -> clientMap.computeIfPresent(request.clientId(), (id, client) -> {
             client.receive(request);
