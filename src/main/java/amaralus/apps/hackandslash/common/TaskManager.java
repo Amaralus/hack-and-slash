@@ -31,6 +31,10 @@ public class TaskManager {
         }
     }
 
+    public CompletableFuture<Void> runAsync(Runnable runnable) {
+        return CompletableFuture.runAsync(runnable, executorService);
+    }
+
     public <E> CompletableFuture<E> supplyAsync(Supplier<E> supplier) {
         return CompletableFuture.supplyAsync(supplier, executorService);
     }
