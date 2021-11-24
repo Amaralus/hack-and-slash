@@ -29,9 +29,9 @@ public class MessageBroker {
 
     // в отдельный поток
     public void send(Request request) {
-        clientMap.computeIfPresent(request.clientId(), (id, client) -> {
+        taskManager.runAsync(() -> clientMap.computeIfPresent(request.clientId(), (id, client) -> {
             client.receive(request);
             return client;
-        });
+        }));
     }
 }
