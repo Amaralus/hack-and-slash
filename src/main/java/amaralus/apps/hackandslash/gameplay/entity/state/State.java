@@ -28,12 +28,14 @@ public class State implements Updatable {
 
     public void switchState(String stateName) {
         stateSystem.pushState(stateName);
+        logStateSwitching(name, stateName);
     }
 
     public void removeState() {
-        if (!baseState)
+        if (!baseState) {
             stateSystem.popState();
-        else
+            logStateSwitching(name, stateSystem.currentState().name);
+        } else
             log.warn("Попытка удалить базовое состояние [{}]", name);
     }
 
@@ -43,5 +45,9 @@ public class State implements Updatable {
 
     void setBaseState() {
         this.baseState = true;
+    }
+
+    private void logStateSwitching(String prevState, String newState) {
+        log.trace("Переключение состояния [{}] -> [{}]", prevState, newState);
     }
 }
