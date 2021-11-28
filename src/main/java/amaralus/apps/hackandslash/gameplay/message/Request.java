@@ -2,19 +2,25 @@ package amaralus.apps.hackandslash.gameplay.message;
 
 public class Request {
 
-    private final long id;
+    private final long sender;
+    private final long receiver;
     private final Object payload;
 
-    public Request(long id, Object payload) {
-        this.id = id;
+    public Request(long sender, long receiver, Object payload) {
+        this.sender = sender;
+        this.receiver = receiver;
         this.payload = payload;
     }
 
-    public long clientId() {
-        return id;
+    public long sender() {
+        return sender;
     }
 
-    public Object getPayload() {
+    public long receiver() {
+        return receiver;
+    }
+
+    public Object payload() {
         return payload;
     }
 }
