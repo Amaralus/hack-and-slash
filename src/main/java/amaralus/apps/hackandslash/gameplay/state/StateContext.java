@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay.entity.state;
+package amaralus.apps.hackandslash.gameplay.state;
 
 public class StateContext {
 

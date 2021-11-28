@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay.entity.state;
+package amaralus.apps.hackandslash.gameplay.state;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.common.Updatable;
