@@ -1,8 +1,12 @@
 package amaralus.apps.hackandslash.gameplay.entity.state;
 
 import amaralus.apps.hackandslash.common.Updatable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class State implements Updatable {
+
+    private static final Logger log = LoggerFactory.getLogger(State.class);
 
     private final String name;
     private final StateSystem stateSystem;
@@ -27,9 +31,10 @@ public class State implements Updatable {
     }
 
     public void removeState() {
-        // todo warn log
         if (!baseState)
             stateSystem.popState();
+        else
+            log.warn("Попытка удалить базовое состояние [{}]", name);
     }
 
     public String getName() {
