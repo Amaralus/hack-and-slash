@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.gameplay.entity;
 
-import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.gameplay.InputComponent;
 import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
@@ -16,7 +16,7 @@ import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CAS
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.copy;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class Entity extends Node implements Updateable {
+public class Entity extends Node implements Updatable {
 
     public static final AtomicLong entityIdSource = new AtomicLong();
 

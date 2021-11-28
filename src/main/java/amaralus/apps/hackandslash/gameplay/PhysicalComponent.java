@@ -1,12 +1,12 @@
 package amaralus.apps.hackandslash.gameplay;
 
-import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.common.Updatable;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.gameplay.PhysicService.checkGlobalBorderCrossing;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class PhysicalComponent implements Updateable {
+public class PhysicalComponent implements Updatable {
 
     private Vector2f position;
     private Vector2f movementDirection;

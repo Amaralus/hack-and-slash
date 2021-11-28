@@ -1,9 +1,9 @@
 package amaralus.apps.hackandslash.graphics.entities;
 
 import amaralus.apps.hackandslash.common.Nullable;
-import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.common.Updatable;
 
-public interface RenderComponent extends Updateable, Nullable {
+public interface RenderComponent extends Updatable, Nullable {
 
     default <C extends RenderComponent> C wrapTo(Class<C> clazz) {
         return clazz.cast(this);

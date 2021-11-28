@@ -1,8 +1,8 @@
 package amaralus.apps.hackandslash.graphics.entities.sprites;
 
-import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.common.Updatable;
 
-public class Animation implements Updateable {
+public class Animation implements Updatable {
 
     private final int framesCount;
     private final long timePerFrame;
