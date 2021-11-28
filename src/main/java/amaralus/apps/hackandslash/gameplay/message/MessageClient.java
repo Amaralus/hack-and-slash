@@ -1,10 +1,12 @@
 package amaralus.apps.hackandslash.gameplay.message;
 
+import amaralus.apps.hackandslash.common.Destroyable;
+
 import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
-public class MessageClient {
+public class MessageClient implements Destroyable {
 
     private final long id;
     private final MessageBroker broker;
@@ -15,13 +17,19 @@ public class MessageClient {
         this.broker = broker;
     }
 
-    public Optional<Object> getNextMessage() {
-        return Optional.ofNullable(messageQueue.poll())
-                .map(Request::getPayload);
+    @Override
+    public void destroy() {
+        messageQueue.clear();
+        broker.unregister(id);
     }
 
-    public void send(long id, Object payload) {
-        broker.send(new Request(id, payload));
+    public Optional<Object> getNextMessage() {
+        return Optional.ofNullable(messageQueue.poll())
+                .map(Request::payload);
+    }
+
+    public void send(long receiver, Object payload) {
+        broker.send(new Request(id, receiver, payload));
     }
 
     public void receive(Request request) {

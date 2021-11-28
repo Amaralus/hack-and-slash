@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.common.TaskManager;
-import amaralus.apps.hackandslash.common.Updateable;
+import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityService;
 import amaralus.apps.hackandslash.gameplay.entity.EntityStatus;
@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
 
 @Service
-public class UpdateService implements Updateable {
+public class UpdateService implements Updatable {
 
     private static final Logger log = LoggerFactory.getLogger(UpdateService.class);
 

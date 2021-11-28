@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.common;
 
-public interface Updateable {
+public interface Updatable {
 
     void update(long elapsedTime);
 }
