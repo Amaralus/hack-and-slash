@@ -2,8 +2,10 @@ package amaralus.apps.hackandslash.gameplay.message;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class MessageClient implements Destroyable {
@@ -11,6 +13,7 @@ public class MessageClient implements Destroyable {
     private final long id;
     private final MessageBroker broker;
     private final Queue<Request> messageQueue = new ConcurrentLinkedQueue<>();
+    private final Set<String> topics = new HashSet<>();
 
     public MessageClient(long id, MessageBroker broker) {
         this.id = id;
@@ -20,7 +23,8 @@ public class MessageClient implements Destroyable {
     @Override
     public void destroy() {
         messageQueue.clear();
-        broker.unregister(id);
+        topics.forEach(this::unsubscribe);
+        broker.deleteClient(id);
     }
 
     public Optional<Object> getNextMessage() {
@@ -29,11 +33,25 @@ public class MessageClient implements Destroyable {
     }
 
     public void send(long receiver, Object payload) {
-        broker.send(new Request(id, receiver, payload));
+        broker.send(receiver, new Request(id, payload));
+    }
+
+    public void send(String topicName, Object payload) {
+        broker.send(topicName, new Request(id, payload));
     }
 
     public void receive(Request request) {
         messageQueue.offer(request);
+    }
+
+    public void subscribe(String topicName) {
+        broker.subscribe(topicName, id);
+        topics.add(topicName);
+    }
+
+    public void unsubscribe(String topicName) {
+        broker.unsubscribe(topicName, id);
+        topics.remove(topicName);
     }
 
     public long getId() {

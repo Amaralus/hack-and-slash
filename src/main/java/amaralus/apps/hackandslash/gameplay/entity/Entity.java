@@ -18,7 +18,7 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class Entity extends Node implements Updatable {
 
-    public static final AtomicLong entityIdSource = new AtomicLong();
+    private static final AtomicLong entityIdSource = new AtomicLong();
 
     private final long entityId;
     private final InputComponent inputComponent;
