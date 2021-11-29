@@ -42,9 +42,13 @@ public class MessageBroker {
     }
 
     public void deleteTopic(String topicName) {
-        var topic = topics.get(topicName);
-        topic.getSubscribers().forEach(clientId -> unsubscribe(topicName, clientId));
-        topics.remove(topicName);
+        topics.remove(topicName).getSubscribers().stream()
+                .map(clients::get)
+                .forEach(client -> {
+                    client.removeSubscription(topicName);
+                    log.debug("Клиент id={} отписан от топика {}", client.getId(), topicName);
+                });
+
         log.debug("Удален топик {}", topicName);
     }
 

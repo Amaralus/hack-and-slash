@@ -23,7 +23,7 @@ public class MessageClient implements Destroyable {
     @Override
     public void destroy() {
         messageQueue.clear();
-        topics.forEach(this::unsubscribe);
+        topics.forEach(topic -> broker.unsubscribe(topic, id));
         broker.deleteClient(id);
     }
 
@@ -51,6 +51,10 @@ public class MessageClient implements Destroyable {
 
     public void unsubscribe(String topicName) {
         broker.unsubscribe(topicName, id);
+        topics.remove(topicName);
+    }
+
+    void removeSubscription(String topicName) {
         topics.remove(topicName);
     }
 
