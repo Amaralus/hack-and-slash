@@ -37,12 +37,21 @@ public class MessageBroker {
     }
 
     public void createTopic(String topicName) {
-        topics.put(topicName, new Topic(topicName, this));
-        log.debug("Создан топик {}", topicName);
+        topics.computeIfAbsent(topicName, name -> {
+            log.debug("Создан топик {}", topicName);
+            return new Topic(name, this);
+        });
     }
 
     public void deleteTopic(String topicName) {
-        topics.remove(topicName).getSubscribers().stream()
+        var topic = topics.remove(topicName);
+
+        if (topic == null) {
+            log.warn("Попытка удалить несуществующий топик [{}]", topicName);
+            return;
+        }
+
+        topic.getSubscribers().stream()
                 .map(clients::get)
                 .forEach(client -> {
                     client.removeSubscription(topicName);
@@ -56,19 +65,19 @@ public class MessageBroker {
         var topic = topics.get(topicName);
 
         if (topic == null) {
-            log.warn("Топик с именем [{}] не существует! Подписчик id={}", topicName, clientId);
+            log.warn("Топик [{}] не существует! Подписчик id={}", topicName, clientId);
             return;
         }
 
         topic.subscribe(clientId);
-        log.debug("Клиент id={} подписан на топик {}", clientId, topicName);
+        log.debug("Клиент id={} подписан на топик [{}]", clientId, topicName);
     }
 
     void unsubscribe(String topicName, long clientId) {
         var topic = topics.get(topicName);
 
         if (topic == null) {
-            log.warn("Топик с именем [{}] не существует! Подписчик id={}", topicName, clientId);
+            log.warn("Топик [{}] не существует! Подписчик id={}", topicName, clientId);
             return;
         }
 
@@ -97,7 +106,7 @@ public class MessageBroker {
     private void sendToTopic(String topicName, Request request) {
         var topic = topics.get(topicName);
         if (topic == null)
-            log.warn("Топик с именем [{}] не существует! Отправитель id={}", topicName, request.sender());
+            log.warn("Топик [{}] не существует! Отправитель id={}", topicName, request.sender());
         else {
             log.trace("Пересылка сообщения в топик {} -> {}", request.sender(), topicName);
             topic.receive(request);
