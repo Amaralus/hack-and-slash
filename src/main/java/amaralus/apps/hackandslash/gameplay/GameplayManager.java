@@ -14,8 +14,8 @@ import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.graphics.entities.Color.CYAN;
 import static amaralus.apps.hackandslash.graphics.entities.Color.WHITE;
-import static amaralus.apps.hackandslash.io.events.KeyCode.*;
-import static amaralus.apps.hackandslash.io.events.MouseButton.*;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
+import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.*;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Service

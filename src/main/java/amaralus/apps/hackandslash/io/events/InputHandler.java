@@ -1,6 +1,13 @@
 package amaralus.apps.hackandslash.io.events;
 
+import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
+import amaralus.apps.hackandslash.gameplay.message.MessageClient;
 import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.io.events.keyboard.KeyCode;
+import amaralus.apps.hackandslash.io.events.keyboard.KeyboardKeyEvent;
+import amaralus.apps.hackandslash.io.events.mouse.MouseButton;
+import amaralus.apps.hackandslash.io.events.mouse.MouseButtonEvent;
+import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
 import org.springframework.stereotype.Service;
 
 import java.util.EnumMap;
@@ -14,23 +21,30 @@ import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 @Service
 public class InputHandler {
 
+    public static final String INPUT_TOPIC_NAME = "input";
+
     private final EnumSet<KeyCode> pressedKeys;
     private final Map<KeyCode, Runnable> keyActions;
 
     private final EnumSet<MouseButton> pressedButtons;
     private final Map<MouseButton, Runnable> buttonActions;
 
+    private final MessageClient messageClient;
+
     private BiConsumer<Float, Float> scrollAction;
     private float scrollingSensitivity = 0.1f;
     private float scrollXOffset;
     private float scrollYOffset;
 
-    public InputHandler(Window window) {
+    public InputHandler(Window window, MessageBroker messageBroker) {
         pressedKeys = EnumSet.noneOf(KeyCode.class);
         pressedButtons = EnumSet.noneOf(MouseButton.class);
 
         keyActions = new EnumMap<>(KeyCode.class);
         buttonActions = new EnumMap<>(MouseButton.class);
+
+        messageBroker.createTopic(INPUT_TOPIC_NAME);
+        messageClient = messageBroker.createClient();
 
         setUpInputHandling(window);
     }
@@ -43,21 +57,21 @@ public class InputHandler {
 
     public void handleKeyboardKeyEvents(KeyboardKeyEvent event) {
         if (GLFW_PRESS == event.getAction())
-            setPressed(event.getKey());
+            setPressed(event.getButtonCode());
         if (GLFW_RELEASE == event.getAction())
-            setReleased(event.getKey());
+            setReleased(event.getButtonCode());
     }
 
     public void handleMouseButtonsEvents(MouseButtonEvent event) {
         if (GLFW_PRESS == event.getAction())
-            setPressed(event.getButton());
+            setPressed(event.getButtonCode());
         if (GLFW_RELEASE == event.getAction())
-            setReleased(event.getButton());
+            setReleased(event.getButtonCode());
     }
 
     public void handleScrollEvents(ScrollEvent event) {
-        scrollXOffset = (float) event.getxOffset() * scrollingSensitivity;
-        scrollYOffset = (float) event.getyOffset() * scrollingSensitivity;
+        scrollXOffset = (float) event.getXOffset() * scrollingSensitivity;
+        scrollYOffset = (float) event.getYOffset() * scrollingSensitivity;
     }
 
     public void executeActions() {

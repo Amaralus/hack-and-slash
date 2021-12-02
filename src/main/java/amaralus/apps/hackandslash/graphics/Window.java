@@ -1,9 +1,9 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.common.Destroyable;
-import amaralus.apps.hackandslash.io.events.KeyboardKeyEvent;
-import amaralus.apps.hackandslash.io.events.MouseButtonEvent;
-import amaralus.apps.hackandslash.io.events.ScrollEvent;
+import amaralus.apps.hackandslash.io.events.keyboard.KeyboardKeyEvent;
+import amaralus.apps.hackandslash.io.events.mouse.MouseButtonEvent;
+import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
 import org.joml.Vector2f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFWVidMode;

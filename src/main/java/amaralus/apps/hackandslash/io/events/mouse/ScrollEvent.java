@@ -1,26 +1,23 @@
-package amaralus.apps.hackandslash.io.events;
+package amaralus.apps.hackandslash.io.events.mouse;
 
-public class ScrollEvent {
+import amaralus.apps.hackandslash.io.events.Event;
 
-    private final long window;
+public class ScrollEvent extends Event {
+
     private final double xOffset;
     private final double yOffset;
 
     public ScrollEvent(long window, double xOffset, double yOffset) {
-        this.window = window;
+        super(window);
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
 
-    public long getWindow() {
-        return window;
-    }
-
-    public double getxOffset() {
+    public double getXOffset() {
         return xOffset;
     }
 
-    public double getyOffset() {
+    public double getYOffset() {
         return yOffset;
     }
 }
