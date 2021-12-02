@@ -51,26 +51,20 @@ public class GameplayManager {
     }
 
     private void setUpInput() {
-        inputHandler.addAction(ESCAPE, window::close);
-
-        inputHandler.addAction(W, () -> player.getInputComponent().addCommand(ENTITY_MOVE_UP));
-        inputHandler.addAction(S, () -> player.getInputComponent().addCommand(ENTITY_MOVE_DOWN));
-        inputHandler.addAction(A, () -> player.getInputComponent().addCommand(ENTITY_MOVE_LEFT));
-        inputHandler.addAction(D, () -> player.getInputComponent().addCommand(ENTITY_MOVE_RIGHT));
-
-        inputHandler.addAction(DIG1, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(0));
-        inputHandler.addAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1));
-        inputHandler.addAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2));
-
-        inputHandler.addAction(R, () -> triangle.setStatus(REMOVE));
-
-        inputHandler.addAction(MOUSE_BUTTON_LEFT, () -> player.getPhysicalComponent().setPosition(
-                rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
-
-        inputHandler.addAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(
-                rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())));
-
-        inputHandler.setScrollAction((xOffset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
+        inputHandler.singleAction(ESCAPE, window::close)
+                .buttonAction(W, () -> player.getInputComponent().addCommand(ENTITY_MOVE_UP))
+                .buttonAction(S, () -> player.getInputComponent().addCommand(ENTITY_MOVE_DOWN))
+                .buttonAction(A, () -> player.getInputComponent().addCommand(ENTITY_MOVE_LEFT))
+                .buttonAction(D, () -> player.getInputComponent().addCommand(ENTITY_MOVE_RIGHT))
+                .singleAction(DIG1, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(0))
+                .singleAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1))
+                .singleAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2))
+                .singleAction(R, () -> triangle.setStatus(REMOVE))
+                .singleAction(MOUSE_BUTTON_LEFT, () -> player.getPhysicalComponent().setPosition(
+                        rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())))
+                .singleAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(
+                        rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())))
+                .scrollAction((xOffset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 
     private void setUpEntities() {

@@ -4,7 +4,7 @@ public abstract class Event {
 
     private final long window;
 
-    public Event(long window) {
+    protected Event(long window) {
         this.window = window;
     }
 

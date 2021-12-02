@@ -1,168 +1,70 @@
 package amaralus.apps.hackandslash.io.events;
 
 import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
-import amaralus.apps.hackandslash.gameplay.message.MessageClient;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.io.events.keyboard.KeyCode;
-import amaralus.apps.hackandslash.io.events.keyboard.KeyboardKeyEvent;
-import amaralus.apps.hackandslash.io.events.mouse.MouseButton;
-import amaralus.apps.hackandslash.io.events.mouse.MouseButtonEvent;
 import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
+import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
+import amaralus.apps.hackandslash.io.events.triggers.ButtonEventSingleActionTrigger;
+import amaralus.apps.hackandslash.io.events.triggers.EventActionTrigger;
+import amaralus.apps.hackandslash.io.events.triggers.ScrollEventActionTrigger;
 import org.springframework.stereotype.Service;
 
-import java.util.EnumMap;
-import java.util.EnumSet;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
-
-import static org.lwjgl.glfw.GLFW.GLFW_PRESS;
-import static org.lwjgl.glfw.GLFW.GLFW_RELEASE;
 
 @Service
 public class InputHandler {
 
     public static final String INPUT_TOPIC_NAME = "input";
 
-    private final EnumSet<KeyCode> pressedKeys;
-    private final Map<KeyCode, Runnable> keyActions;
-
-    private final EnumSet<MouseButton> pressedButtons;
-    private final Map<MouseButton, Runnable> buttonActions;
-
-    private final MessageClient messageClient;
-
-    private BiConsumer<Float, Float> scrollAction;
-    private float scrollingSensitivity = 0.1f;
-    private float scrollXOffset;
-    private float scrollYOffset;
+    private final Map<ButtonCode, ButtonEventActionTrigger> buttonTriggers = new ConcurrentHashMap<>();
+    private ScrollEventActionTrigger scrollTrigger;
 
     public InputHandler(Window window, MessageBroker messageBroker) {
-        pressedKeys = EnumSet.noneOf(KeyCode.class);
-        pressedButtons = EnumSet.noneOf(MouseButton.class);
-
-        keyActions = new EnumMap<>(KeyCode.class);
-        buttonActions = new EnumMap<>(MouseButton.class);
-
         messageBroker.createTopic(INPUT_TOPIC_NAME);
-        messageClient = messageBroker.createClient();
 
         setUpInputHandling(window);
     }
 
-    public void setUpInputHandling(Window window) {
-        window.setKeyCallback(this::handleKeyboardKeyEvents);
-        window.setMouseButtonCallback(this::handleMouseButtonsEvents);
-        window.setScrollCallback(this::handleScrollEvents);
+    public InputHandler buttonAction(ButtonCode buttonCode, Runnable action) {
+        addTrigger(new ButtonEventActionTrigger(buttonCode, action));
+        return this;
     }
 
-    public void handleKeyboardKeyEvents(KeyboardKeyEvent event) {
-        if (GLFW_PRESS == event.getAction())
-            setPressed(event.getButtonCode());
-        if (GLFW_RELEASE == event.getAction())
-            setReleased(event.getButtonCode());
+    public InputHandler singleAction(ButtonCode buttonCode, Runnable action) {
+        addTrigger(new ButtonEventSingleActionTrigger(buttonCode, action));
+        return this;
     }
 
-    public void handleMouseButtonsEvents(MouseButtonEvent event) {
-        if (GLFW_PRESS == event.getAction())
-            setPressed(event.getButtonCode());
-        if (GLFW_RELEASE == event.getAction())
-            setReleased(event.getButtonCode());
+    public InputHandler scrollAction(BiConsumer<Float, Float> scrollAction) {
+        scrollTrigger = new ScrollEventActionTrigger(scrollAction);
+        return this;
     }
 
-    public void handleScrollEvents(ScrollEvent event) {
-        scrollXOffset = (float) event.getXOffset() * scrollingSensitivity;
-        scrollYOffset = (float) event.getYOffset() * scrollingSensitivity;
+    public void addTrigger(ButtonEventActionTrigger buttonTrigger) {
+        buttonTriggers.put(buttonTrigger.getButtonCode(), buttonTrigger);
     }
 
     public void executeActions() {
-        executeKeyActions();
-        executeButtonActions();
-        executeScrollAction();
+        buttonTriggers.values().forEach(EventActionTrigger::runAction);
+        if (scrollTrigger != null)
+            scrollTrigger.runAction();
     }
 
-    private void executeKeyActions() {
-        for (var entry : keyActions.entrySet())
-            if (isPressed(entry.getKey()))
-                entry.getValue().run();
+    private void setUpInputHandling(Window window) {
+        window.setKeyCallback(this::handleButtonEvent);
+        window.setMouseButtonCallback(this::handleButtonEvent);
+        window.setScrollCallback(this::handleScrollEvent);
     }
 
-    private void executeButtonActions() {
-        for (var entry : buttonActions.entrySet())
-            if (isPressed(entry.getKey()))
-                entry.getValue().run();
+    private void handleButtonEvent(ButtonEvent<?> event) {
+        System.out.println(event.getButtonCode());
+        buttonTriggers.get(event.getButtonCode()).handleEvent(event);
     }
 
-    private void executeScrollAction() {
-        if (scrollAction != null && (scrollXOffset != 0f || scrollYOffset != 0f)) {
-            scrollAction.accept(scrollXOffset, scrollYOffset);
-            scrollXOffset = 0f;
-            scrollYOffset = 0f;
-        }
-    }
-
-    public void setPressed(KeyCode keyCode) {
-        pressedKeys.add(keyCode);
-    }
-
-    public void setReleased(KeyCode keyCode) {
-        pressedKeys.remove(keyCode);
-    }
-
-    public boolean isPressed(KeyCode keyCode) {
-        return pressedKeys.contains(keyCode);
-    }
-
-    public void releasePressedKeys() {
-        pressedKeys.clear();
-    }
-
-    public void addAction(KeyCode keyCode, Runnable action) {
-        keyActions.put(keyCode, action);
-    }
-
-    public void removeAction(KeyCode keyCode) {
-        keyActions.remove(keyCode);
-    }
-
-    public void clearKeyActions() {
-        keyActions.clear();
-    }
-
-    public void setPressed(MouseButton mouseButton) {
-        pressedButtons.add(mouseButton);
-    }
-
-    public void setReleased(MouseButton mouseButton) {
-        pressedButtons.remove(mouseButton);
-    }
-
-    public boolean isPressed(MouseButton mouseButton) {
-        return pressedButtons.contains(mouseButton);
-    }
-
-    public void releasePressedMouseButtons() {
-        pressedButtons.clear();
-    }
-
-    public void addAction(MouseButton mouseButton, Runnable action) {
-        buttonActions.put(mouseButton, action);
-    }
-
-    public void removeAction(MouseButton mouseButton) {
-        buttonActions.remove(mouseButton);
-    }
-
-    public void clearButtonActions() {
-        buttonActions.clear();
-    }
-
-    public void setScrollingSensitivity(float scrollingSensitivity) {
-        if (scrollingSensitivity < 0.01f) scrollingSensitivity = 0.01f;
-        if (scrollingSensitivity > 1f) scrollingSensitivity = 1f;
-        this.scrollingSensitivity = scrollingSensitivity;
-    }
-
-    public void setScrollAction(BiConsumer<Float, Float> scrollAction) {
-        this.scrollAction = scrollAction;
+    public void handleScrollEvent(ScrollEvent scrollEvent) {
+        if (scrollTrigger != null)
+            scrollTrigger.handleEvent(scrollEvent);
     }
 }
