@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.io;
 
-import amaralus.apps.hackandslash.io.entities.ImageData;
+import amaralus.apps.hackandslash.io.data.ImageData;
 import com.google.gson.Gson;
 import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.BufferUtils;
