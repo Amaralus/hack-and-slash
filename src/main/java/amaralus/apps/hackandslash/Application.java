@@ -1,20 +1,18 @@
 package amaralus.apps.hackandslash;
 
 import amaralus.apps.hackandslash.config.ApplicationConfig;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import amaralus.apps.hackandslash.gameplay.GameplayManager;
 import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.resources.ResourceManager;
+import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.glfw.GLFWErrorCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
 
 import static org.lwjgl.glfw.GLFW.*;
 
+@Slf4j
 public class Application {
-
-    private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     private GenericApplicationContext applicationContext;
 

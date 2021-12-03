@@ -1,8 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.message;
 
 import amaralus.apps.hackandslash.common.TaskManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -10,9 +9,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Service
+@Slf4j
 public class MessageBroker {
 
-    private static final Logger log = LoggerFactory.getLogger(MessageBroker.class);
     private static final AtomicLong clientIdSource = new AtomicLong();
 
     private final TaskManager taskManager;

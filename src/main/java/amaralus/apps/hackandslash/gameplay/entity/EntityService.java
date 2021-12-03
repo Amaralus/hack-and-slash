@@ -3,8 +3,7 @@ package amaralus.apps.hackandslash.gameplay.entity;
 import amaralus.apps.hackandslash.gameplay.UpdateService;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.scene.Node;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,9 +13,8 @@ import java.util.stream.Collectors;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SINGLE;
 
 @Service
+@Slf4j
 public class EntityService {
-
-    private static final Logger log = LoggerFactory.getLogger(EntityService.class);
 
     private UpdateService updateService;
     private final RendererService rendererService;

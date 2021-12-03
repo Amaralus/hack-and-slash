@@ -2,9 +2,8 @@ package amaralus.apps.hackandslash.io;
 
 import amaralus.apps.hackandslash.io.entities.ImageData;
 import com.google.gson.Gson;
+import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.BufferUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
@@ -18,9 +17,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
+@Slf4j
 public class FileLoadService {
-
-    private static final Logger log = LoggerFactory.getLogger(FileLoadService.class);
 
     public List<String> loadFileAsLines(String path) {
         try {

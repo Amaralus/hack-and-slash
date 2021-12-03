@@ -6,8 +6,7 @@ import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
 import amaralus.apps.hackandslash.io.events.triggers.ButtonEventSingleActionTrigger;
 import amaralus.apps.hackandslash.io.events.triggers.EventActionTrigger;
 import amaralus.apps.hackandslash.io.events.triggers.ScrollEventActionTrigger;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -15,9 +14,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
 @Service
+@Slf4j
 public class InputHandler {
-
-    private static final Logger log = LoggerFactory.getLogger(InputHandler.class);
 
     private final Map<ButtonCode, ButtonEventActionTrigger> buttonTriggers = new ConcurrentHashMap<>();
     private ScrollEventActionTrigger scrollTrigger;

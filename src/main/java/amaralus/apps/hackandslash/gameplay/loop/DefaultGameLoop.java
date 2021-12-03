@@ -4,16 +4,14 @@ import amaralus.apps.hackandslash.gameplay.UpdateService;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.io.events.InputHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 
 @Component
+@Slf4j
 public class DefaultGameLoop extends GameLoop {
-
-    private static final Logger log = LoggerFactory.getLogger(DefaultGameLoop.class);
 
     private final InputHandler inputHandler;
     private final RendererService rendererService;

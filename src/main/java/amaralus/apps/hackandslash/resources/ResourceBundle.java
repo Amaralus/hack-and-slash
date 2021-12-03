@@ -2,15 +2,13 @@ package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.common.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
+@Slf4j
 class ResourceBundle<R extends Resource> implements Destroyable, Nullable {
-
-    private static final Logger log = LoggerFactory.getLogger(ResourceBundle.class);
 
     private final Map<String, R> resourceMap;
     private final Class<R> resourcesClass;

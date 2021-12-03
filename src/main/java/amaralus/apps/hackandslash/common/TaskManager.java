@@ -1,7 +1,6 @@
 package amaralus.apps.hackandslash.common;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PreDestroy;
@@ -13,9 +12,8 @@ import java.util.function.UnaryOperator;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class TaskManager {
-
-    private static final Logger log = LoggerFactory.getLogger(TaskManager.class);
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() + 1);
 
