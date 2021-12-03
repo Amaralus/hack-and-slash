@@ -49,9 +49,17 @@ public class MessageClient implements Destroyable {
         topics.add(topicName);
     }
 
+    public void subscribe(SystemTopic systemTopic) {
+        subscribe(systemTopic.getName());
+    }
+
     public void unsubscribe(String topicName) {
         broker.unsubscribe(topicName, id);
         topics.remove(topicName);
+    }
+
+    public void unsubscribe(SystemTopic systemTopic) {
+        unsubscribe(systemTopic.getName());
     }
 
     void removeSubscription(String topicName) {

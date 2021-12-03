@@ -1,6 +1,5 @@
 package amaralus.apps.hackandslash.io.events;
 
-import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
 import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
@@ -18,15 +17,12 @@ import java.util.function.BiConsumer;
 @Service
 public class InputHandler {
 
-    public static final String INPUT_TOPIC_NAME = "input";
     private static final Logger log = LoggerFactory.getLogger(InputHandler.class);
 
     private final Map<ButtonCode, ButtonEventActionTrigger> buttonTriggers = new ConcurrentHashMap<>();
     private ScrollEventActionTrigger scrollTrigger;
 
-    public InputHandler(Window window, MessageBroker messageBroker) {
-        messageBroker.createTopic(INPUT_TOPIC_NAME);
-
+    public InputHandler(Window window) {
         setUpInputHandling(window);
     }
 

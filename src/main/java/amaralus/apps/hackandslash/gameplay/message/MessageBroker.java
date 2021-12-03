@@ -21,6 +21,8 @@ public class MessageBroker {
 
     public MessageBroker(TaskManager taskManager) {
         this.taskManager = taskManager;
+        for (var systemTopic : SystemTopic.values())
+            createTopic(systemTopic.getName());
     }
 
     public MessageClient createClient() {
