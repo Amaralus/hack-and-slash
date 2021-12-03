@@ -7,6 +7,8 @@ import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
 import amaralus.apps.hackandslash.io.events.triggers.ButtonEventSingleActionTrigger;
 import amaralus.apps.hackandslash.io.events.triggers.EventActionTrigger;
 import amaralus.apps.hackandslash.io.events.triggers.ScrollEventActionTrigger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -17,6 +19,7 @@ import java.util.function.BiConsumer;
 public class InputHandler {
 
     public static final String INPUT_TOPIC_NAME = "input";
+    private static final Logger log = LoggerFactory.getLogger(InputHandler.class);
 
     private final Map<ButtonCode, ButtonEventActionTrigger> buttonTriggers = new ConcurrentHashMap<>();
     private ScrollEventActionTrigger scrollTrigger;
@@ -39,11 +42,13 @@ public class InputHandler {
 
     public InputHandler scrollAction(BiConsumer<Float, Float> scrollAction) {
         scrollTrigger = new ScrollEventActionTrigger(scrollAction);
+        log.debug("Добавлен триггер на скроллинг");
         return this;
     }
 
     public void addTrigger(ButtonEventActionTrigger buttonTrigger) {
         buttonTriggers.put(buttonTrigger.getButtonCode(), buttonTrigger);
+        log.debug("Добавлен триггер на кнопку {}", buttonTrigger.getButtonCode());
     }
 
     public void executeActions() {
@@ -59,12 +64,30 @@ public class InputHandler {
     }
 
     private void handleButtonEvent(ButtonEvent<?> event) {
-        System.out.println(event.getButtonCode());
-        buttonTriggers.get(event.getButtonCode()).handleEvent(event);
+        buttonTriggers.computeIfPresent(event.getButtonCode(), (code, trigger) -> {
+            trigger.handleEvent(event);
+            log.trace("Обработано событие ввода для кнопки {} - {}", event.getButtonCode(), getActionName(event.getAction()));
+            return trigger;
+        });
     }
 
     public void handleScrollEvent(ScrollEvent scrollEvent) {
-        if (scrollTrigger != null)
+        if (scrollTrigger != null) {
             scrollTrigger.handleEvent(scrollEvent);
+            log.trace("Обработано событие скроллинга [{};{}]", scrollEvent.getXOffset(), scrollEvent.getYOffset());
+        }
+    }
+
+    private String getActionName(int action) {
+        switch (action) {
+            case 0:
+                return "RELEASE";
+            case 1:
+                return "PRESS";
+            case 2:
+                return "REPEAT";
+            default:
+                return "UNKNOWN";
+        }
     }
 }

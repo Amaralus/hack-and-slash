@@ -18,7 +18,6 @@ public class ButtonEventSingleActionTrigger extends ButtonEventActionTrigger {
         if (isActive() && !actionExecuted) {
             super.runAction();
             actionExecuted = true;
-            System.out.println("exec");
         }
     }
 
