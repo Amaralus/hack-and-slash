@@ -40,6 +40,10 @@ public class MessageClient implements Destroyable {
         broker.send(topicName, new Request(id, payload));
     }
 
+    public void send(SystemTopic systemTopic, Object payload) {
+        send(systemTopic.getName(), payload);
+    }
+
     public void receive(Request request) {
         messageQueue.offer(request);
     }

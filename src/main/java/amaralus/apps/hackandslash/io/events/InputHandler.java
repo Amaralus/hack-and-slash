@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.io.events;
 
+import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
+import amaralus.apps.hackandslash.gameplay.message.MessageClient;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
 import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
@@ -13,15 +15,22 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
+import static amaralus.apps.hackandslash.gameplay.message.SystemTopic.INPUT_TOPIC;
+import static amaralus.apps.hackandslash.io.events.InputEventMessage.inputEventMessage;
+import static org.lwjgl.glfw.GLFW.glfwPollEvents;
+
 @Service
 @Slf4j
 public class InputHandler {
 
     private final Map<ButtonCode, ButtonEventActionTrigger> buttonTriggers = new ConcurrentHashMap<>();
+    private final MessageClient messageClient;
     private ScrollEventActionTrigger scrollTrigger;
 
-    public InputHandler(Window window) {
+    public InputHandler(Window window, MessageBroker broker) {
         setUpInputHandling(window);
+        messageClient = broker.createClient();
+        scrollAction(this::sendEvent);
     }
 
     public InputHandler buttonAction(ButtonCode buttonCode, Runnable action) {
@@ -29,8 +38,18 @@ public class InputHandler {
         return this;
     }
 
+    public InputHandler buttonAction(ButtonCode buttonCode) {
+        addTrigger(new ButtonEventActionTrigger(buttonCode, () -> sendEvent(buttonCode)));
+        return this;
+    }
+
     public InputHandler singleAction(ButtonCode buttonCode, Runnable action) {
         addTrigger(new ButtonEventSingleActionTrigger(buttonCode, action));
+        return this;
+    }
+
+    public InputHandler singleAction(ButtonCode buttonCode) {
+        addTrigger(new ButtonEventSingleActionTrigger(buttonCode, () -> sendEvent(buttonCode)));
         return this;
     }
 
@@ -40,15 +59,28 @@ public class InputHandler {
         return this;
     }
 
-    public void addTrigger(ButtonEventActionTrigger buttonTrigger) {
+    public void handleInputEvents() {
+        glfwPollEvents();
+        buttonTriggers.values().forEach(EventActionTrigger::runAction);
+        if (scrollTrigger != null)
+            scrollTrigger.runAction();
+    }
+
+    private void addTrigger(ButtonEventActionTrigger buttonTrigger) {
         buttonTriggers.put(buttonTrigger.getButtonCode(), buttonTrigger);
         log.debug("Добавлен триггер на кнопку {}", buttonTrigger.getButtonCode());
     }
 
-    public void executeActions() {
-        buttonTriggers.values().forEach(EventActionTrigger::runAction);
-        if (scrollTrigger != null)
-            scrollTrigger.runAction();
+    private void sendEvent(float xOffset, float yOffset) {
+        sendEvent(inputEventMessage(xOffset, yOffset));
+    }
+
+    private void sendEvent(ButtonCode buttonCode) {
+        sendEvent(inputEventMessage(buttonCode));
+    }
+
+    private void sendEvent(InputEventMessage message) {
+        messageClient.send(INPUT_TOPIC, message);
     }
 
     private void setUpInputHandling(Window window) {
@@ -65,7 +97,7 @@ public class InputHandler {
         });
     }
 
-    public void handleScrollEvent(ScrollEvent scrollEvent) {
+    private void handleScrollEvent(ScrollEvent scrollEvent) {
         if (scrollTrigger != null) {
             scrollTrigger.handleEvent(scrollEvent);
             log.trace("Обработано событие скроллинга [{};{}]", scrollEvent.getXOffset(), scrollEvent.getYOffset());

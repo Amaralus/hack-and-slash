@@ -7,8 +7,6 @@ import amaralus.apps.hackandslash.io.events.InputHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
-import static org.lwjgl.glfw.GLFW.glfwPollEvents;
-
 @Component
 @Slf4j
 public class DefaultGameLoop extends GameLoop {
@@ -36,8 +34,7 @@ public class DefaultGameLoop extends GameLoop {
 
     @Override
     public void processInput() {
-        glfwPollEvents();
-        inputHandler.executeActions();
+        inputHandler.handleInputEvents();
     }
 
     @Override

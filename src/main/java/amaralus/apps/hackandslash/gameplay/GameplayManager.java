@@ -5,17 +5,19 @@ import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
-import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
-import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
+import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.SLEEPING;
+import static amaralus.apps.hackandslash.gameplay.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.graphics.entities.Color.CYAN;
 import static amaralus.apps.hackandslash.graphics.entities.Color.WHITE;
+import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
-import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.*;
+import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_LEFT;
+import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_RIGHT;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Service
@@ -52,13 +54,13 @@ public class GameplayManager {
 
     private void setUpInput() {
         inputHandler.singleAction(ESCAPE, window::close)
-                .buttonAction(W, () -> player.getInputComponent().addCommand(ENTITY_MOVE_UP))
-                .buttonAction(S, () -> player.getInputComponent().addCommand(ENTITY_MOVE_DOWN))
-                .buttonAction(A, () -> player.getInputComponent().addCommand(ENTITY_MOVE_LEFT))
-                .buttonAction(D, () -> player.getInputComponent().addCommand(ENTITY_MOVE_RIGHT))
-                .singleAction(DIG1, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(0))
-                .singleAction(DIG2, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(1))
-                .singleAction(DIG3, () -> player.getRenderComponent().wrapTo(SpriteRenderComponent.class).changeAnimatedFrameStrip(2))
+                .buttonAction(W)
+                .buttonAction(S)
+                .buttonAction(A)
+                .buttonAction(D)
+                .singleAction(DIG1)
+                .singleAction(DIG2)
+                .singleAction(DIG3)
                 .singleAction(R, () -> triangle.setStatus(REMOVE))
                 .singleAction(MOUSE_BUTTON_LEFT, () -> player.getPhysicalComponent().setPosition(
                         rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())))
@@ -86,6 +88,26 @@ public class GameplayManager {
                 .movementSpeed(200)
                 .targetNode(triangle)
                 .register();
+        player.getMessageClient().subscribe(INPUT_TOPIC);
+        player.setEventProcessor((entity, inputEvent) -> {
+            if (inputEvent.isScrollEvent())
+                return;
+
+            if (inputEvent.getButtonCode() == W)
+                ENTITY_MOVE_UP.execute(entity);
+            else if (inputEvent.getButtonCode() == S)
+                ENTITY_MOVE_DOWN.execute(entity);
+            else if (inputEvent.getButtonCode() == A)
+                ENTITY_MOVE_LEFT.execute(entity);
+            else if (inputEvent.getButtonCode() == D)
+                ENTITY_MOVE_RIGHT.execute(entity);
+            else if (inputEvent.getButtonCode() == DIG1)
+                changeFrameStrip(0).execute(entity);
+            else if (inputEvent.getButtonCode() == DIG2)
+                changeFrameStrip(1).execute(entity);
+            else if (inputEvent.getButtonCode() == DIG3)
+                changeFrameStrip(2).execute(entity);
+        });
 
         entityFactory.entity()
                 .renderComponent(entityFactory.spriteRenderComponent()

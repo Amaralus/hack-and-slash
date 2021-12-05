@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.gameplay.UpdateService;
+import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import lombok.extern.slf4j.Slf4j;
@@ -18,18 +19,21 @@ public class EntityService {
 
     private UpdateService updateService;
     private final RendererService rendererService;
+    private final MessageBroker messageBroker;
 
     private final Set<Entity> allEntities = new HashSet<>();
     private final List<RegisteredInfo> newEntities = new ArrayList<>();
 
-    public EntityService(RendererService rendererService) {
+    public EntityService(RendererService rendererService, MessageBroker messageBroker) {
         this.rendererService = rendererService;
+        this.messageBroker = messageBroker;
     }
 
     public void registerEntity(Entity entity, Node targetNode, EntityStatus targetStatus) {
+        entity.setMessageClient(messageBroker.createClient());
         allEntities.add(entity);
         newEntities.add(new RegisteredInfo(entity, targetNode, targetStatus));
-        log.debug("Новая сущность id={} зарегестрирована", entity.getEntityId());
+        log.debug("Новая сущность id={} зарегистрирована, clientId={}", entity.getEntityId(), entity.getMessageClient().getId());
     }
 
     public void activateNewEntities() {
@@ -55,6 +59,7 @@ public class EntityService {
             entity.getParent().getChildren().remove(entity);
             entity.setParent(null);
             entity.getChildren().clear();
+            entity.getMessageClient().destroy();
 
             log.debug("Удалена сущность id={}", entity.getEntityId());
         }
