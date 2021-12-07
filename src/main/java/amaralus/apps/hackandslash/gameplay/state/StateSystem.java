@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.gameplay.state;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.common.Updatable;
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
 
 import java.util.*;
 
@@ -9,6 +10,7 @@ public class StateSystem implements Updatable, Destroyable {
 
     private final Deque<State> stack = new ArrayDeque<>();
     private final Map<String, State> states = new HashMap<>();
+    private Entity entity;
 
     @Override
     public void update(long elapsedTime) {
@@ -19,6 +21,15 @@ public class StateSystem implements Updatable, Destroyable {
     public void destroy() {
         stack.clear();
         states.clear();
+        entity = null;
+    }
+
+    public Entity getEntity() {
+        return entity;
+    }
+
+    public void setEntity(Entity entity) {
+        this.entity = entity;
     }
 
     void setUpStates(Map<String, State> states) {

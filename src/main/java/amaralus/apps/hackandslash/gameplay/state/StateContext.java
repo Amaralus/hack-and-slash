@@ -1,5 +1,8 @@
 package amaralus.apps.hackandslash.gameplay.state;
 
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
+import amaralus.apps.hackandslash.gameplay.message.MessageClient;
+
 public class StateContext {
 
     private final State state;
@@ -16,7 +19,15 @@ public class StateContext {
         state.removeState();
     }
 
-    public String getName() {
+    public String stateName() {
         return state.getName();
+    }
+
+    public Entity entity() {
+        return state.getStateSystem().getEntity();
+    }
+
+    public MessageClient messageClient() {
+        return entity().getMessageClient();
     }
 }

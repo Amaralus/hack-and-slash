@@ -3,6 +3,7 @@ package amaralus.apps.hackandslash.gameplay.entity;
 import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
 import amaralus.apps.hackandslash.gameplay.message.MessageClient;
+import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
@@ -27,6 +28,7 @@ public class Entity extends Node implements Updatable {
     private final PhysicalComponent physicalComponent;
     private final RenderComponent renderComponent;
     private MessageClient messageClient;
+    private StateSystem stateSystem;
     private BiConsumer<Entity, InputEventMessage> eventProcessor;
     private Vector2f globalPosition;
 
@@ -72,10 +74,6 @@ public class Entity extends Node implements Updatable {
             globalPosition = physicalComponent.getPosition();
     }
 
-    public void move(Vector2f direction) {
-        physicalComponent.move(direction);
-    }
-
     public long getEntityId() {
         return entityId;
     }
@@ -94,6 +92,15 @@ public class Entity extends Node implements Updatable {
 
     public void setMessageClient(MessageClient messageClient) {
         this.messageClient = messageClient;
+    }
+
+    public StateSystem getStateSystem() {
+        return stateSystem;
+    }
+
+    public void setStateSystem(StateSystem stateSystem) {
+        this.stateSystem = stateSystem;
+        stateSystem.setEntity(this);
     }
 
     public Vector2f getGlobalPosition() {

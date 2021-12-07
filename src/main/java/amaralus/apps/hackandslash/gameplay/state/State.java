@@ -45,6 +45,10 @@ public class State implements Updatable {
         this.baseState = true;
     }
 
+    StateSystem getStateSystem() {
+        return stateSystem;
+    }
+
     private void logStateSwitching(String prevState, String newState) {
         log.trace("Переключение состояния [{}] -> [{}]", prevState, newState);
     }

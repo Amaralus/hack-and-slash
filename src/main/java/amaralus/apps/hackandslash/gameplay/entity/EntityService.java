@@ -60,6 +60,7 @@ public class EntityService {
             entity.setParent(null);
             entity.getChildren().clear();
             entity.getMessageClient().destroy();
+            entity.getStateSystem().destroy();
 
             log.debug("Удалена сущность id={}", entity.getEntityId());
         }
