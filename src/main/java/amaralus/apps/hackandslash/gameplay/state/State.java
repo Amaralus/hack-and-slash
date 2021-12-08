@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.state;
 
 import amaralus.apps.hackandslash.common.Updatable;
+import amaralus.apps.hackandslash.gameplay.state.action.StateAction;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

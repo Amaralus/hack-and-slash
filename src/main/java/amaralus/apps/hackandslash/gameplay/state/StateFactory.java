@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.state;
 
+import amaralus.apps.hackandslash.gameplay.state.action.StateAction;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -3,8 +3,12 @@ package amaralus.apps.hackandslash.gameplay;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
+import amaralus.apps.hackandslash.gameplay.state.StateFactory;
+import amaralus.apps.hackandslash.gameplay.state.action.InputEventProcessingAction;
+import amaralus.apps.hackandslash.gameplay.state.action.MessageProcessingStateAction;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import org.springframework.stereotype.Service;
 
@@ -61,53 +65,17 @@ public class GameplayManager {
                 .singleAction(DIG1)
                 .singleAction(DIG2)
                 .singleAction(DIG3)
-                .singleAction(R, () -> triangle.setStatus(REMOVE))
-                .singleAction(MOUSE_BUTTON_LEFT, () -> player.getPhysicalComponent().setPosition(
-                        rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())))
-                .singleAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(
-                        rendererService.getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition())))
+                .singleAction(R)
+                .singleAction(MOUSE_BUTTON_LEFT)
+                .singleAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(rendererService.getGlobalCursorPosition()))
                 .scrollAction((xOffset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 
     private void setUpEntities() {
 
-        triangle = entityFactory.entity()
-                .renderComponent(entityFactory.primitiveRenderComponent()
-                        .triangle(vec2(0f, -40f), vec2(40f, 40f), vec2(-40f, 40f))
-                        .primitiveName("triangle")
-                        .color(WHITE)
-                        .produce())
-                .removingStrategy(CASCADE)
-                .register();
+        setUpTriangle();
 
-        player = entityFactory.entity()
-                .renderComponent(entityFactory.spriteRenderComponent()
-                        .spriteName("testTextureSheet")
-                        .runAnimation()
-                        .produce())
-                .movementSpeed(200)
-                .targetNode(triangle)
-                .register();
-        player.getMessageClient().subscribe(INPUT_TOPIC);
-        player.setEventProcessor((entity, inputEvent) -> {
-            if (inputEvent.isScrollEvent())
-                return;
-
-            if (inputEvent.getButtonCode() == W)
-                ENTITY_MOVE_UP.execute(entity);
-            else if (inputEvent.getButtonCode() == S)
-                ENTITY_MOVE_DOWN.execute(entity);
-            else if (inputEvent.getButtonCode() == A)
-                ENTITY_MOVE_LEFT.execute(entity);
-            else if (inputEvent.getButtonCode() == D)
-                ENTITY_MOVE_RIGHT.execute(entity);
-            else if (inputEvent.getButtonCode() == DIG1)
-                changeFrameStrip(0).execute(entity);
-            else if (inputEvent.getButtonCode() == DIG2)
-                changeFrameStrip(1).execute(entity);
-            else if (inputEvent.getButtonCode() == DIG3)
-                changeFrameStrip(2).execute(entity);
-        });
+        setUpPlayer();
 
         entityFactory.entity()
                 .renderComponent(entityFactory.spriteRenderComponent()
@@ -128,5 +96,55 @@ public class GameplayManager {
                         .produce())
                 .entityStatus(SLEEPING)
                 .register();
+    }
+
+    private void setUpPlayer() {
+        player = entityFactory.entity()
+                .renderComponent(entityFactory.spriteRenderComponent()
+                        .spriteName("testTextureSheet")
+                        .runAnimation()
+                        .produce())
+                .movementSpeed(200)
+                .targetNode(triangle)
+                .register();
+
+        player.getMessageClient().subscribe(INPUT_TOPIC);
+
+        player.setStateSystem(new StateFactory()
+                .baseState("base", new MessageProcessingStateAction()
+                        .onMessage(InputEventMessage.class, new InputEventProcessingAction()
+                                .onButton(W, (stateContext, updateTime) -> ENTITY_MOVE_UP.execute(stateContext.entity()))
+                                .onButton(S, (stateContext, updateTime) -> ENTITY_MOVE_DOWN.execute(stateContext.entity()))
+                                .onButton(A, (stateContext, updateTime) -> ENTITY_MOVE_LEFT.execute(stateContext.entity()))
+                                .onButton(D, (stateContext, updateTime) -> ENTITY_MOVE_RIGHT.execute(stateContext.entity()))
+                                .onButton(DIG1, (stateContext, updateTime) -> changeFrameStrip(0).execute(stateContext.entity()))
+                                .onButton(DIG2, (stateContext, updateTime) -> changeFrameStrip(1).execute(stateContext.entity()))
+                                .onButton(DIG3, (stateContext, updateTime) -> changeFrameStrip(2).execute(stateContext.entity()))
+                                .onButton(MOUSE_BUTTON_LEFT, (stateContext, updateTime) ->
+                                        stateContext.entity().getPhysicalComponent().setPosition(rendererService.getGlobalCursorPosition()))
+                        ))
+                .produce());
+    }
+
+    private void setUpTriangle() {
+        triangle = entityFactory.entity()
+                .renderComponent(entityFactory.primitiveRenderComponent()
+                        .triangle(vec2(0f, -40f), vec2(40f, 40f), vec2(-40f, 40f))
+                        .primitiveName("triangle")
+                        .color(WHITE)
+                        .produce())
+                .removingStrategy(CASCADE)
+                .register();
+
+        triangle.getMessageClient().subscribe(INPUT_TOPIC);
+
+        triangle.setStateSystem(new StateFactory()
+                .baseState("base", new MessageProcessingStateAction()
+                        .onMessage(InputEventMessage.class, new InputEventProcessingAction()
+                                .onButton(R, (stateContext, updateTime) -> stateContext.entity().setStatus(REMOVE))
+                                .onButton(MOUSE_BUTTON_RIGHT, (stateContext, updateTime) ->
+                                        stateContext.entity().getPhysicalComponent().setPosition(rendererService.getGlobalCursorPosition()))
+                        ))
+                .produce());
     }
 }

@@ -6,13 +6,10 @@ import amaralus.apps.hackandslash.gameplay.message.MessageClient;
 import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
-import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import org.joml.Vector2f;
 
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.NEW;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
@@ -29,7 +26,6 @@ public class Entity extends Node implements Updatable {
     private final RenderComponent renderComponent;
     private MessageClient messageClient;
     private StateSystem stateSystem;
-    private BiConsumer<Entity, InputEventMessage> eventProcessor;
     private Vector2f globalPosition;
 
     private EntityStatus status;
@@ -44,26 +40,14 @@ public class Entity extends Node implements Updatable {
 
     @Override
     public void update(long elapsedTime) {
-        handleMessages();
+        if (stateSystem != null)
+            stateSystem.update(elapsedTime);
 
         physicalComponent.update(elapsedTime);
 
         updateGlobalPosition();
 
         renderComponent.update(elapsedTime);
-    }
-
-    private void handleMessages() {
-        Optional<Object> nextMessage = messageClient.getNextMessage();
-        while (nextMessage.isPresent()) {
-            if (eventProcessor != null && nextMessage.get() instanceof InputEventMessage)
-                eventProcessor.accept(this, (InputEventMessage) nextMessage.get());
-            nextMessage = messageClient.getNextMessage();
-        }
-    }
-
-    public void setEventProcessor(BiConsumer<Entity, InputEventMessage> eventProcessor) {
-        this.eventProcessor = eventProcessor;
     }
 
     private void updateGlobalPosition() {
