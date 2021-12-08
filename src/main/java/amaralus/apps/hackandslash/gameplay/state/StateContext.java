@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.state;
 
+import amaralus.apps.hackandslash.common.message.MessageClient;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
-import amaralus.apps.hackandslash.gameplay.message.MessageClient;
 
 public class StateContext {
 

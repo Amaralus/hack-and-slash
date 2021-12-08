@@ -12,10 +12,10 @@ import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import org.springframework.stereotype.Service;
 
+import static amaralus.apps.hackandslash.common.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.SLEEPING;
-import static amaralus.apps.hackandslash.gameplay.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.graphics.entities.Color.CYAN;
 import static amaralus.apps.hackandslash.graphics.entities.Color.WHITE;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;

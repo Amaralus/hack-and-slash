@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.io.events;
 
-import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
-import amaralus.apps.hackandslash.gameplay.message.MessageClient;
+import amaralus.apps.hackandslash.common.message.MessageBroker;
+import amaralus.apps.hackandslash.common.message.MessageClient;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
 import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
@@ -15,7 +15,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 
-import static amaralus.apps.hackandslash.gameplay.message.SystemTopic.INPUT_TOPIC;
+import static amaralus.apps.hackandslash.common.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.io.events.InputEventMessage.inputEventMessage;
 import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 

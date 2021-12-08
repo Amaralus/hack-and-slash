@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.entity;
 
+import amaralus.apps.hackandslash.common.message.MessageBroker;
 import amaralus.apps.hackandslash.gameplay.UpdateService;
-import amaralus.apps.hackandslash.gameplay.message.MessageBroker;
 import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import lombok.extern.slf4j.Slf4j;

@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay.message;
+package amaralus.apps.hackandslash.common.message;
 
 public class Request {
 
