@@ -1,14 +1,17 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.gpu.*;
+import amaralus.apps.hackandslash.graphics.entities.gpu.IntVertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
+import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.VertexBufferObject;
 import amaralus.apps.hackandslash.graphics.entities.gpu.factory.ShaderFactory;
 import amaralus.apps.hackandslash.graphics.entities.gpu.factory.TextureFactory;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
-import amaralus.apps.hackandslash.io.entities.SpriteSheetData;
+import amaralus.apps.hackandslash.io.data.SpriteSheetData;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.springframework.stereotype.Service;

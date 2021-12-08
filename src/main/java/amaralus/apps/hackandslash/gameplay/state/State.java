@@ -1,12 +1,11 @@
-package amaralus.apps.hackandslash.gameplay.entity.state;
+package amaralus.apps.hackandslash.gameplay.state;
 
 import amaralus.apps.hackandslash.common.Updatable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import amaralus.apps.hackandslash.gameplay.state.action.StateAction;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class State implements Updatable {
-
-    private static final Logger log = LoggerFactory.getLogger(State.class);
 
     private final String name;
     private final StateSystem stateSystem;
@@ -45,6 +44,10 @@ public class State implements Updatable {
 
     void setBaseState() {
         this.baseState = true;
+    }
+
+    StateSystem getStateSystem() {
+        return stateSystem;
     }
 
     private void logStateSwitching(String prevState, String newState) {

@@ -45,6 +45,11 @@ public class RendererService {
         window.swapBuffers();
     }
 
+    // todo перенести в сцену
+    public Vector2f getGlobalCursorPosition() {
+        return getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition());
+    }
+
     private void doRender(RenderComponent renderComponent, Vector2f globalPosition) {
         if (renderComponent.isNull())
             return;

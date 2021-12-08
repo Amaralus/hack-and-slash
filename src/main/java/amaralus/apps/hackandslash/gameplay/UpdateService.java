@@ -5,21 +5,20 @@ import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityService;
 import amaralus.apps.hackandslash.gameplay.entity.EntityStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.*;
 
 @Service
+@Slf4j
 public class UpdateService implements Updatable {
-
-    private static final Logger log = LoggerFactory.getLogger(UpdateService.class);
 
     private final TaskManager taskManager;
     private EntityService entityService;

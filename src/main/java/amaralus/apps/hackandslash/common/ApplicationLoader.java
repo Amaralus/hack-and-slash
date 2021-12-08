@@ -2,14 +2,12 @@ package amaralus.apps.hackandslash.common;
 
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.Collectors;
 
+@Slf4j
 public class ApplicationLoader {
-
-    private static final Logger log = LoggerFactory.getLogger(ApplicationLoader.class);
 
     private final FileLoadService fileLoadService;
     private final ResourceFactory resourceFactory;

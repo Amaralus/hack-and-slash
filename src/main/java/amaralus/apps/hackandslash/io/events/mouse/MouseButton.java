@@ -1,9 +1,11 @@
-package amaralus.apps.hackandslash.io.events;
+package amaralus.apps.hackandslash.io.events.mouse;
+
+import amaralus.apps.hackandslash.io.events.ButtonCode;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public enum MouseButton {
+public enum MouseButton implements ButtonCode {
 
     UNKNOWN(-1),
     MOUSE_BUTTON_LEFT(0),
@@ -32,6 +34,7 @@ public enum MouseButton {
         return mouseButton == null ? UNKNOWN : mouseButton;
     }
 
+    @Override
     public int getNumber() {
         return number;
     }

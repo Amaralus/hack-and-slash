@@ -1,8 +1,9 @@
 package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.Updatable;
-import amaralus.apps.hackandslash.gameplay.InputComponent;
+import amaralus.apps.hackandslash.common.message.MessageClient;
 import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
+import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Vector2f;
@@ -18,12 +19,13 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class Entity extends Node implements Updatable {
 
-    public static final AtomicLong entityIdSource = new AtomicLong();
+    private static final AtomicLong entityIdSource = new AtomicLong();
 
     private final long entityId;
-    private final InputComponent inputComponent;
     private final PhysicalComponent physicalComponent;
     private final RenderComponent renderComponent;
+    private MessageClient messageClient;
+    private StateSystem stateSystem;
     private Vector2f globalPosition;
 
     private EntityStatus status;
@@ -31,7 +33,6 @@ public class Entity extends Node implements Updatable {
     public Entity(RenderComponent renderComponent, Vector2f position) {
         entityId = entityIdSource.incrementAndGet();
         status = NEW;
-        inputComponent = new InputComponent();
         physicalComponent = new PhysicalComponent(position);
         this.renderComponent = renderComponent;
         globalPosition = vec2();
@@ -39,8 +40,9 @@ public class Entity extends Node implements Updatable {
 
     @Override
     public void update(long elapsedTime) {
+        if (stateSystem != null)
+            stateSystem.update(elapsedTime);
 
-        inputComponent.executeCommands(this);
         physicalComponent.update(elapsedTime);
 
         updateGlobalPosition();
@@ -56,16 +58,8 @@ public class Entity extends Node implements Updatable {
             globalPosition = physicalComponent.getPosition();
     }
 
-    public void move(Vector2f direction) {
-        physicalComponent.move(direction);
-    }
-
     public long getEntityId() {
         return entityId;
-    }
-
-    public InputComponent getInputComponent() {
-        return inputComponent;
     }
 
     public PhysicalComponent getPhysicalComponent() {
@@ -74,6 +68,23 @@ public class Entity extends Node implements Updatable {
 
     public RenderComponent getRenderComponent() {
         return renderComponent;
+    }
+
+    public MessageClient getMessageClient() {
+        return messageClient;
+    }
+
+    public void setMessageClient(MessageClient messageClient) {
+        this.messageClient = messageClient;
+    }
+
+    public StateSystem getStateSystem() {
+        return stateSystem;
+    }
+
+    public void setStateSystem(StateSystem stateSystem) {
+        this.stateSystem = stateSystem;
+        stateSystem.setEntity(this);
     }
 
     public Vector2f getGlobalPosition() {

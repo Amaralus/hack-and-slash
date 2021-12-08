@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.io.entities;
+package amaralus.apps.hackandslash.io.data;
 
 import java.nio.ByteBuffer;
 

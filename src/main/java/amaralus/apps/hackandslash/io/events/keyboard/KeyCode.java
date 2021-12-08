@@ -1,9 +1,11 @@
-package amaralus.apps.hackandslash.io.events;
+package amaralus.apps.hackandslash.io.events.keyboard;
+
+import amaralus.apps.hackandslash.io.events.ButtonCode;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-public enum KeyCode {
+public enum KeyCode implements ButtonCode {
 
     UNKNOWN(-1),
     SPACE(32),
@@ -140,6 +142,7 @@ public enum KeyCode {
         return keyCode == null ? UNKNOWN : keyCode;
     }
 
+    @Override
     public int getNumber() {
         return number;
     }

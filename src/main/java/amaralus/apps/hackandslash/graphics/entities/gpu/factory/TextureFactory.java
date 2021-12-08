@@ -2,17 +2,15 @@ package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
 
 import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.io.FileLoadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
 @Component
+@Slf4j
 public class TextureFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(TextureFactory.class);
 
     private final FileLoadService fileLoadService;
 

@@ -6,8 +6,9 @@
     </appender>
 
     <logger level="debug" name="amaralus.apps.hackandslash"/>
-    <logger level="trace" name="amaralus.apps.hackandslash.gameplay.entity.state"/>
-    <logger level="trace" name="amaralus.apps.hackandslash.gameplay.message"/>
+    <logger level="trace" name="amaralus.apps.hackandslash.gameplay.state"/>
+    <logger level="trace" name="amaralus.apps.hackandslash.common.message"/>
+    <logger level="debug" name="amaralus.apps.hackandslash.io.events"/>
     <logger level="info" name="org.springframework"/>
 
     <root level="error">

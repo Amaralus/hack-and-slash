@@ -1,17 +1,15 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.common.Destroyable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
+@Slf4j
 public class ResourceManager implements Destroyable {
-
-    private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
 
     private final Map<Class<? extends Destroyable>, ResourceBundle<? extends Destroyable>> resourceBundleMap;
 

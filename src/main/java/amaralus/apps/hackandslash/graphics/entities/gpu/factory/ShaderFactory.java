@@ -2,16 +2,14 @@ package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
 
 import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.io.FileLoadService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import static org.lwjgl.opengl.GL20.*;
 
 @Component
+@Slf4j
 public class ShaderFactory {
-
-    private static final Logger log = LoggerFactory.getLogger(ShaderFactory.class);
 
     private final FileLoadService fileLoadService;
 
