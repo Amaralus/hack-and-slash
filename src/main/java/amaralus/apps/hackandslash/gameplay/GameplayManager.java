@@ -67,7 +67,7 @@ public class GameplayManager {
                 .singleAction(DIG3)
                 .singleAction(R)
                 .singleAction(MOUSE_BUTTON_LEFT)
-                .singleAction(MOUSE_BUTTON_RIGHT, () -> triangle.getPhysicalComponent().setPosition(rendererService.getGlobalCursorPosition()))
+                .singleAction(MOUSE_BUTTON_RIGHT)
                 .scrollAction((xOffset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 
