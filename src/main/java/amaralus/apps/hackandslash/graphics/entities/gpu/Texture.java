@@ -45,4 +45,51 @@ public class Texture extends Resource implements Bindable {
     public int getHeight() {
         return height;
     }
+
+    public enum Filter {
+        NEAREST(GL_NEAREST),
+        LINEAR(GL_LINEAR);
+
+        private final int value;
+
+        Filter(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public enum WrapMode {
+        CLAMP(GL_CLAMP),
+        REPEAT(GL_REPEAT);
+
+        private final int value;
+
+        WrapMode(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
+
+    public enum ParameterName {
+        MAG_FILTER(GL_TEXTURE_MAG_FILTER),
+        MIN_FILTER(GL_TEXTURE_MIN_FILTER),
+        WRAP_S(GL_TEXTURE_WRAP_S),
+        WRAP_T(GL_TEXTURE_WRAP_T);
+
+        private final int value;
+
+        ParameterName(int value) {
+            this.value = value;
+        }
+
+        public int getValue() {
+            return value;
+        }
+    }
 }

@@ -5,6 +5,12 @@ import amaralus.apps.hackandslash.io.FileLoadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.nio.ByteBuffer;
+
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.Filter.LINEAR;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.Filter.NEAREST;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.ParameterName.*;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.WrapMode.REPEAT;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL30.glGenerateMipmap;
 
@@ -26,15 +32,37 @@ public class TextureFactory {
         var texture = new Texture(name, glGenTextures(), imageData.getWidth(), imageData.getHeight());
         texture.bind();
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        setParam(WRAP_S, REPEAT);
+        setParam(WRAP_T, REPEAT);
+        setParam(MIN_FILTER, NEAREST);
+        setParam(MAG_FILTER, NEAREST);
 
         glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, texture.getWidth(), texture.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, imageData.getImageBytes());
         glGenerateMipmap(GL_TEXTURE_2D);
 
         texture.unbind();
         return texture;
+    }
+
+    public Texture produceFontTexture(ByteBuffer byteBuffer, int width, int height) {
+        var texture = new Texture("font", glGenTextures(), width, height);
+        texture.bind();
+
+        setParam(MIN_FILTER, LINEAR);
+        setParam(MAG_FILTER, LINEAR);
+
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, width, height, 0, GL_RED, GL_UNSIGNED_BYTE, byteBuffer);
+        glGenerateMipmap(GL_TEXTURE_2D);
+
+        texture.unbind();
+        return texture;
+    }
+
+    private void setParam(Texture.ParameterName parameterName, Texture.Filter filter) {
+        glTexParameteri(GL_TEXTURE_2D, parameterName.getValue(), filter.getValue());
+    }
+
+    private void setParam(Texture.ParameterName parameterName, Texture.WrapMode wrapMode) {
+        glTexParameteri(GL_TEXTURE_2D, parameterName.getValue(), wrapMode.getValue());
     }
 }
