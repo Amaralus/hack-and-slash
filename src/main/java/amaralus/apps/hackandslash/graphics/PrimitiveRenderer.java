@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.entities.Camera;
-import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
+import amaralus.apps.hackandslash.graphics.entities.gpu.shader.Shader;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;

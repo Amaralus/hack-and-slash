@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu;
+package amaralus.apps.hackandslash.graphics.entities.gpu.shader;
 
 import amaralus.apps.hackandslash.resources.Resource;
 import org.joml.Matrix4f;

@@ -1,12 +1,12 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.IntVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexBufferObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.factory.ShaderFactory;
-import amaralus.apps.hackandslash.graphics.entities.gpu.factory.TextureFactory;
+import amaralus.apps.hackandslash.graphics.entities.gpu.shader.ShaderFactory;
+import amaralus.apps.hackandslash.graphics.entities.gpu.texture.Texture;
+import amaralus.apps.hackandslash.graphics.entities.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
@@ -17,10 +17,6 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.springframework.stereotype.Service;
 
-import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.Filter.NEAREST;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.ParameterName.*;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.PixelFormat.RGBA;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.WrapMode.REPEAT;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferType.ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferType.ELEMENT_ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferUsage.DYNAMIC_DRAW;
@@ -28,6 +24,10 @@ import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferUsag
 import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory.VboFactory.intBuffer;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.texture.PixelFormat.RGBA;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.texture.TextureFilter.NEAREST;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.texture.TextureParameterName.*;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.texture.TextureWrapMode.REPEAT;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 @Service

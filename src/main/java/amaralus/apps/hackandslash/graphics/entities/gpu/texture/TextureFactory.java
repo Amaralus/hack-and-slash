@@ -1,7 +1,6 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
+package amaralus.apps.hackandslash.graphics.entities.gpu.texture;
 
 import amaralus.apps.hackandslash.common.ValueEnum;
-import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
 import amaralus.apps.hackandslash.io.data.ImageData;
 import org.springframework.stereotype.Component;
 
@@ -21,13 +20,13 @@ public class TextureFactory {
 
     public static class TextureFactoryBuilder {
 
-        private final Map<Texture.ParameterName, ValueEnum> params = new HashMap<>();
+        private final Map<TextureParameterName, ValueEnum> params = new HashMap<>();
         private final String resourceName;
 
         private int width;
         private int height;
         private ByteBuffer pixels;
-        private Texture.PixelFormat pixelFormat;
+        private PixelFormat pixelFormat;
         private boolean generateMipmap;
 
         public TextureFactoryBuilder(String resourceName) {
@@ -56,7 +55,7 @@ public class TextureFactory {
             return this;
         }
 
-        public TextureFactoryBuilder pixelFormat(Texture.PixelFormat pixelFormat) {
+        public TextureFactoryBuilder pixelFormat(PixelFormat pixelFormat) {
             this.pixelFormat = pixelFormat;
             return this;
         }
@@ -66,7 +65,7 @@ public class TextureFactory {
             return this;
         }
 
-        public TextureFactoryBuilder param(Texture.ParameterName parameterName, ValueEnum parameterValue) {
+        public TextureFactoryBuilder param(TextureParameterName parameterName, ValueEnum parameterValue) {
             params.put(parameterName, parameterValue);
             return this;
         }

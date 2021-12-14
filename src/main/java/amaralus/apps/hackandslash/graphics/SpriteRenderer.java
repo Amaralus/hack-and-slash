@@ -1,13 +1,14 @@
 package amaralus.apps.hackandslash.graphics;
 
 import amaralus.apps.hackandslash.graphics.entities.Camera;
+import amaralus.apps.hackandslash.graphics.entities.gpu.shader.Shader;
 import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
 import static org.joml.Math.toRadians;
 import static org.lwjgl.opengl.GL15.*;
 

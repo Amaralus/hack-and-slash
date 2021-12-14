@@ -1,6 +1,5 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
+package amaralus.apps.hackandslash.graphics.entities.gpu.shader;
 
-import amaralus.apps.hackandslash.graphics.entities.gpu.Shader;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
