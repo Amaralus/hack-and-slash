@@ -50,7 +50,7 @@ public class RendererService {
                     doRender(renderComponent, entity.getGlobalPosition());
                 }
 
-        fontRenderer.renderText("test 12345 test", Color.YELLOW, activeScene.getCamera());
+        fontRenderer.renderText("test 12345 test шрифты", Color.YELLOW, activeScene.getCamera());
 
         window.swapBuffers();
     }
@@ -78,7 +78,8 @@ public class RendererService {
     }
 
     private void clear() {
-        glClearColor(0f, 0f, 0f, 1f);
+        var background = Color.WHITE;
+        glClearColor(background.r(), background.g(), background.b(), background.a());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 

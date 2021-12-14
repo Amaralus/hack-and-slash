@@ -33,7 +33,7 @@ public class Color {
         return new Color(r, g, b, 1f);
     }
 
-    public static Color rgba(int r, int g, int b) {
+    public static Color rgb(int r, int g, int b) {
         return rgba(r / 255f, g / 255f, b / 255f, 1f);
     }
 
