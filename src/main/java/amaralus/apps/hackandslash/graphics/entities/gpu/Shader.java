@@ -3,10 +3,10 @@ package amaralus.apps.hackandslash.graphics.entities.gpu;
 import amaralus.apps.hackandslash.resources.Resource;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.opengl.GL20.*;
-import static org.lwjgl.opengl.GL20.glUniformMatrix4fv;
 
 public class Shader extends Resource {
 
@@ -36,6 +36,10 @@ public class Shader extends Resource {
 
     public void setVec2(String parameter, Vector2f vector) {
         glUniform2f(getUniformLocation(parameter), vector.x, vector.y);
+    }
+
+    public void setVec3(String parameter, Vector3f vector) {
+        glUniform3f(getUniformLocation(parameter), vector.x, vector.y, vector.z);
     }
 
     public void setMat4(String parameter, Matrix4f matrix) {

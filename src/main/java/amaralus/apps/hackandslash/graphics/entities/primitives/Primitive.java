@@ -23,7 +23,7 @@ public abstract class Primitive implements RenderComponent {
     public void updateColor(Color color) {
         this.color = color;
         var vbo = getVbo(1);
-        vbo.updateBuffer(FloatBuffer.wrap(toArray(color.getVector())), 0);
+        vbo.updateBuffer(FloatBuffer.wrap(toArray(color.rgba())), 0);
     }
 
     @Override

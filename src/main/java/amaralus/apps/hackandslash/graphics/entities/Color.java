@@ -1,8 +1,8 @@
 package amaralus.apps.hackandslash.graphics.entities;
 
+import amaralus.apps.hackandslash.utils.VectMatrUtil;
+import org.joml.Vector3f;
 import org.joml.Vector4f;
-
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec4;
 
 public class Color {
 
@@ -18,7 +18,7 @@ public class Color {
     private final Vector4f vector;
 
     private Color(float r, float g, float b, float a) {
-        vector = vec4(r, g, b, a);
+        vector = VectMatrUtil.vec4(r, g, b, a);
     }
 
     public static Color rgba(float r, float g, float b, float a) {
@@ -53,7 +53,11 @@ public class Color {
         return vector.w;
     }
 
-    public Vector4f getVector() {
+    public Vector4f rgba() {
         return vector;
+    }
+
+    public Vector3f rgb() {
+        return VectMatrUtil.vec3(r(), g(), b());
     }
 }

@@ -12,6 +12,7 @@ import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.data.SpriteSheetData;
+import lombok.extern.slf4j.Slf4j;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.springframework.stereotype.Service;
@@ -20,12 +21,17 @@ import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ARRAY_
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ELEMENT_ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.DYNAMIC_DRAW;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.STATIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.Filter.NEAREST;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.ParameterName.*;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.PixelFormat.RGBA;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.WrapMode.REPEAT;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.intBuffer;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 @Service
+@Slf4j
 public class ResourceFactory {
 
     private final FileLoadService fileLoadService;
@@ -51,7 +57,20 @@ public class ResourceFactory {
     }
 
     public void produceTexture(String textureName) {
-        var texture = textureFactory.produce(textureName);
+        log.debug("Загрузка текстуры {}", textureName);
+
+        var imageData = fileLoadService.loadImageData("sprites/" + textureName + ".png");
+
+        var texture = textureFactory.newTexture(textureName)
+                .imageData(imageData)
+                .pixelFormat(RGBA)
+                .generateMipmap()
+                .param(WRAP_S, REPEAT)
+                .param(WRAP_T, REPEAT)
+                .param(MIN_FILTER, NEAREST)
+                .param(MAG_FILTER, NEAREST)
+                .produce();
+
         resourceManager.addResource(texture);
     }
 
@@ -84,7 +103,7 @@ public class ResourceFactory {
     private VertexBufferObject colorBuffer(String name, Color color, int countVertex) {
         Vector4f[] colors = new Vector4f[countVertex];
         for (int i = 0; i < colors.length; i++)
-            colors[i] = color.getVector();
+            colors[i] = color.rgba();
 
         return floatBuffer(toArray(colors))
                 .type(ARRAY_BUFFER)
