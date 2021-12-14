@@ -1,5 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
+import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexArraysObject;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 

@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu;
+package amaralus.apps.hackandslash.graphics.entities.gpu.buffer;
 
 import static org.lwjgl.opengl.GL15.*;
 

@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu;
+package amaralus.apps.hackandslash.graphics.entities.gpu.buffer;
 
 import java.nio.IntBuffer;
 

@@ -1,7 +1,7 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
+package amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory;
 
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexBufferObject;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 
 import java.util.ArrayList;

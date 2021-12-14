@@ -1,10 +1,10 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.gpu.IntVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.IntVertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexBufferObject;
 import amaralus.apps.hackandslash.graphics.entities.gpu.factory.ShaderFactory;
 import amaralus.apps.hackandslash.graphics.entities.gpu.factory.TextureFactory;
 import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
@@ -17,17 +17,17 @@ import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.springframework.stereotype.Service;
 
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ELEMENT_ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.DYNAMIC_DRAW;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.STATIC_DRAW;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.Filter.NEAREST;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.ParameterName.*;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.PixelFormat.RGBA;
 import static amaralus.apps.hackandslash.graphics.entities.gpu.Texture.WrapMode.REPEAT;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VaoFactory.newVao;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.floatBuffer;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.intBuffer;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferType.ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferType.ELEMENT_ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferUsage.DYNAMIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.BufferUsage.STATIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory.VaoFactory.newVao;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory.VboFactory.floatBuffer;
+import static amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory.VboFactory.intBuffer;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 @Service

@@ -1,6 +1,6 @@
-package amaralus.apps.hackandslash.graphics.entities.gpu.factory;
+package amaralus.apps.hackandslash.graphics.entities.gpu.buffer.factory;
 
-import amaralus.apps.hackandslash.graphics.entities.gpu.*;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.*;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 
 import java.nio.FloatBuffer;

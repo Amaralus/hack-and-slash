@@ -2,8 +2,8 @@ package amaralus.apps.hackandslash.graphics.entities.primitives;
 
 import amaralus.apps.hackandslash.graphics.entities.Color;
 import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
-import amaralus.apps.hackandslash.graphics.entities.gpu.FloatVertexBufferObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.FloatVertexBufferObject;
+import amaralus.apps.hackandslash.graphics.entities.gpu.buffer.VertexArraysObject;
 
 import java.nio.FloatBuffer;
 
