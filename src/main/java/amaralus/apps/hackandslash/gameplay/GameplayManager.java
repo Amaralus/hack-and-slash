@@ -11,9 +11,7 @@ import amaralus.apps.hackandslash.graphics.gpu.buffer.IntVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
-import amaralus.apps.hackandslash.graphics.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
-import amaralus.apps.hackandslash.io.data.SpriteSheetData;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceManager;
@@ -92,8 +90,6 @@ public class GameplayManager {
         setUpInput();
 //        setUpEntities();
 
-        rendererService.getActiveScene().getCamera().addScale(0.7f);
-
         initFont();
 
         gameLoop.enable();
@@ -122,11 +118,6 @@ public class GameplayManager {
         var fontData = new FontData(texture, vao, info, cdata, ascent, descent, lineGap);
         rendererService.setFontData(fontData);
 
-    }
-
-    private float[] textureData(Texture texture, SpriteSheetData spriteSheetData) {
-        var texturePosition = Sprite.frameTexturePosition(texture, spriteSheetData);
-        return new float[]{0f, texturePosition.y, 0f, 0f, texturePosition.x, 0f, texturePosition.x, texturePosition.y};
     }
 
     private ByteBuffer loadFontBuffer(String path) {

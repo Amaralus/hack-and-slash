@@ -2,13 +2,14 @@ package amaralus.apps.hackandslash.graphics.gpu.buffer;
 
 import java.nio.FloatBuffer;
 
+import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 
 public class FloatVertexBufferObject extends VertexBufferObject<FloatBuffer> {
 
-    public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, float[] buffer) {
-        this(resourceName, type, usage, FloatBuffer.wrap(buffer));
+    public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, float[] floats) {
+        this(resourceName, type, usage, bufferOf(floats));
     }
 
     public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, FloatBuffer buffer) {

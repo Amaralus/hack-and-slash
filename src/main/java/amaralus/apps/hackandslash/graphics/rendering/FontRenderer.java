@@ -8,9 +8,9 @@ import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.system.MemoryStack;
 
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointKernAdvance;
@@ -74,14 +74,11 @@ public class FontRenderer {
                 float y0 = scale(lineY, alignedQuad.y0(), factorY);
                 float y1 = scale(lineY, alignedQuad.y1(), factorY);
 
-                vao.getBuffers().get(0).updateBuffer(
-                        FloatBuffer.wrap(new float[]{
-                                alignedQuad.s0(), alignedQuad.t0(), x0, y0,
-                                alignedQuad.s1(), alignedQuad.t0(), x1, y0,
-                                alignedQuad.s1(), alignedQuad.t1(), x1, y1,
-                                alignedQuad.s0(), alignedQuad.t1(), x0, y1
-                        }),
-                        0);
+                vao.getBuffers().get(0).updateBuffer(bufferOf(
+                        x0, y0, alignedQuad.s0(), alignedQuad.t0(),
+                        x1, y0, alignedQuad.s1(), alignedQuad.t0(),
+                        x1, y1, alignedQuad.s1(), alignedQuad.t1(),
+                        x0, y1, alignedQuad.s0(), alignedQuad.t1()));
                 fontData.getTexture().bind();
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 

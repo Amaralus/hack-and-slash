@@ -4,8 +4,7 @@ import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import org.joml.Vector2f;
 
-import java.nio.FloatBuffer;
-
+import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 public class Line extends Primitive {
@@ -22,13 +21,13 @@ public class Line extends Primitive {
     public void updateStart(Vector2f vector) {
         start = vector;
         var vbo = getVbo(0);
-        vbo.updateBuffer(FloatBuffer.wrap(toArray(start)), 0);
+        vbo.updateBuffer(bufferOf(toArray(start)));
     }
 
     public void updateEnd(Vector2f vector) {
         end = vector;
         var vbo = getVbo(0);
-        vbo.updateBuffer(FloatBuffer.wrap(toArray(end)), vbo.getDataTypeBytes() * 2L);
+        vbo.updateBuffer(bufferOf(toArray(end)), vbo.getDataTypeBytes() * 2L);
     }
 
     public Vector2f getStart() {

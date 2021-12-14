@@ -39,6 +39,10 @@ public abstract class VertexBufferObject<B extends Buffer> extends Resource impl
         unbind();
     }
 
+    public void updateBuffer(B buffer) {
+        updateBuffer(buffer, 0);
+    }
+
     public void updateBuffer(B buffer, long offset) {
         bind();
         updateBufferData(buffer, offset);

@@ -2,13 +2,14 @@ package amaralus.apps.hackandslash.graphics.gpu.buffer;
 
 import java.nio.IntBuffer;
 
+import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static org.lwjgl.opengl.GL15.glBufferData;
 import static org.lwjgl.opengl.GL15.glBufferSubData;
 
 public class IntVertexBufferObject extends VertexBufferObject<IntBuffer> {
 
-    public IntVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, int[] buffer) {
-        this(resourceName, type, usage, IntBuffer.wrap(buffer));
+    public IntVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, int[] ints) {
+        this(resourceName, type, usage, bufferOf(ints));
     }
 
     public IntVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, IntBuffer buffer) {

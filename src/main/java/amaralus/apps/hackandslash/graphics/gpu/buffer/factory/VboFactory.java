@@ -8,6 +8,8 @@ import java.nio.IntBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
+import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
+
 public class VboFactory {
 
     private BufferType type;
@@ -25,15 +27,15 @@ public class VboFactory {
     }
 
     public static VboFactory intBuffer(int... intBuffer) {
-        return new VboFactory(IntBuffer.wrap(intBuffer));
+        return new VboFactory(bufferOf(intBuffer));
     }
 
     public static VboFactory floatBuffer(FloatBuffer floatBuffer) {
         return new VboFactory(floatBuffer);
     }
 
-    public static VboFactory floatBuffer(float... floatBuffer) {
-        return new VboFactory(FloatBuffer.wrap(floatBuffer));
+    public static VboFactory floatBuffer(float... floats) {
+        return new VboFactory(bufferOf(floats));
     }
 
     private VboFactory(IntBuffer intBuffer) {

@@ -50,7 +50,7 @@ public class RendererService {
                     doRender(renderComponent, entity.getGlobalPosition());
                 }
 
-        fontRenderer.renderText("Testing test rendering!", Color.YELLOW, activeScene.getCamera());
+        fontRenderer.renderText("test 12345 test", Color.YELLOW, activeScene.getCamera());
 
         window.swapBuffers();
     }
