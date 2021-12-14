@@ -1,7 +1,5 @@
 package amaralus.apps.hackandslash.graphics.scene;
 
-import amaralus.apps.hackandslash.graphics.entities.Camera;
-
 import java.util.ArrayList;
 import java.util.List;
 

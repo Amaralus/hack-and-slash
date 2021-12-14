@@ -1,8 +1,8 @@
 package amaralus.apps.hackandslash.gameplay.loop;
 
 import amaralus.apps.hackandslash.gameplay.UpdateService;
-import amaralus.apps.hackandslash.graphics.RendererService;
 import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.graphics.rendering.RendererService;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
