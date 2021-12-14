@@ -107,8 +107,8 @@ public class GameplayManager {
     }
 
     private Sprite initFont() {
-        int width = 512;
-        int height = 512;
+        int width = 1024;
+        int height = 1024;
 
         var ttf = loadFontBuffer("fonts/RobotoMonoRegular.ttf");
 
@@ -177,8 +177,11 @@ public class GameplayManager {
     private Texture createFontTexture(ByteBuffer ttf, int width, int height) {
         var pixels = BufferUtils.createByteBuffer(width * height);
 
-        cdata = STBTTBakedChar.malloc(4096);
-        stbtt_BakeFontBitmap(ttf, 32, pixels, width, height, 32, cdata);
+        int characterBufferCapacity = 4092;
+        float fontHeightInPixels = 64;
+
+        cdata = STBTTBakedChar.malloc(characterBufferCapacity);
+        stbtt_BakeFontBitmap(ttf, fontHeightInPixels, pixels, width, height, 32, cdata);
 
         var texture = textureFactory.newTexture("font")
                 .width(width)

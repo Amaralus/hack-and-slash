@@ -50,7 +50,7 @@ public class RendererService {
                     doRender(renderComponent, entity.getGlobalPosition());
                 }
 
-        fontRenderer.renderText("test 12345 test шрифты", Color.YELLOW, activeScene.getCamera());
+        fontRenderer.renderText("test 12345 test шрифты", Color.BLACK, activeScene.getCamera());
 
         window.swapBuffers();
     }

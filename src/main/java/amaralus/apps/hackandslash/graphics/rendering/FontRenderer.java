@@ -40,9 +40,6 @@ public class FontRenderer {
 
             var alignedQuad = STBTTAlignedQuad.mallocStack(stack);
 
-            float factorX = 1.0f;
-            float factorY = 1.0f;
-
             // положение текста (скорее всего пиксели)
             float lineY = 50f;
             y.put(0, lineY);
@@ -61,34 +58,25 @@ public class FontRenderer {
 
                 if (cp < 32) continue;
 
-                float cpX = x.get(0);
                 stbtt_GetBakedQuad(fontData.getCdata(), fontData.getWidth(), fontData.getHeight(), cp - 32, x, y, alignedQuad, true);
-                x.put(0, scale(cpX, x.get(0), factorX));
+                x.put(0, x.get(0));
                 if (kerningEnabled && i < to) {
                     getCodePoint(text, to, i, pCodePoint);
                     x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontData.getInfo(), cp, pCodePoint.get(0)));
                 }
 
-                float x0 = scale(cpX, alignedQuad.x0(), factorX);
-                float x1 = scale(cpX, alignedQuad.x1(), factorX);
-                float y0 = scale(lineY, alignedQuad.y0(), factorY);
-                float y1 = scale(lineY, alignedQuad.y1(), factorY);
-
                 vao.getBuffers().get(0).updateBuffer(bufferOf(
-                        x0, y0, alignedQuad.s0(), alignedQuad.t0(),
-                        x1, y0, alignedQuad.s1(), alignedQuad.t0(),
-                        x1, y1, alignedQuad.s1(), alignedQuad.t1(),
-                        x0, y1, alignedQuad.s0(), alignedQuad.t1()));
+                        alignedQuad.x0(), alignedQuad.y0(), alignedQuad.s0(), alignedQuad.t0(),
+                        alignedQuad.x1(), alignedQuad.y0(), alignedQuad.s1(), alignedQuad.t0(),
+                        alignedQuad.x1(), alignedQuad.y1(), alignedQuad.s1(), alignedQuad.t1(),
+                        alignedQuad.x0(), alignedQuad.y1(), alignedQuad.s0(), alignedQuad.t1()));
+
                 fontData.getTexture().bind();
                 glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
             }
             vao.unbind();
         }
-    }
-
-    private float scale(float center, float offset, float factor) {
-        return (offset - center) * factor + center;
     }
 
     private int getCodePoint(String text, int to, int i, IntBuffer codePointOut) {
