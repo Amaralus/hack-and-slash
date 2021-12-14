@@ -7,17 +7,17 @@ import org.lwjgl.stb.STBTTFontinfo;
 
 public class FontData {
 
-    private final int width;
-    private final int height;
+    private final Texture texture;
+    private final VertexArraysObject vao;
     private final STBTTFontinfo info;
     private final STBTTBakedChar.Buffer cdata;
     private final int ascent;
     private final int descent;
     private final int lineGap;
 
-    public FontData(int width, int height, STBTTFontinfo info, STBTTBakedChar.Buffer cdata, int ascent, int descent, int lineGap) {
-        this.width = width;
-        this.height = height;
+    public FontData(Texture texture, VertexArraysObject vao, STBTTFontinfo info, STBTTBakedChar.Buffer cdata, int ascent, int descent, int lineGap) {
+        this.texture = texture;
+        this.vao = vao;
         this.info = info;
         this.cdata = cdata;
         this.ascent = ascent;
@@ -25,12 +25,20 @@ public class FontData {
         this.lineGap = lineGap;
     }
 
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public VertexArraysObject getVao() {
+        return vao;
+    }
+
     public int getWidth() {
-        return width;
+        return texture.getWidth();
     }
 
     public int getHeight() {
-        return height;
+        return texture.getHeight();
     }
 
     public STBTTFontinfo getInfo() {

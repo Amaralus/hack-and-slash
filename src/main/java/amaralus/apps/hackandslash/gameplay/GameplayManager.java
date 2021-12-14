@@ -12,9 +12,7 @@ import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
 import amaralus.apps.hackandslash.graphics.sprites.Sprite;
-import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.io.FileLoadService;
-import amaralus.apps.hackandslash.io.data.FrameStripData;
 import amaralus.apps.hackandslash.io.data.SpriteSheetData;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
@@ -26,7 +24,7 @@ import org.lwjgl.system.MemoryStack;
 import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
-import java.util.Collections;
+import java.nio.FloatBuffer;
 
 import static amaralus.apps.hackandslash.common.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
@@ -96,16 +94,12 @@ public class GameplayManager {
 
         rendererService.getActiveScene().getCamera().addScale(0.7f);
 
-        var fontSprite = initFont();
-        entityFactory.entity()
-                .renderComponent(new SpriteRenderComponent(fontSprite))
-                .position(0, 200)
-                .register();
+        initFont();
 
         gameLoop.enable();
     }
 
-    private Sprite initFont() {
+    private void initFont() {
         int width = 512;
         int height = 512;
 
@@ -115,21 +109,19 @@ public class GameplayManager {
 
         var texture = createFontTexture(ttf, width, height);
 
-        var spriteSheetData = new SpriteSheetData(width, height, Collections.singletonList(new FrameStripData(1)));
-
-        var fontData = new FontData(width, height, info, cdata, ascent, descent, lineGap);
-
         var vao = newVao()
                 .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))
-                .buffer(floatBuffer(textureData(texture, spriteSheetData))
+                .buffer(floatBuffer(FloatBuffer.allocate(16))
                         .type(ARRAY_BUFFER)
-                        .usage(STATIC_DRAW)
+                        .usage(DYNAMIC_DRAW)
                         .saveAsVbo("font", resourceManager)
-                        .dataFormat(0, 2, 2, 0, Float.TYPE))
+                        .dataFormat(0, 4, 4, 0, Float.TYPE))
                 .saveAsVao("font", resourceManager)
                 .build();
 
-        return new Sprite("fontSprite", texture, vao, spriteSheetData);
+        var fontData = new FontData(texture, vao, info, cdata, ascent, descent, lineGap);
+        rendererService.setFontData(fontData);
+
     }
 
     private float[] textureData(Texture texture, SpriteSheetData spriteSheetData) {
@@ -150,7 +142,7 @@ public class GameplayManager {
         }
 
         try (MemoryStack stack = stackPush()) {
-            var pAscent  = stack.mallocInt(1);
+            var pAscent = stack.mallocInt(1);
             var pDescent = stack.mallocInt(1);
             var pLineGap = stack.mallocInt(1);
 
@@ -163,11 +155,23 @@ public class GameplayManager {
     }
 
     private Texture createFontTexture(ByteBuffer ttf, int width, int height) {
-        var pixelBuffer = BufferUtils.createByteBuffer(width*height);
-        cdata = STBTTBakedChar.malloc(96);
+        var pixels = BufferUtils.createByteBuffer(width * height);
 
-        stbtt_BakeFontBitmap(ttf, 32, pixelBuffer, width, height, 32, cdata);
-        var texture =  textureFactory.produceFontTexture(pixelBuffer, width, height);
+        cdata = STBTTBakedChar.malloc(96);
+        stbtt_BakeFontBitmap(ttf, 32, pixels, width, height, 32, cdata);
+
+        var texture = textureFactory.newTexture("font")
+                .width(width)
+                .height(height)
+                .pixels(pixels)
+                .pixelFormat(RED)
+                .generateMipmap()
+                .param(WRAP_S, CLAMP_TO_EDGE)
+                .param(WRAP_T, CLAMP_TO_EDGE)
+                .param(MIN_FILTER, LINEAR)
+                .param(MAG_FILTER, LINEAR)
+                .produce();
+
         resourceManager.addResource(texture);
         return texture;
     }
