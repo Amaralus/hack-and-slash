@@ -11,14 +11,11 @@ import amaralus.apps.hackandslash.graphics.gpu.buffer.IntVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
-import amaralus.apps.hackandslash.graphics.sprites.Sprite;
-import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.io.FileLoadService;
-import amaralus.apps.hackandslash.io.data.FrameStripData;
-import amaralus.apps.hackandslash.io.data.SpriteSheetData;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceManager;
+import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
@@ -27,7 +24,6 @@ import org.springframework.stereotype.Service;
 
 import java.nio.ByteBuffer;
 import java.nio.FloatBuffer;
-import java.util.Collections;
 
 import static amaralus.apps.hackandslash.common.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
@@ -37,7 +33,6 @@ import static amaralus.apps.hackandslash.graphics.Color.CYAN;
 import static amaralus.apps.hackandslash.graphics.Color.WHITE;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferType.ARRAY_BUFFER;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.DYNAMIC_DRAW;
-import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.STATIC_DRAW;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.graphics.gpu.texture.PixelFormat.RED;
@@ -53,6 +48,7 @@ import static org.lwjgl.stb.STBTruetype.*;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 @Service
+@Slf4j
 public class GameplayManager {
 
     private final Window window;
@@ -96,17 +92,12 @@ public class GameplayManager {
         setUpInput();
 //        setUpEntities();
 
-        var fontSprite = initFont();
-
-        entityFactory.entity()
-                .renderComponent(new SpriteRenderComponent(fontSprite))
-                .position(0, 200)
-                .register();
+        initFont();
 
         gameLoop.enable();
     }
 
-    private Sprite initFont() {
+    private void initFont() {
         int width = 1024;
         int height = 1024;
 
@@ -128,25 +119,6 @@ public class GameplayManager {
 
         var fontData = new FontData(texture, vao, info, cdata, ascent, descent, lineGap);
         rendererService.setFontData(fontData);
-
-        var spriteSheetData = new SpriteSheetData(width, height, Collections.singletonList(new FrameStripData(1)));
-        var spriteVao = newVao()
-                .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))
-                .buffer(floatBuffer(textureData(texture, spriteSheetData))
-                        .type(ARRAY_BUFFER)
-                        .usage(STATIC_DRAW)
-                        .saveAsVbo("fontSprite", resourceManager)
-                        .dataFormat(0, 2, 2, 0, Float.TYPE))
-                .saveAsVao("fontSprite", resourceManager)
-                .build();
-
-
-        return new Sprite("fontSprite", texture, spriteVao, spriteSheetData);
-    }
-
-    private float[] textureData(Texture texture, SpriteSheetData spriteSheetData) {
-        var texturePosition = Sprite.frameTexturePosition(texture, spriteSheetData);
-        return new float[]{0f, texturePosition.y, 0f, 0f, texturePosition.x, 0f, texturePosition.x, texturePosition.y};
     }
 
     private ByteBuffer loadFontBuffer(String path) {
@@ -178,7 +150,8 @@ public class GameplayManager {
         var pixels = BufferUtils.createByteBuffer(width * height);
 
         int characterBufferCapacity = 4092;
-        float fontHeightInPixels = 64;
+        // влияет на размер шрифта на текстуре
+        float fontHeightInPixels = 32;
 
         cdata = STBTTBakedChar.malloc(characterBufferCapacity);
         stbtt_BakeFontBitmap(ttf, fontHeightInPixels, pixels, width, height, 32, cdata);

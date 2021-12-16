@@ -11,6 +11,7 @@ import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.opengl.GL11.*;
 
 @Service
@@ -50,7 +51,7 @@ public class RendererService {
                     doRender(renderComponent, entity.getGlobalPosition());
                 }
 
-        fontRenderer.renderText("test 12345 test шрифты", Color.BLACK, activeScene.getCamera());
+        fontRenderer.renderText("TEST 12345 test шрифты", Color.BLACK, vec2(), activeScene.getCamera());
 
         window.swapBuffers();
     }
