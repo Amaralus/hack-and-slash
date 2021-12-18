@@ -14,7 +14,8 @@ public interface RenderComponent extends Updatable, Nullable {
     enum RenderComponentType {
         NULL,
         SPRITE,
-        PRIMITIVE
+        PRIMITIVE,
+        FONT
     }
 
     final class NullRenderComponent implements RenderComponent {

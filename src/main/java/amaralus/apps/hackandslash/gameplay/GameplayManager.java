@@ -6,25 +6,16 @@ import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.gameplay.state.StateFactory;
 import amaralus.apps.hackandslash.gameplay.state.action.InputEventProcessingAction;
 import amaralus.apps.hackandslash.gameplay.state.action.MessageProcessingStateAction;
+import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.gpu.buffer.IntVertexBufferObject;
-import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
-import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
+import amaralus.apps.hackandslash.graphics.font.Font;
+import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
-import amaralus.apps.hackandslash.io.FileLoadService;
-import amaralus.apps.hackandslash.io.data.ImageData;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import lombok.extern.slf4j.Slf4j;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.stb.STBTTBakedChar;
-import org.lwjgl.stb.STBTTFontinfo;
-import org.lwjgl.system.MemoryStack;
 import org.springframework.stereotype.Service;
-
-import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 
 import static amaralus.apps.hackandslash.common.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
@@ -32,17 +23,11 @@ import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.SLEEPING;
 import static amaralus.apps.hackandslash.graphics.Color.CYAN;
 import static amaralus.apps.hackandslash.graphics.Color.WHITE;
-import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferType.ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.DYNAMIC_DRAW;
-import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VaoFactory.newVao;
-import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_LEFT;
 import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_RIGHT;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
-import static org.lwjgl.stb.STBTruetype.*;
-import static org.lwjgl.system.MemoryStack.stackPush;
 
 @Service
 @Slf4j
@@ -53,111 +38,39 @@ public class GameplayManager {
     private final EntityFactory entityFactory;
     private final GameLoop gameLoop;
     private final RendererService rendererService;
-
-    private final FileLoadService fileLoadService;
     private final ResourceManager resourceManager;
-    private final TextureFactory textureFactory;
 
     private Entity player;
     private Entity triangle;
-
-    private STBTTFontinfo info;
-    private STBTTBakedChar.Buffer cdata;
-    private int ascent;
-    private int descent;
-    private int lineGap;
 
     public GameplayManager(Window window,
                            InputHandler inputHandler,
                            EntityFactory entityFactory,
                            GameLoop gameLoop,
                            RendererService rendererService,
-                           FileLoadService fileLoadService,
-                           ResourceManager resourceManager,
-                           TextureFactory textureFactory) {
+                           ResourceManager resourceManager) {
         this.window = window;
         this.inputHandler = inputHandler;
         this.entityFactory = entityFactory;
         this.gameLoop = gameLoop;
         this.rendererService = rendererService;
-        this.fileLoadService = fileLoadService;
         this.resourceManager = resourceManager;
-        this.textureFactory = textureFactory;
     }
 
     public void runGameLoop() {
         setUpInput();
 //        setUpEntities();
 
-        initFont();
+        entityFactory.entity()
+                .renderComponent(new FontRenderComponent(
+                        resourceManager.getResource("robotoMonoRegular", Font.class),
+                        Color.BLACK,
+                        "TEST 12345 test шрифты"
+                ))
+                .register();
 
         gameLoop.enable();
     }
-
-    private void initFont() {
-        int width = 1024;
-        int height = 1024;
-
-        var ttf = loadFontBuffer("fonts/robotoMonoRegular.ttf");
-
-        initFontInfo(ttf);
-
-        var texture = createFontTexture(ttf, width, height);
-
-        var vao = newVao()
-                .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))
-                .buffer(floatBuffer(FloatBuffer.allocate(16))
-                        .type(ARRAY_BUFFER)
-                        .usage(DYNAMIC_DRAW)
-                        .saveAsVbo("font", resourceManager)
-                        .dataFormat(0, 4, 4, 0, Float.TYPE))
-                .saveAsVao("font", resourceManager)
-                .build();
-
-        var fontData = new FontData(texture, vao, info, cdata, ascent, descent, lineGap);
-        rendererService.setFontData(fontData);
-    }
-
-    private ByteBuffer loadFontBuffer(String path) {
-        var fontBuffer = fileLoadService.loadFileAsByteBuffer(path);
-        return BufferUtils.createByteBuffer(fontBuffer.capacity()).put(fontBuffer).flip();
-    }
-
-    private void initFontInfo(ByteBuffer ttf) {
-        info = STBTTFontinfo.create();
-
-        if (!stbtt_InitFont(info, ttf)) {
-            throw new IllegalStateException("Failed to initialize font information.");
-        }
-
-        try (MemoryStack stack = stackPush()) {
-            var pAscent = stack.mallocInt(1);
-            var pDescent = stack.mallocInt(1);
-            var pLineGap = stack.mallocInt(1);
-
-            stbtt_GetFontVMetrics(info, pAscent, pDescent, pLineGap);
-
-            ascent = pAscent.get(0);
-            descent = pDescent.get(0);
-            lineGap = pLineGap.get(0);
-        }
-    }
-
-    private Texture createFontTexture(ByteBuffer ttf, int width, int height) {
-
-        int characterBufferCapacity = 4092;
-        // влияет на размер шрифта на текстуре
-        float fontHeightInPixels = 32;
-
-        var pixels = BufferUtils.createByteBuffer(width * height);
-        cdata = STBTTBakedChar.malloc(characterBufferCapacity);
-
-        stbtt_BakeFontBitmap(ttf, fontHeightInPixels, pixels, width, height, 32, cdata);
-
-        return textureFactory.produceFontTexture("robotoMonoRegular", new ImageData(width, height, pixels));
-    }
-
-    // -----------
 
     private void setUpInput() {
         inputHandler.singleAction(ESCAPE, window::close)

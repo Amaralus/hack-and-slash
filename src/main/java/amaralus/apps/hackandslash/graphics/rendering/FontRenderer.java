@@ -1,7 +1,9 @@
 package amaralus.apps.hackandslash.graphics.rendering;
 
-import amaralus.apps.hackandslash.gameplay.FontData;
-import amaralus.apps.hackandslash.graphics.Color;
+import amaralus.apps.hackandslash.graphics.font.Font;
+import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
+import amaralus.apps.hackandslash.graphics.font.FontVerticalMetrics;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.shader.Shader;
 import amaralus.apps.hackandslash.graphics.scene.Camera;
 import amaralus.apps.hackandslash.resources.ResourceManager;
@@ -22,36 +24,31 @@ import static org.lwjgl.system.MemoryStack.stackPush;
 public class FontRenderer {
 
     private final Shader fontShader;
-    private FontData fontData;
-    private final boolean kerningEnabled = false;
-    private final int fontHeight = 24;
+    private boolean kerningEnabled = false;
 
     public FontRenderer(ResourceManager resourceManager) {
         fontShader = resourceManager.getResource("font", Shader.class);
     }
 
-    public void setFontData(FontData fontData) {
-        this.fontData = fontData;
+    public void renderText(Camera camera, FontRenderComponent renderComponent, Vector2f textPosition) {
+        var font = renderComponent.getFont();
+
+        fontShader.use();
+        fontShader.setVec3("fontColor", renderComponent.getColor().rgb());
+        fontShader.setMat4("projection", camera.getProjection());
+        var model = mat4().translate(vec3(copy(textPosition).sub(camera.getLeftTopPosition()), 0f));
+        fontShader.setMat4("model", model);
+
+        var vao = font.getVao();
+        vao.bind();
+        font.getTexture().bind();
+
+        renderText(font, renderComponent.getText(), textPosition);
+
+        vao.unbind();
     }
 
-    public void renderText(String text, Color color, Vector2f textPosition, Camera camera) {
-
-            fontShader.use();
-            fontShader.setVec3("fontColor", color.rgb());
-            fontShader.setMat4("projection", camera.getProjection());
-            var model = mat4().translate(vec3(copy(textPosition).sub(camera.getLeftTopPosition()), 0f));
-            fontShader.setMat4("model", model);
-
-            var vao = fontData.getVao();
-            vao.bind();
-            fontData.getTexture().bind();
-
-            renderText(text, textPosition);
-
-            vao.unbind();
-    }
-
-    private void renderText(String text, Vector2f textPosition) {
+    private void renderText(Font font, String text, Vector2f textPosition) {
         try (MemoryStack stack = stackPush()) {
 
             var x = stack.floats(textPosition.x());
@@ -66,21 +63,22 @@ public class FontRenderer {
 
                 if (cp < 32) continue;
 
-                stbtt_GetBakedQuad(fontData.getCdata(), fontData.getWidth(), fontData.getHeight(), cp - 32, x, y, alignedQuad, true);
+                stbtt_GetBakedQuad(font.getBakedChars(), font.getTexture().getWidth(), font.getTexture().getHeight(), cp - 32, x, y, alignedQuad, true);
+
                 x.put(0, x.get(0));
 
                 if (kerningEnabled && i < to) {
                     getCodePoint(text, to, i, pCodePoint);
-                    x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontData.getInfo(), cp, pCodePoint.get(0)));
+                    x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(font.getFontInfo(), cp, pCodePoint.get(0)));
                 }
 
-                renderCharacter(alignedQuad);
+                renderCharacter(font.getVao(), alignedQuad);
             }
         }
     }
 
-    private void renderCharacter(STBTTAlignedQuad alignedQuad) {
-        fontData.getVao().getBuffers().get(0).updateBuffer(bufferOf(
+    private void renderCharacter(VertexArraysObject vao, STBTTAlignedQuad alignedQuad) {
+        vao.getBuffers().get(0).updateBuffer(bufferOf(
                 alignedQuad.x0(), alignedQuad.y0(), alignedQuad.s0(), alignedQuad.t0(),
                 alignedQuad.x1(), alignedQuad.y0(), alignedQuad.s1(), alignedQuad.t0(),
                 alignedQuad.x1(), alignedQuad.y1(), alignedQuad.s1(), alignedQuad.t1(),
@@ -89,8 +87,8 @@ public class FontRenderer {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
-    private float nextLine(FloatBuffer y) {
-        float lineY = y.get(0) + (fontData.getAscent() - fontData.getDescent() + fontData.getLineGap());
+    private float nextLine(FloatBuffer y, FontVerticalMetrics metrics) {
+        float lineY = y.get(0) + (metrics.getAscent() - metrics.getDescent() + metrics.getLineGap());
         y.put(0, lineY);
         return lineY;
     }
@@ -106,5 +104,9 @@ public class FontRenderer {
         }
         codePointOut.put(0, c1);
         return 1;
+    }
+
+    public void setKerningEnabled(boolean kerningEnabled) {
+        this.kerningEnabled = kerningEnabled;
     }
 }

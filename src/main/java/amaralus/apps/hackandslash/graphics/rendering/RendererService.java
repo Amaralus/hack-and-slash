@@ -1,9 +1,9 @@
 package amaralus.apps.hackandslash.graphics.rendering;
 
-import amaralus.apps.hackandslash.gameplay.FontData;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
 import amaralus.apps.hackandslash.graphics.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
@@ -11,7 +11,6 @@ import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 import static org.lwjgl.opengl.GL11.*;
 
 @Service
@@ -33,10 +32,6 @@ public class RendererService {
         fontRenderer = new FontRenderer(resourceManager);
     }
 
-    public void setFontData(FontData fontData) {
-        fontRenderer.setFontData(fontData);
-    }
-
     public void render() {
         clear();
 
@@ -50,8 +45,6 @@ public class RendererService {
 
                     doRender(renderComponent, entity.getGlobalPosition());
                 }
-
-        fontRenderer.renderText("TEST 12345 test шрифты", Color.BLACK, vec2(), activeScene.getCamera());
 
         window.swapBuffers();
     }
@@ -73,6 +66,9 @@ public class RendererService {
                 break;
             case SPRITE:
                 spriteRenderer.render(camera, renderComponent.wrapTo(SpriteRenderComponent.class), globalPosition);
+                break;
+            case FONT:
+                fontRenderer.renderText(camera, renderComponent.wrapTo(FontRenderComponent.class), globalPosition);
                 break;
             default:
         }

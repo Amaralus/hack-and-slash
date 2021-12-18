@@ -44,6 +44,11 @@ public class FileLoadService {
         }
     }
 
+    public ByteBuffer loadFontData(String path) {
+        var fontBuffer = loadFileAsByteBuffer(path);
+        return BufferUtils.createByteBuffer(fontBuffer.capacity()).put(fontBuffer).flip();
+    }
+
     public ImageData loadImageData(String path) {
         try {
             var image = ImageIO.read(loadResourceAsStream(path));
