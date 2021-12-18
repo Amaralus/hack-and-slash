@@ -15,7 +15,8 @@ import java.nio.IntBuffer;
 import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.stb.STBTruetype.*;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
+import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointKernAdvance;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
 public class FontRenderer {
@@ -55,7 +56,6 @@ public class FontRenderer {
 
             var x = stack.floats(textPosition.x());
             var y = stack.floats(textPosition.y());
-            float scale = stbtt_ScaleForPixelHeight(fontData.getInfo(), fontHeight);
             var alignedQuad = STBTTAlignedQuad.mallocStack(stack);
             var pCodePoint = stack.mallocInt(1);
 
@@ -71,7 +71,7 @@ public class FontRenderer {
 
                 if (kerningEnabled && i < to) {
                     getCodePoint(text, to, i, pCodePoint);
-                    x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontData.getInfo(), cp, pCodePoint.get(0)) * scale);
+                    x.put(0, x.get(0) + stbtt_GetCodepointKernAdvance(fontData.getInfo(), cp, pCodePoint.get(0)));
                 }
 
                 renderCharacter(alignedQuad);
@@ -89,8 +89,8 @@ public class FontRenderer {
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     }
 
-    private float nextLine(FloatBuffer y, float scale) {
-        float lineY = y.get(0) + (fontData.getAscent() - fontData.getDescent() + fontData.getLineGap()) * scale;
+    private float nextLine(FloatBuffer y) {
+        float lineY = y.get(0) + (fontData.getAscent() - fontData.getDescent() + fontData.getLineGap());
         y.put(0, lineY);
         return lineY;
     }

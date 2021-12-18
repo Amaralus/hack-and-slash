@@ -12,6 +12,7 @@ import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
 import amaralus.apps.hackandslash.io.FileLoadService;
+import amaralus.apps.hackandslash.io.data.ImageData;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import amaralus.apps.hackandslash.resources.ResourceManager;
@@ -35,10 +36,6 @@ import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferType.ARRAY_BU
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.DYNAMIC_DRAW;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.floatBuffer;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.PixelFormat.RED;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureFilter.CLAMP_TO_EDGE;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureFilter.LINEAR;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureParameterName.*;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_LEFT;
@@ -101,7 +98,7 @@ public class GameplayManager {
         int width = 1024;
         int height = 1024;
 
-        var ttf = loadFontBuffer("fonts/RobotoMonoRegular.ttf");
+        var ttf = loadFontBuffer("fonts/robotoMonoRegular.ttf");
 
         initFontInfo(ttf);
 
@@ -147,29 +144,17 @@ public class GameplayManager {
     }
 
     private Texture createFontTexture(ByteBuffer ttf, int width, int height) {
-        var pixels = BufferUtils.createByteBuffer(width * height);
 
         int characterBufferCapacity = 4092;
         // влияет на размер шрифта на текстуре
         float fontHeightInPixels = 32;
 
+        var pixels = BufferUtils.createByteBuffer(width * height);
         cdata = STBTTBakedChar.malloc(characterBufferCapacity);
+
         stbtt_BakeFontBitmap(ttf, fontHeightInPixels, pixels, width, height, 32, cdata);
 
-        var texture = textureFactory.newTexture("font")
-                .width(width)
-                .height(height)
-                .pixels(pixels)
-                .pixelFormat(RED)
-                .generateMipmap()
-                .param(WRAP_S, CLAMP_TO_EDGE)
-                .param(WRAP_T, CLAMP_TO_EDGE)
-                .param(MIN_FILTER, LINEAR)
-                .param(MAG_FILTER, LINEAR)
-                .produce();
-
-        resourceManager.addResource(texture);
-        return texture;
+        return textureFactory.produceFontTexture("robotoMonoRegular", new ImageData(width, height, pixels));
     }
 
     // -----------

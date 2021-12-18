@@ -6,7 +6,6 @@ import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexBufferObject;
 import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderFactory;
 import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
-import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.graphics.primitives.Line;
 import amaralus.apps.hackandslash.graphics.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.sprites.Sprite;
@@ -24,10 +23,6 @@ import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.STATIC_
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VaoFactory.newVao;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.floatBuffer;
 import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.intBuffer;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.PixelFormat.RGBA;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureFilter.NEAREST;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureParameterName.*;
-import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureWrapMode.REPEAT;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 @Service
@@ -37,41 +32,18 @@ public class ResourceFactory {
     private final FileLoadService fileLoadService;
     private final ResourceManager resourceManager;
     private final ShaderFactory shaderFactory;
-    private final TextureFactory textureFactory;
 
     public ResourceFactory(FileLoadService fileLoadService,
                            ResourceManager resourceManager,
-                           ShaderFactory shaderFactory,
-                           TextureFactory textureFactory) {
+                           ShaderFactory shaderFactory) {
         this.fileLoadService = fileLoadService;
         this.resourceManager = resourceManager;
         this.shaderFactory = shaderFactory;
-        this.textureFactory = textureFactory;
-
-        produceDefaultTextureEbo();
     }
 
     public void produceShader(String shaderName) {
         var shader = shaderFactory.produce(shaderName);
         resourceManager.addResource(shader);
-    }
-
-    public void produceTexture(String textureName) {
-        log.debug("Загрузка текстуры {}", textureName);
-
-        var imageData = fileLoadService.loadImageData("sprites/" + textureName + ".png");
-
-        var texture = textureFactory.newTexture(textureName)
-                .imageData(imageData)
-                .pixelFormat(RGBA)
-                .generateMipmap()
-                .param(WRAP_S, REPEAT)
-                .param(WRAP_T, REPEAT)
-                .param(MIN_FILTER, NEAREST)
-                .param(MAG_FILTER, NEAREST)
-                .produce();
-
-        resourceManager.addResource(texture);
     }
 
     public Line produceLine(String name, Color color, Vector2f start, Vector2f end) {
@@ -136,7 +108,7 @@ public class ResourceFactory {
         return new float[]{0f, texturePosition.y, 0f, 0f, texturePosition.x, 0f, texturePosition.x, texturePosition.y};
     }
 
-    private void produceDefaultTextureEbo() {
+    public void produceDefaultTextureEbo() {
         intBuffer(0, 1, 3, 1, 2, 3)
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)

@@ -7,7 +7,6 @@ import amaralus.apps.hackandslash.graphics.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.scene.Camera;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
@@ -15,7 +14,6 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
 import static org.lwjgl.opengl.GL11.*;
 
 @Component
-@DependsOn("applicationLoader")
 public class PrimitiveRenderer {
 
     private final Shader primitiveShader;
