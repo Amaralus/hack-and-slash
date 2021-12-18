@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
+
 @Service
 @Slf4j
 public class FileLoadService {
@@ -36,10 +38,15 @@ public class FileLoadService {
 
     public ByteBuffer loadFileAsByteBuffer(String path) {
         try {
-            return ByteBuffer.wrap(loadResourceAsStream(path).readAllBytes());
+            return bufferOf(loadResourceAsStream(path).readAllBytes());
         } catch (Exception e) {
             throw new LoadFileException(e);
         }
+    }
+
+    public ByteBuffer loadFontData(String path) {
+        var fontBuffer = loadFileAsByteBuffer(path);
+        return BufferUtils.createByteBuffer(fontBuffer.capacity()).put(fontBuffer).flip();
     }
 
     public ImageData loadImageData(String path) {

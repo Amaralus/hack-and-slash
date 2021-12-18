@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash;
 
+import amaralus.apps.hackandslash.common.ApplicationLoader;
 import amaralus.apps.hackandslash.config.ApplicationConfig;
 import amaralus.apps.hackandslash.gameplay.GameplayManager;
 import amaralus.apps.hackandslash.graphics.Window;
@@ -25,9 +26,10 @@ public class Application {
 
         try (var errorCallback = GLFWErrorCallback.createPrint(System.err).set()) {
 
-            if (!glfwInit()) throw new IllegalStateException("Невозвожно инициализировать GLFW!");
+            if (!glfwInit()) throw new IllegalStateException("Невозможно инициализировать GLFW!");
 
             applicationContext = new AnnotationConfigApplicationContext(ApplicationConfig.class);
+            applicationContext.getBean(ApplicationLoader.class).initLoading();
             applicationContext.getBean(GameplayManager.class).runGameLoop();
 
             glfwSetErrorCallback(null);

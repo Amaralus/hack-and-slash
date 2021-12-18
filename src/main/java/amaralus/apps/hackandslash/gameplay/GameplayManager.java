@@ -6,18 +6,23 @@ import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.gameplay.state.StateFactory;
 import amaralus.apps.hackandslash.gameplay.state.action.InputEventProcessingAction;
 import amaralus.apps.hackandslash.gameplay.state.action.MessageProcessingStateAction;
-import amaralus.apps.hackandslash.graphics.RendererService;
+import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.Window;
+import amaralus.apps.hackandslash.graphics.font.Font;
+import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
+import amaralus.apps.hackandslash.graphics.rendering.RendererService;
 import amaralus.apps.hackandslash.io.events.InputEventMessage;
 import amaralus.apps.hackandslash.io.events.InputHandler;
+import amaralus.apps.hackandslash.resources.ResourceManager;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.common.message.SystemTopic.INPUT_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.CommandsPool.*;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.SLEEPING;
-import static amaralus.apps.hackandslash.graphics.entities.Color.CYAN;
-import static amaralus.apps.hackandslash.graphics.entities.Color.WHITE;
+import static amaralus.apps.hackandslash.graphics.Color.CYAN;
+import static amaralus.apps.hackandslash.graphics.Color.WHITE;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
 import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
 import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_LEFT;
@@ -25,6 +30,7 @@ import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTO
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Service
+@Slf4j
 public class GameplayManager {
 
     private final Window window;
@@ -32,6 +38,7 @@ public class GameplayManager {
     private final EntityFactory entityFactory;
     private final GameLoop gameLoop;
     private final RendererService rendererService;
+    private final ResourceManager resourceManager;
 
     private Entity player;
     private Entity triangle;
@@ -40,34 +47,43 @@ public class GameplayManager {
                            InputHandler inputHandler,
                            EntityFactory entityFactory,
                            GameLoop gameLoop,
-                           RendererService rendererService) {
+                           RendererService rendererService,
+                           ResourceManager resourceManager) {
         this.window = window;
         this.inputHandler = inputHandler;
         this.entityFactory = entityFactory;
         this.gameLoop = gameLoop;
-
         this.rendererService = rendererService;
+        this.resourceManager = resourceManager;
     }
 
     public void runGameLoop() {
         setUpInput();
-        setUpEntities();
+//        setUpEntities();
+
+        entityFactory.entity()
+                .renderComponent(new FontRenderComponent(
+                        resourceManager.getResource("robotoMonoRegular", Font.class),
+                        Color.BLACK,
+                        "TEST 12345 test шрифты"
+                ))
+                .register();
 
         gameLoop.enable();
     }
 
     private void setUpInput() {
         inputHandler.singleAction(ESCAPE, window::close)
-                .buttonAction(W)
-                .buttonAction(S)
-                .buttonAction(A)
-                .buttonAction(D)
-                .singleAction(DIG1)
-                .singleAction(DIG2)
-                .singleAction(DIG3)
-                .singleAction(R)
-                .singleAction(MOUSE_BUTTON_LEFT)
-                .singleAction(MOUSE_BUTTON_RIGHT)
+//                .buttonAction(W)
+//                .buttonAction(S)
+//                .buttonAction(A)
+//                .buttonAction(D)
+//                .singleAction(DIG1)
+//                .singleAction(DIG2)
+//                .singleAction(DIG3)
+//                .singleAction(R)
+//                .singleAction(MOUSE_BUTTON_LEFT)
+//                .singleAction(MOUSE_BUTTON_RIGHT)
                 .scrollAction((xOffset, yOffset) -> rendererService.getActiveScene().getCamera().addScale(yOffset));
     }
 

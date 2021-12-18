@@ -8,7 +8,7 @@ public abstract class Resource implements Destroyable {
 
     private final String resourceName;
 
-    public Resource(String resourceName) {
+    protected Resource(String resourceName) {
         this.resourceName = Objects.requireNonNull(resourceName);
     }
 

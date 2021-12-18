@@ -1,12 +1,12 @@
 package amaralus.apps.hackandslash.gameplay.entity;
 
-import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
-import amaralus.apps.hackandslash.graphics.entities.sprites.Animation;
-import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
+import amaralus.apps.hackandslash.graphics.Color;
+import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy;
+import amaralus.apps.hackandslash.graphics.sprites.Animation;
+import amaralus.apps.hackandslash.graphics.sprites.Sprite;
+import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
 import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;

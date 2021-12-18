@@ -4,7 +4,7 @@ import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.common.message.MessageClient;
 import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
 import amaralus.apps.hackandslash.gameplay.state.StateSystem;
-import amaralus.apps.hackandslash.graphics.entities.RenderComponent;
+import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Vector2f;
 

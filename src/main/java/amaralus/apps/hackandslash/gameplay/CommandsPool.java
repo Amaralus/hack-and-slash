@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
-import amaralus.apps.hackandslash.graphics.entities.sprites.SpriteRenderComponent;
+import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 

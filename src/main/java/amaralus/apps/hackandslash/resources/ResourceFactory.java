@@ -1,58 +1,49 @@
 package amaralus.apps.hackandslash.resources;
 
-import amaralus.apps.hackandslash.graphics.entities.Color;
-import amaralus.apps.hackandslash.graphics.entities.gpu.IntVertexBufferObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.Texture;
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexArraysObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.VertexBufferObject;
-import amaralus.apps.hackandslash.graphics.entities.gpu.factory.ShaderFactory;
-import amaralus.apps.hackandslash.graphics.entities.gpu.factory.TextureFactory;
-import amaralus.apps.hackandslash.graphics.entities.primitives.Line;
-import amaralus.apps.hackandslash.graphics.entities.primitives.Triangle;
-import amaralus.apps.hackandslash.graphics.entities.sprites.Sprite;
+import amaralus.apps.hackandslash.graphics.Color;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.IntVertexBufferObject;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexBufferObject;
+import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderFactory;
+import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
+import amaralus.apps.hackandslash.graphics.primitives.Line;
+import amaralus.apps.hackandslash.graphics.primitives.Triangle;
+import amaralus.apps.hackandslash.graphics.sprites.Sprite;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.data.SpriteSheetData;
+import lombok.extern.slf4j.Slf4j;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
 import org.springframework.stereotype.Service;
 
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferType.ELEMENT_ARRAY_BUFFER;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.DYNAMIC_DRAW;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.BufferUsage.STATIC_DRAW;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VaoFactory.newVao;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.floatBuffer;
-import static amaralus.apps.hackandslash.graphics.entities.gpu.factory.VboFactory.intBuffer;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferType.ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferType.ELEMENT_ARRAY_BUFFER;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.DYNAMIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.BufferUsage.STATIC_DRAW;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VaoFactory.newVao;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.floatBuffer;
+import static amaralus.apps.hackandslash.graphics.gpu.buffer.factory.VboFactory.intBuffer;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 @Service
+@Slf4j
 public class ResourceFactory {
 
     private final FileLoadService fileLoadService;
     private final ResourceManager resourceManager;
     private final ShaderFactory shaderFactory;
-    private final TextureFactory textureFactory;
 
     public ResourceFactory(FileLoadService fileLoadService,
                            ResourceManager resourceManager,
-                           ShaderFactory shaderFactory,
-                           TextureFactory textureFactory) {
+                           ShaderFactory shaderFactory) {
         this.fileLoadService = fileLoadService;
         this.resourceManager = resourceManager;
         this.shaderFactory = shaderFactory;
-        this.textureFactory = textureFactory;
-
-        produceDefaultTextureEbo();
     }
 
     public void produceShader(String shaderName) {
         var shader = shaderFactory.produce(shaderName);
         resourceManager.addResource(shader);
-    }
-
-    public void produceTexture(String textureName) {
-        var texture = textureFactory.produce(textureName);
-        resourceManager.addResource(texture);
     }
 
     public Line produceLine(String name, Color color, Vector2f start, Vector2f end) {
@@ -84,7 +75,7 @@ public class ResourceFactory {
     private VertexBufferObject colorBuffer(String name, Color color, int countVertex) {
         Vector4f[] colors = new Vector4f[countVertex];
         for (int i = 0; i < colors.length; i++)
-            colors[i] = color.getVector();
+            colors[i] = color.rgba();
 
         return floatBuffer(toArray(colors))
                 .type(ARRAY_BUFFER)
@@ -117,7 +108,7 @@ public class ResourceFactory {
         return new float[]{0f, texturePosition.y, 0f, 0f, texturePosition.x, 0f, texturePosition.x, texturePosition.y};
     }
 
-    private void produceDefaultTextureEbo() {
+    public void produceDefaultTextureEbo() {
         intBuffer(0, 1, 3, 1, 2, 3)
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)
