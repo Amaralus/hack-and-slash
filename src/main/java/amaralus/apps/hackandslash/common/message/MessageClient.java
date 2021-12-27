@@ -48,6 +48,10 @@ public class MessageClient implements Destroyable {
         messageQueue.offer(request);
     }
 
+    public void clearMessageQueue() {
+        messageQueue.clear();
+    }
+
     public void subscribe(String topicName) {
         broker.subscribe(topicName, id);
         topics.add(topicName);
