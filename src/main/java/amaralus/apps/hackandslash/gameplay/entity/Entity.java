@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.Updatable;
-import amaralus.apps.hackandslash.common.message.MessageClient;
+import amaralus.apps.hackandslash.common.message.QueueMessageClient;
 import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
 import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
@@ -10,6 +10,8 @@ import org.joml.Vector2f;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.NEW;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
@@ -24,7 +26,11 @@ public class Entity extends Node implements Updatable {
     private final long entityId;
     private final PhysicalComponent physicalComponent;
     private final RenderComponent renderComponent;
-    private MessageClient messageClient;
+
+    private final ReadWriteLock lock = new ReentrantReadWriteLock();
+    private EntityContext entityContext;
+
+    private QueueMessageClient messageClient;
     private StateSystem stateSystem;
     private Vector2f globalPosition;
 
@@ -36,6 +42,7 @@ public class Entity extends Node implements Updatable {
         physicalComponent = new PhysicalComponent(position);
         this.renderComponent = renderComponent;
         globalPosition = vec2();
+        entityContext = new EntityContext(entityId, status, vec2(), -1);
     }
 
     @Override
@@ -48,6 +55,26 @@ public class Entity extends Node implements Updatable {
         updateGlobalPosition();
 
         renderComponent.update(elapsedTime);
+        updateContext();
+    }
+
+    private void updateContext() {
+        var tmpContext = new EntityContext(entityId, status, copy(globalPosition), messageClient.getId());
+        try {
+            lock.writeLock().lock();
+            entityContext = tmpContext;
+        } finally {
+            lock.writeLock().unlock();
+        }
+    }
+
+    public EntityContext getEntityContext() {
+        try {
+            lock.readLock().lock();
+            return entityContext;
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     private void updateGlobalPosition() {
@@ -70,11 +97,11 @@ public class Entity extends Node implements Updatable {
         return renderComponent;
     }
 
-    public MessageClient getMessageClient() {
+    public QueueMessageClient getMessageClient() {
         return messageClient;
     }
 
-    public void setMessageClient(MessageClient messageClient) {
+    public void setMessageClient(QueueMessageClient messageClient) {
         this.messageClient = messageClient;
     }
 

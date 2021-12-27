@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 @Service
 @Slf4j
@@ -24,12 +25,22 @@ public class MessageBroker {
             createTopic(systemTopic.getName());
     }
 
-    public MessageClient createClient() {
-        long id = clientIdSource.incrementAndGet();
-        var client = new MessageClient(id, this);
-        clients.put(id, client);
-        log.debug("Клиент id={} зарегистрирован", id);
+    public QueueMessageClient createQueueClient() {
+        var client = new QueueMessageClient(clientIdSource.incrementAndGet(), this);
+        registerClient(client);
         return client;
+    }
+
+    public ActionMessageClient createActionClient(Consumer<Request> action) {
+        Consumer<Request>  asyncAction = request -> taskManager.runAsync(() ->  action.accept(request));
+        var client  = new ActionMessageClient(clientIdSource.incrementAndGet() ,this, asyncAction);
+        registerClient(client);
+        return client;
+    }
+
+    private void registerClient(MessageClient client) {
+        clients.put(client.getId(), client);
+        log.debug("Клиент id={} зарегистрирован", client.getId());
     }
 
     void deleteClient(long id) {
@@ -55,7 +66,7 @@ public class MessageBroker {
         topic.getSubscribers().stream()
                 .map(clients::get)
                 .forEach(client -> {
-                    client.removeSubscription(topicName);
+                    ((ActionMessageClient) client).removeSubscription(topicName);
                     log.debug("Клиент id={} отписан от топика {}", client.getId(), topicName);
                 });
 

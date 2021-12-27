@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.gameplay.state;
 
-import amaralus.apps.hackandslash.common.message.MessageClient;
+import amaralus.apps.hackandslash.common.message.QueueMessageClient;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 
 public class StateContext {
@@ -27,7 +27,7 @@ public class StateContext {
         return state.getStateSystem().getEntity();
     }
 
-    public MessageClient messageClient() {
+    public QueueMessageClient messageClient() {
         return entity().getMessageClient();
     }
 }

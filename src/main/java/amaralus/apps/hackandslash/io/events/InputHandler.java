@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.io.events;
 
 import amaralus.apps.hackandslash.common.message.MessageBroker;
-import amaralus.apps.hackandslash.common.message.MessageClient;
+import amaralus.apps.hackandslash.common.message.QueueMessageClient;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.io.events.mouse.ScrollEvent;
 import amaralus.apps.hackandslash.io.events.triggers.ButtonEventActionTrigger;
@@ -24,12 +24,12 @@ import static org.lwjgl.glfw.GLFW.glfwPollEvents;
 public class InputHandler {
 
     private final Map<ButtonCode, ButtonEventActionTrigger> buttonTriggers = new ConcurrentHashMap<>();
-    private final MessageClient messageClient;
+    private final QueueMessageClient messageClient;
     private ScrollEventActionTrigger scrollTrigger;
 
     public InputHandler(Window window, MessageBroker broker) {
         setUpInputHandling(window);
-        messageClient = broker.createClient();
+        messageClient = broker.createQueueClient();
         scrollAction(this::sendEvent);
     }
 

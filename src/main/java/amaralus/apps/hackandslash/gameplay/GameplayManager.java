@@ -2,7 +2,6 @@ package amaralus.apps.hackandslash.gameplay;
 
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
-import amaralus.apps.hackandslash.gameplay.entity.EntityService;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
@@ -10,7 +9,6 @@ import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
@@ -26,7 +24,6 @@ public class GameplayManager {
     private final EntityFactory entityFactory;
     private final GameLoop gameLoop;
     private final RendererService rendererService;
-    private final EntityService entityService;
 
     private int currentFrame = 0;
 
@@ -64,20 +61,5 @@ public class GameplayManager {
 
     private void setCurrentFrame(int currentFrame) {
         this.currentFrame = currentFrame;
-    }
-
-    private Entity getClosestEntity(Vector2f position) {
-        float minSquaredDistance = Float.MAX_VALUE;
-        Entity resultEntity = null;
-
-        for (var entity : entityService.getAllEntities()) {
-            float sqDist = position.distanceSquared(entity.getGlobalPosition());
-            if (sqDist < minSquaredDistance) {
-                resultEntity = entity;
-                minSquaredDistance = sqDist;
-            }
-        }
-
-        return resultEntity;
     }
 }
