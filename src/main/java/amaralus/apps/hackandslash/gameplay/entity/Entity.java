@@ -2,10 +2,10 @@ package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.common.message.QueueMessageClient;
-import amaralus.apps.hackandslash.gameplay.PhysicalComponent;
 import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
+import amaralus.apps.hackandslash.physics.PhysicalComponent;
 import org.joml.Vector2f;
 
 import java.util.Objects;
@@ -42,7 +42,7 @@ public class Entity extends Node implements Updatable {
         physicalComponent = new PhysicalComponent(position);
         this.renderComponent = renderComponent;
         globalPosition = vec2();
-        entityContext = new EntityContext(entityId, status, vec2(), -1);
+        entityContext = new EntityContext(this);
     }
 
     @Override
@@ -59,7 +59,7 @@ public class Entity extends Node implements Updatable {
     }
 
     private void updateContext() {
-        var tmpContext = new EntityContext(entityId, status, copy(globalPosition), messageClient.getId());
+        var tmpContext = new EntityContext(this);
         try {
             lock.writeLock().lock();
             entityContext = tmpContext;
@@ -75,6 +75,10 @@ public class Entity extends Node implements Updatable {
         } finally {
             lock.readLock().unlock();
         }
+    }
+
+    public EntityLiveContext getLiveContext() {
+        return new EntityLiveContext(this);
     }
 
     private void updateGlobalPosition() {

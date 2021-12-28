@@ -101,11 +101,4 @@ public final class VectMatrUtil {
         }
         return array;
     }
-
-    public static void moveTo(Vector2f position, Vector2f to, float distance) {
-        if (position.distanceSquared(to) < distance * distance)
-            position.set(to);
-        else
-            position.add(copy(to).sub(position).normalize(distance, copy(position)));
-    }
 }

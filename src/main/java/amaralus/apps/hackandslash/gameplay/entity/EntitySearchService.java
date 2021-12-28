@@ -1,17 +1,17 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.message.MessageBroker;
 import amaralus.apps.hackandslash.common.message.MessageClient;
 import amaralus.apps.hackandslash.common.message.Request;
-import amaralus.apps.hackandslash.gameplay.entity.Entity;
-import amaralus.apps.hackandslash.gameplay.entity.EntityContext;
-import amaralus.apps.hackandslash.gameplay.entity.EntityService;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
 import static amaralus.apps.hackandslash.common.message.SystemTopic.ENTITY_SEARCH_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
 
+// todo -> возможно станет общим сервисом поиска
 @Service
 public class EntitySearchService {
 
@@ -26,11 +26,11 @@ public class EntitySearchService {
 
     private void findEntity(Request request) {
         var position = (Vector2f) request.payload();
-        var entityContext = getClosestEntity(position);
-        client.send(request.sender(), entityContext);
+        var entity = getClosestEntity(position);
+        client.send(request.sender(), new SearchResult(entity == null ? null : entity.getLiveContext()));
     }
 
-    private EntityContext getClosestEntity(Vector2f position) {
+    private Entity getClosestEntity(Vector2f position) {
         float minSquaredDistance = Float.MAX_VALUE;
         Entity resultEntity = null;
 
@@ -42,6 +42,12 @@ public class EntitySearchService {
             }
         }
 
-        return resultEntity == null ? null : resultEntity.getEntityContext();
+        return resultEntity;
+    }
+
+    @AllArgsConstructor
+    @Getter
+    public static class SearchResult {
+        private final EntityLiveContext liveContext;
     }
 }

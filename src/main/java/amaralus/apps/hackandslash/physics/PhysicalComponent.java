@@ -1,9 +1,10 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.physics;
 
 import amaralus.apps.hackandslash.common.Updatable;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.gameplay.PhysicService.checkGlobalBorderCrossing;
+import static amaralus.apps.hackandslash.physics.PhysicService.checkGlobalBorderCrossing;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.copy;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class PhysicalComponent implements Updatable {
@@ -28,6 +29,13 @@ public class PhysicalComponent implements Updatable {
 
             position.sub(checkGlobalBorderCrossing(position));
         }
+    }
+
+    public static void moveTo(Vector2f position, Vector2f to, float distance) {
+        if (position.distanceSquared(to) < distance * distance)
+            position.set(to);
+        else
+            position.add(copy(to).sub(position).normalize(distance, copy(position)));
     }
 
     public void move(Vector2f direction) {

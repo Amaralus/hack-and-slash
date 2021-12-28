@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.gameplay;
+package amaralus.apps.hackandslash.physics;
 
 import org.joml.Vector2f;
 
@@ -6,10 +6,10 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class PhysicService {
 
-    private static final float LEFT_BORDER = -200;
-    private static final float RIGHT_BORDER = 200;
-    private static final float TOP_BORDER = -200;
-    private static final float BOTTOM_BORDER = 200;
+    private static final float LEFT_BORDER = -640;
+    private static final float RIGHT_BORDER = 640;
+    private static final float TOP_BORDER = -360;
+    private static final float BOTTOM_BORDER = 360;
 
     public static Vector2f checkGlobalBorderCrossing(Vector2f position) {
         var crossingDistance = vec2();
