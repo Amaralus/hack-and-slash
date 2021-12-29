@@ -6,7 +6,6 @@ import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
 import amaralus.apps.hackandslash.graphics.scene.Node;
 import amaralus.apps.hackandslash.physics.PhysicalComponent;
-import org.joml.Vector2f;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
@@ -16,8 +15,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.NEW;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
 import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.copy;
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class Entity extends Node implements Updatable {
 
@@ -25,23 +22,20 @@ public class Entity extends Node implements Updatable {
 
     private final long entityId;
     private final PhysicalComponent physicalComponent;
-    private final RenderComponent renderComponent;
+    private RenderComponent renderComponent;
 
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
     private EntityContext entityContext;
 
     private QueueMessageClient messageClient;
     private StateSystem stateSystem;
-    private Vector2f globalPosition;
 
     private EntityStatus status;
 
-    public Entity(RenderComponent renderComponent, Vector2f position) {
+    public Entity() {
         entityId = entityIdSource.incrementAndGet();
         status = NEW;
-        physicalComponent = new PhysicalComponent(position);
-        this.renderComponent = renderComponent;
-        globalPosition = vec2();
+        physicalComponent = new PhysicalComponent(this);
         entityContext = new EntityContext(this);
     }
 
@@ -50,9 +44,8 @@ public class Entity extends Node implements Updatable {
         if (stateSystem != null)
             stateSystem.update(elapsedTime);
 
+        // todo в идеале это должен обновлять стейт когда это необходимо
         physicalComponent.update(elapsedTime);
-
-        updateGlobalPosition();
 
         renderComponent.update(elapsedTime);
         updateContext();
@@ -81,14 +74,6 @@ public class Entity extends Node implements Updatable {
         return new EntityLiveContext(this);
     }
 
-    private void updateGlobalPosition() {
-        var parent = getParent();
-        if (parent instanceof Entity)
-            globalPosition = copy(((Entity) parent).globalPosition).add(physicalComponent.getPosition());
-        else
-            globalPosition = physicalComponent.getPosition();
-    }
-
     public long getEntityId() {
         return entityId;
     }
@@ -99,6 +84,10 @@ public class Entity extends Node implements Updatable {
 
     public RenderComponent getRenderComponent() {
         return renderComponent;
+    }
+
+    public void setRenderComponent(RenderComponent renderComponent) {
+        this.renderComponent = renderComponent;
     }
 
     public QueueMessageClient getMessageClient() {
@@ -116,14 +105,6 @@ public class Entity extends Node implements Updatable {
     public void setStateSystem(StateSystem stateSystem) {
         this.stateSystem = stateSystem;
         stateSystem.setEntity(this);
-    }
-
-    public Vector2f getGlobalPosition() {
-        return globalPosition;
-    }
-
-    public void setGlobalPosition(Vector2f globalPosition) {
-        this.globalPosition = globalPosition;
     }
 
     public EntityStatus getStatus() {

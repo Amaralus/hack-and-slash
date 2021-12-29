@@ -35,7 +35,7 @@ public class EntitySearchService {
         Entity resultEntity = null;
 
         for (var entity : entityService.getAllEntities()) {
-            float sqDist = position.distanceSquared(entity.getGlobalPosition());
+            float sqDist = position.distanceSquared(entity.getPhysicalComponent().getPosition());
             if (entity.getStatus() != REMOVE && sqDist < minSquaredDistance) {
                 resultEntity = entity;
                 minSquaredDistance = sqDist;

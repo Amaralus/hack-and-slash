@@ -43,7 +43,7 @@ public class RendererService {
                     var entity = (Entity) node;
                     var renderComponent = entity.getRenderComponent();
 
-                    doRender(renderComponent, entity.getGlobalPosition());
+                    doRender(renderComponent, entity.getPhysicalComponent().getPosition());
                 }
 
         window.swapBuffers();

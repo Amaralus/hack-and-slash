@@ -62,6 +62,7 @@ public class EntityService {
             entity.getMessageClient().destroy();
             if (entity.getStateSystem() != null)
                 entity.getStateSystem().destroy();
+            entity.getPhysicalComponent().destroy();
 
             log.debug("Удалена сущность id={}", entity.getEntityId());
         }

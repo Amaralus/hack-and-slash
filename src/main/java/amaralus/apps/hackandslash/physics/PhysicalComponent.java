@@ -1,34 +1,58 @@
 package amaralus.apps.hackandslash.physics;
 
+import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.common.Updatable;
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
+import amaralus.apps.hackandslash.graphics.scene.Node;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.physics.PhysicService.checkGlobalBorderCrossing;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.copy;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class PhysicalComponent implements Updatable {
+public class PhysicalComponent implements Updatable, Destroyable {
 
-    private Vector2f position;
+    private Node entityNode;
+
+    private Vector2f position = vec2();
+    private Vector2f nodePosition = vec2();
     private Vector2f movementDirection;
 
     private float speed;
 
-    public PhysicalComponent(Vector2f position) {
-        this.position = position;
+    public PhysicalComponent(Node entityNode) {
+        this.entityNode = entityNode;
         movementDirection = vec2();
     }
 
     @Override
     public void update(long elapsedTime) {
-        if (!movementDirection.equals(0f, 0f)) {
-            var speedCoef = speed * elapsedTime * 0.001f;
+        if (movementDirection.equals(0f, 0f))
+            return;
 
-            position.add(movementDirection.mul(speedCoef));
-            movementDirection = vec2();
+        var speedCoef = speed * elapsedTime * 0.001f;
 
-            position.sub(checkGlobalBorderCrossing(position));
-        }
+        nodePosition.add(movementDirection.mul(speedCoef));
+        movementDirection = vec2();
+
+        // todo проверка границ нужно переделать на глобальную
+        nodePosition.sub(checkGlobalBorderCrossing(nodePosition));
+
+        updatePosition();
+    }
+
+    @Override
+    public void destroy() {
+        entityNode = null;
+    }
+
+    private void updatePosition() {
+        var parent = entityNode.getParent();
+        if (parent instanceof Entity) {
+            var parentPosition = ((Entity) parent).getPhysicalComponent().position;
+            position = copy(parentPosition).add(nodePosition);
+        } else
+            position = nodePosition;
     }
 
     public static void moveTo(Vector2f position, Vector2f to, float distance) {
@@ -48,6 +72,14 @@ public class PhysicalComponent implements Updatable {
 
     public void setPosition(Vector2f position) {
         this.position = position;
+    }
+
+    public Vector2f getNodePosition() {
+        return nodePosition;
+    }
+
+    public void setNodePosition(Vector2f nodePosition) {
+        this.nodePosition = nodePosition;
     }
 
     public float getSpeed() {

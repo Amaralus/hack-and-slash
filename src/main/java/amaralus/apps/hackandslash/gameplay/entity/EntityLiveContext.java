@@ -23,7 +23,7 @@ public class EntityLiveContext {
     }
 
     public Vector2f getGlobalPosition() {
-        return getEntityContext().getGlobalPosition();
+        return getEntityContext().getPosition();
     }
 
     public long getClientId() {

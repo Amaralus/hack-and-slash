@@ -10,13 +10,13 @@ public class EntityContext {
 
     private final long entityId;
     private final EntityStatus status;
-    private final Vector2f globalPosition;
+    private final Vector2f position;
     private final long clientId;
 
     EntityContext(Entity entity) {
         entityId = entity.getEntityId();
         status = entity.getStatus();
-        globalPosition = copy(entity.getGlobalPosition());
+        position = copy(entity.getPhysicalComponent().getPosition());
 
         var client = entity.getMessageClient();
         clientId = client == null ? -1 : client.getId();

@@ -43,7 +43,7 @@ public class EntityFactory {
 
     public class EntityBuilder {
 
-        private RenderComponent renderComponent = new RenderComponent.NullRenderComponent();
+        private RenderComponent renderComponent = RenderComponent.NULL;
         private Vector2f startPosition = vec2();
         private NodeRemovingStrategy nodeRemovingStrategy = SINGLE;
         private float movementSpeed = 100f;
@@ -51,9 +51,11 @@ public class EntityFactory {
         private EntityStatus entityStatus = UPDATING;
 
         public Entity produce() {
-            var entity = new Entity(renderComponent, startPosition);
+            var entity = new Entity();
+            entity.getPhysicalComponent().setPosition(startPosition);
             entity.getPhysicalComponent().setSpeed(movementSpeed);
             entity.setRemovingStrategy(nodeRemovingStrategy);
+            entity.setRenderComponent(renderComponent);
             return entity;
         }
 
