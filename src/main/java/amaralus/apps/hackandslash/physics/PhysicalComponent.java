@@ -16,34 +16,37 @@ public class PhysicalComponent implements Updatable, Destroyable {
 
     private Vector2f position = vec2();
     private Vector2f nodePosition = vec2();
-    private Vector2f movementDirection;
+    private Vector2f movementUnitVector = vec2();
 
-    private float speed;
+    private Vector2f targetPosition;
+
+    private float speedPerMs;
 
     public PhysicalComponent(Node entityNode) {
         this.entityNode = entityNode;
-        movementDirection = vec2();
-    }
-
-    @Override
-    public void update(long elapsedTime) {
-        if (movementDirection.equals(0f, 0f))
-            return;
-
-        var speedCoef = speed * elapsedTime * 0.001f;
-
-        nodePosition.add(movementDirection.mul(speedCoef));
-        movementDirection = vec2();
-
-        // todo проверка границ нужно переделать на глобальную
-        nodePosition.sub(checkGlobalBorderCrossing(nodePosition));
-
-        updatePosition();
     }
 
     @Override
     public void destroy() {
         entityNode = null;
+    }
+
+    @Override
+    public void update(long elapsedTime) {
+        if (movementUnitVector.equals(0f, 0f))
+            return;
+
+        var distance = speedPerMs * elapsedTime;
+
+        if (targetPosition == null) {
+            nodePosition.add(movementUnitVector.mul(distance));
+            movementUnitVector = vec2();
+        } else
+            moveToTarget(distance);
+
+        // todo проверка границ нужно переделать на глобальную??
+        nodePosition.sub(checkGlobalBorderCrossing(nodePosition));
+        updatePosition();
     }
 
     private void updatePosition() {
@@ -55,15 +58,23 @@ public class PhysicalComponent implements Updatable, Destroyable {
             position = nodePosition;
     }
 
-    public static void moveTo(Vector2f position, Vector2f to, float distance) {
-        if (position.distanceSquared(to) < distance * distance)
-            position.set(to);
-        else
-            position.add(copy(to).sub(position).normalize(distance, copy(position)));
+    public void moveToTarget(float distance) {
+        if (position.distanceSquared(targetPosition) < distance * distance) {
+            position.set(targetPosition);
+            targetPosition = null;
+            movementUnitVector = vec2();
+        } else {
+            movementUnitVector = copy(targetPosition).sub(position).normalize(distance, copy(position));
+            position.add(movementUnitVector);
+        }
     }
 
-    public void move(Vector2f direction) {
-        movementDirection.add(direction);
+    public void addMovementVector(Vector2f direction) {
+        movementUnitVector.add(direction);
+    }
+
+    public void setTargetPosition(Vector2f targetPosition) {
+        this.targetPosition = targetPosition;
     }
 
     public Vector2f getPosition() {
@@ -83,10 +94,10 @@ public class PhysicalComponent implements Updatable, Destroyable {
     }
 
     public float getSpeed() {
-        return speed;
+        return speedPerMs * 1000;
     }
 
     public void setSpeed(float speed) {
-        this.speed = speed;
+        speedPerMs = speed * 0.001f;
     }
 }
