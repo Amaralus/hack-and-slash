@@ -9,7 +9,7 @@ import java.util.Map;
 
 public class MessageState<E extends Entity> extends State<E>{
 
-    private final Map<Class<?>, PayloadStateAction<E, Object>> actionMap = new HashMap<>();
+    private final Map<Class<?>, PayloadStateAction<E, Object>> actions = new HashMap<>();
 
     public MessageState(String name, StateAction<E> action, StateSystem<E> stateSystem) {
         super(name, action, stateSystem);
@@ -30,14 +30,14 @@ public class MessageState<E extends Entity> extends State<E>{
         var nextMessage = context.messageClient().getNextMessage();
         while (nextMessage.isPresent()) {
             var message = nextMessage.get();
-            var action = actionMap.get(message.getClass());
+            var action = actions.get(message.getClass());
             if (action != null)
                 action.execute(context, message, updateTime);
             nextMessage = context.messageClient().getNextMessage();
         }
     }
 
-    public <P> void onMessage(Class<P> payloadClass, PayloadStateAction<E, P> action) {
-        actionMap.put(payloadClass, (PayloadStateAction<E, Object>) action);
+    public void setUpActions(Map<Class<?>, PayloadStateAction<E, Object>> actions) {
+        this.actions.putAll(actions);
     }
 }

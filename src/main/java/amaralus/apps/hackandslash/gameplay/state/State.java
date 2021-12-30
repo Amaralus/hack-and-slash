@@ -47,11 +47,11 @@ public class State<E extends Entity> implements Updatable {
         log.trace("Переключение состояния [{}] -> [{}] сущность id={}", name, stateName, stateSystem.getEntity().getEntityId());
     }
 
-    void setBeforeAction(StateAction<E> beforeAction) {
+    public void setBeforeAction(StateAction<E> beforeAction) {
         this.beforeAction = beforeAction;
     }
 
-    void setAfterAction(StateAction<E> afterAction) {
+    public void setAfterAction(StateAction<E> afterAction) {
         this.afterAction = afterAction;
     }
 

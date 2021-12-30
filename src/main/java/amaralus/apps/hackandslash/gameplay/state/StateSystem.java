@@ -31,7 +31,7 @@ public class StateSystem<E extends Entity> implements Updatable, Destroyable {
         currentState = state;
     }
 
-    void setUpStates(Map<String, State<E>> states) {
+    public void setUpStates(Map<String, State<E>> states) {
         this.states.putAll(states);
     }
 
