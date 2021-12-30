@@ -3,11 +3,11 @@ package amaralus.apps.hackandslash.gameplay.state;
 import amaralus.apps.hackandslash.common.message.QueueMessageClient;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 
-public class StateContext {
+public class StateContext<E extends Entity> {
 
-    private final State state;
+    private final State<E> state;
 
-    public StateContext(State state) {
+    public StateContext(State<E> state) {
         this.state = state;
     }
 
@@ -15,15 +15,11 @@ public class StateContext {
         state.switchState(stateName);
     }
 
-    public void removeState() {
-        state.removeState();
-    }
-
     public String stateName() {
         return state.getName();
     }
 
-    public Entity entity() {
+    public E entity() {
         return state.getStateSystem().getEntity();
     }
 

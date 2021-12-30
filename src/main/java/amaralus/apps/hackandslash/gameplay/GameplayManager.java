@@ -52,6 +52,12 @@ public class GameplayManager {
                 .movementSpeed(200)
                 .register();
 
+        // Камень -> Ножницы, Ящерица
+        // Ножницы -> Бумага, Ящерица
+        // Бумага -> Камень, Спок
+        // Ящерица -> Спок, Бумага
+        // Спок -> Ножницы, Камень
+
         changeFrame(bot, currentFrame);
     }
 

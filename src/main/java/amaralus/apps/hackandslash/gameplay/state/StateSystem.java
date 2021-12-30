@@ -4,59 +4,46 @@ import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class StateSystem implements Updatable, Destroyable {
+public class StateSystem<E extends Entity> implements Updatable, Destroyable {
 
-    private final Deque<State> stack = new ArrayDeque<>();
-    private final Map<String, State> states = new HashMap<>();
-    private Entity entity;
-
-    @Override
-    public void update(long elapsedTime) {
-        currentState().update(elapsedTime);
-    }
+    private final Map<String, State<E>> states = new HashMap<>();
+    private E entity;
+    private State<E> currentState;
 
     @Override
     public void destroy() {
-        stack.clear();
         states.clear();
         entity = null;
     }
 
-    public Entity getEntity() {
-        return entity;
+    @Override
+    public void update(long elapsedTime) {
+        currentState.update(elapsedTime);
     }
 
-    public void setEntity(Entity entity) {
-        this.entity = entity;
-    }
-
-    void setUpStates(Map<String, State> states) {
-        this.states.putAll(states);
-    }
-
-    State currentState() {
-        try {
-            return stack.getFirst();
-        } catch (NoSuchElementException e) {
-            throw new InvalidStateSystemException("Empty state stack!");
-        }
-    }
-
-    void pushState(String stateName) {
+    public void switchState(String stateName) {
         var state = states.get(stateName);
         if (state == null)
             throw new InvalidStateSystemException("Couldn't switch state! State [" + stateName + "] not found!");
-
-        stack.push(state);
+        currentState = state;
     }
 
-    void popState() {
-        try {
-            stack.pop();
-        } catch (NoSuchElementException e) {
-            throw new InvalidStateSystemException("Empty state stack!");
-        }
+    void setUpStates(Map<String, State<E>> states) {
+        this.states.putAll(states);
+    }
+
+    public E getEntity() {
+        return entity;
+    }
+
+    public void setEntity(E entity) {
+        this.entity = entity;
+    }
+
+    public State<E> currentState() {
+        return currentState;
     }
 }

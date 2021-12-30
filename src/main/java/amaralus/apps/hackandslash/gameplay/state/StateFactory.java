@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.gameplay.state;
 
+import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.state.action.StateAction;
 
 import java.util.HashMap;
@@ -8,27 +9,27 @@ import java.util.Map;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toMap;
 
-public class StateFactory {
+public class StateFactory<E extends Entity> {
 
-    private final Map<String, StateAction> states = new HashMap<>();
+    private final Map<String, StateAction<E>> states = new HashMap<>();
     private String baseStateName;
 
-    public StateFactory state(String name, StateAction action) {
+    public StateFactory<E> state(String name, StateAction<E> action) {
         states.put(requireNonNull(name, "state name is null!"), requireNonNull(action, "state action is null!"));
         return this;
     }
 
-    public StateFactory baseState(String name, StateAction action) {
+    public StateFactory<E> baseState(String name, StateAction<E> action) {
         state(name, action);
         baseStateName = name;
         return this;
     }
 
-    public StateSystem produce() {
+    public StateSystem<E> produce() {
         if (baseStateName == null)
             throw new IllegalArgumentException("Base state not configured!");
 
-        var stateSystem = new StateSystem();
+        var stateSystem = new StateSystem<E>();
 
         stateSystem.setUpStates(states.entrySet()
                 .stream()
@@ -37,18 +38,12 @@ public class StateFactory {
                         entry -> createState(entry.getKey(), entry.getValue(), stateSystem)
                 )));
 
-        stateSystem.pushState(baseStateName);
+        stateSystem.switchState(baseStateName);
 
         return stateSystem;
     }
 
-    private State createState(String name, StateAction action, StateSystem stateSystem) {
-        var state = new State(name, action, stateSystem);
-
-        if (name.equals(baseStateName)) {
-            state.setBaseState();
-        }
-
-        return state;
+    private State<E> createState(String name, StateAction<E> action, StateSystem<E> stateSystem) {
+        return new State<>(name, action, stateSystem);
     }
 }
