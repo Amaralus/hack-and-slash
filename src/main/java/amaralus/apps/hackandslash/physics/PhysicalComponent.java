@@ -33,20 +33,21 @@ public class PhysicalComponent implements Updatable, Destroyable {
 
     @Override
     public void update(long elapsedTime) {
-        if (movementUnitVector.equals(0f, 0f))
-            return;
-
-        var distance = speedPerMs * elapsedTime;
-
-        if (targetPosition == null) {
-            nodePosition.add(movementUnitVector.mul(distance));
+        if (!movementUnitVector.equals(0f, 0f) && targetPosition == null) {
+            nodePosition.add(movementUnitVector.mul(speedPerMs * elapsedTime));
             movementUnitVector = vec2();
-        } else
-            moveToTarget(distance);
 
-        // todo проверка границ нужно переделать на глобальную??
-        nodePosition.sub(checkGlobalBorderCrossing(nodePosition));
-        updatePosition();
+            nodePosition.sub(checkGlobalBorderCrossing(nodePosition));
+            updatePosition();
+        }
+
+        if (targetPosition != null) {
+            moveToTarget(speedPerMs * elapsedTime);
+
+            // todo проверка границ нужно переделать на глобальную??
+            nodePosition.sub(checkGlobalBorderCrossing(nodePosition));
+            updatePosition();
+        }
     }
 
     private void updatePosition() {

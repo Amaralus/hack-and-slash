@@ -13,7 +13,7 @@ public abstract class GameLoop {
 
     protected GameLoop(Window window, long frameRate) {
         this.window = window;
-        this.msPerUpdate = (long) (frameRate * 0.001);
+        this.msPerUpdate = 1000L / frameRate;
         fpsMeter = new FpsMeter();
     }
 
