@@ -1,3 +1,6 @@
 # "Hack and slash" game engine project for self education
 
-Java 11 + OpenGl
+Tech stack:
+- Java 11
+- OpenGl
+- Spring Framework
