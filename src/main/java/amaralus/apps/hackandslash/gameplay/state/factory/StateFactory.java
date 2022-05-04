@@ -28,8 +28,16 @@ public class StateFactory<E extends Entity> {
         return state;
     }
 
-    public StateSystemFactory<E> done() {
-        return stateSystemFactory;
+    public StateSystem<E> produce() {
+        return stateSystemFactory.produce();
+    }
+
+    public StateFactory<E> state(String name) {
+        return stateSystemFactory.state(name);
+    }
+
+    public MessageStateFactory<E> messageState(String name) {
+        return stateSystemFactory.messageState(name);
     }
 
     public StateFactory<E> before(StateAction<E> before) {

@@ -8,6 +8,10 @@ import lombok.Getter;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
+import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import static amaralus.apps.hackandslash.common.message.SystemTopic.ENTITY_SEARCH_TOPIC;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
 
@@ -25,16 +29,16 @@ public class EntitySearchService {
     }
 
     private void findEntity(Request request) {
-        var position = (Vector2f) request.payload();
-        var entity = getClosestEntity(position);
+        var searchRequest = (SearchRequest) request.payload();
+        var entity = getClosestEntity(searchRequest.position, searchRequest.filter);
         client.send(request.sender(), new SearchResult(entity == null ? null : entity.getLiveContext()));
     }
 
-    private Entity getClosestEntity(Vector2f position) {
+    private Entity getClosestEntity(Vector2f position, Predicate<Entity> filter) {
         float minSquaredDistance = Float.MAX_VALUE;
         Entity resultEntity = null;
 
-        for (var entity : entityService.getAllEntities()) {
+        for (var entity : filterEntities(filter)) {
             float sqDist = position.distanceSquared(entity.getPhysicalComponent().getPosition());
             if (entity.getStatus() != REMOVE && sqDist < minSquaredDistance) {
                 resultEntity = entity;
@@ -45,8 +49,24 @@ public class EntitySearchService {
         return resultEntity;
     }
 
-    @AllArgsConstructor
+    private Set<Entity> filterEntities(Predicate<Entity> filter) {
+        if (filter == null)
+            return entityService.getAllEntities();
+        else
+            return entityService.getAllEntities().stream()
+                    .filter(filter)
+                    .collect(Collectors.toSet());
+    }
+
     @Getter
+    @AllArgsConstructor
+    public static class SearchRequest {
+        private final Vector2f position;
+        private final Predicate<Entity> filter;
+    }
+
+    @Getter
+    @AllArgsConstructor
     public static class SearchResult {
         private final EntityLiveContext liveContext;
     }

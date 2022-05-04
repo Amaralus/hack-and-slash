@@ -13,7 +13,7 @@ public class EntityContext {
     private final Vector2f position;
     private final long clientId;
 
-    EntityContext(Entity entity) {
+    protected EntityContext(Entity entity) {
         entityId = entity.getEntityId();
         status = entity.getStatus();
         position = copy(entity.getPhysicalComponent().getPosition());

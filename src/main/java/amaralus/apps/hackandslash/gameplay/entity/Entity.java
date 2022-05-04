@@ -44,21 +44,22 @@ public class Entity extends Node implements Updatable {
         if (stateSystem != null)
             stateSystem.update(elapsedTime);
 
-        // todo в идеале это должен обновлять стейт когда это необходимо
-        physicalComponent.update(elapsedTime);
-
         renderComponent.update(elapsedTime);
         updateContext();
     }
 
     private void updateContext() {
-        var tmpContext = new EntityContext(this);
+        var tmpContext = createContext();
         try {
             lock.writeLock().lock();
             entityContext = tmpContext;
         } finally {
             lock.writeLock().unlock();
         }
+    }
+
+    protected EntityContext createContext() {
+        return new EntityContext(this);
     }
 
     public EntityContext getEntityContext() {
