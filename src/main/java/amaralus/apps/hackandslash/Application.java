@@ -4,7 +4,6 @@ import amaralus.apps.hackandslash.common.ApplicationLoader;
 import amaralus.apps.hackandslash.config.ApplicationConfig;
 import amaralus.apps.hackandslash.gameplay.GameplayManager;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.glfw.GLFWErrorCallback;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -44,12 +43,6 @@ public class Application {
 
     private void onShutdown() {
         log.info("Завершение работы приложения...");
-        try {
-            var resourceManager = applicationContext.getBean(ResourceManager.class);
-            resourceManager.destroy();
-        } catch (Exception e) {
-            log.error("Непредвиденная ошибка освобождения ресурсов во время завершения", e);
-        }
 
         try {
             var window = applicationContext.getBean(Window.class);
@@ -61,7 +54,7 @@ public class Application {
         try {
             applicationContext.close();
         } catch (Exception e) {
-            log.error("Непредвиденная ошибка во время завершения контекста spring", e);
+            log.error("Непредвиденная ошибка во время завершения spring-контекста", e);
         }
         glfwTerminate();
     }

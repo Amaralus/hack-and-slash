@@ -3,7 +3,6 @@ package amaralus.apps.hackandslash.graphics.rendering;
 import amaralus.apps.hackandslash.graphics.gpu.shader.Shader;
 import amaralus.apps.hackandslash.graphics.scene.Camera;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
@@ -16,8 +15,8 @@ public class SpriteRenderer {
 
     private final Shader textureShader;
 
-    public SpriteRenderer(ResourceManager resourceManager) {
-        textureShader = resourceManager.getResource("texture", Shader.class);
+    public SpriteRenderer(Shader textureShader) {
+        this.textureShader = textureShader;
     }
 
     public void render(Camera camera, SpriteRenderComponent renderComponent, Vector2f entityPos) {

@@ -7,8 +7,9 @@ import amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy;
 import amaralus.apps.hackandslash.graphics.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
+import amaralus.apps.hackandslash.graphics.sprites.repository.SpriteRepository;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import amaralus.apps.hackandslash.resources.ResourceManager;
+import lombok.RequiredArgsConstructor;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +18,12 @@ import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SIN
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Component
+@RequiredArgsConstructor
 public class EntityFactory {
 
-    private final ResourceManager resourceManager;
+    private final SpriteRepository spriteRepository;
     private final ResourceFactory resourceFactory;
     private final EntityService entityService;
-
-    public EntityFactory(ResourceManager resourceManager, ResourceFactory resourceFactory, EntityService entityService) {
-        this.resourceManager = resourceManager;
-        this.resourceFactory = resourceFactory;
-        this.entityService = entityService;
-    }
 
     public EntityBuilder entity() {
         return new EntityBuilder();
@@ -130,7 +126,7 @@ public class EntityFactory {
         }
 
         private Sprite getSprite(String spriteName) {
-            return resourceManager.getResource(spriteName, Sprite.class);
+            return spriteRepository.get(spriteName);
         }
     }
 

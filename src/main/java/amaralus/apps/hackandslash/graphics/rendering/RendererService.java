@@ -4,10 +4,10 @@ import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
+import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.graphics.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
@@ -23,13 +23,13 @@ public class RendererService {
 
     private final Scene activeScene;
 
-    public RendererService(Window window, PrimitiveRenderer primitiveRenderer, ResourceManager resourceManager) {
+    public RendererService(Window window, PrimitiveRenderer primitiveRenderer, ShaderRepository shaderRepository) {
         this.window = window;
         activeScene = new Scene(window.getWidth(), window.getHeight());
 
-        spriteRenderer = new SpriteRenderer(resourceManager);
+        spriteRenderer = new SpriteRenderer(shaderRepository.get("texture"));
         this.primitiveRenderer = primitiveRenderer;
-        fontRenderer = new FontRenderer(resourceManager);
+        fontRenderer = new FontRenderer(shaderRepository.get("font"));
     }
 
     public void render() {

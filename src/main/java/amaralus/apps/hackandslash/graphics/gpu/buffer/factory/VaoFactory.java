@@ -2,7 +2,7 @@ package amaralus.apps.hackandslash.graphics.gpu.buffer.factory;
 
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexBufferObject;
-import amaralus.apps.hackandslash.resources.ResourceManager;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.repository.VaoRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,7 +13,7 @@ public class VaoFactory {
     private final List<VertexBufferObject<?>> vertexBufferObjects;
     private final List<VboFactory> vboFactories;
 
-    private ResourceManager resourceManager;
+    private VaoRepository vaoRepository;
     private String resourceName;
 
     public static VaoFactory newVao() {
@@ -35,13 +35,13 @@ public class VaoFactory {
         return this;
     }
 
-    public VaoFactory saveAsVao(String name, ResourceManager resourceManager) {
-        return saveAs(name + "Vao", resourceManager);
+    public VaoFactory saveAsVao(String name, VaoRepository vaoRepository) {
+        return saveAs(name + "Vao", vaoRepository);
     }
 
-    public VaoFactory saveAs(String name, ResourceManager resourceManager) {
+    public VaoFactory saveAs(String name, VaoRepository vaoRepository) {
         this.resourceName = name;
-        this.resourceManager = resourceManager;
+        this.vaoRepository = vaoRepository;
         return this;
     }
 
@@ -53,7 +53,7 @@ public class VaoFactory {
         vbos.addAll(vertexBufferObjects);
         var vao = new VertexArraysObject(resourceName, vbos);
 
-        if (resourceManager != null) resourceManager.addResource(vao);
+        if (vaoRepository != null) vaoRepository.save(vao);
         return vao;
     }
 }

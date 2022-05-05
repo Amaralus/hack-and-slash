@@ -4,6 +4,7 @@ import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.io.data.SpriteSheetData;
 import amaralus.apps.hackandslash.resources.Resource;
+import lombok.Getter;
 import org.joml.Vector2f;
 
 import java.util.ArrayList;
@@ -12,15 +13,20 @@ import java.util.List;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
-public class Sprite extends Resource {
+public class Sprite implements Resource<String> {
 
+    @Getter
+    private final String resourceId;
+    @Getter
     private final Texture texture;
+    @Getter
     private final VertexArraysObject vao;
+    @Getter
     private final Vector2f offsetToSpriteCenter;
     private final List<FramesStrip> framesStrips;
 
-    public Sprite(String resourceName, Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
-        super(resourceName);
+    public Sprite(String resourceId, Texture texture, VertexArraysObject vao, SpriteSheetData spriteSheetData) {
+        this.resourceId = resourceId;
         this.texture = texture;
         this.vao = vao;
 
@@ -44,14 +50,6 @@ public class Sprite extends Resource {
                 (float) spriteSheetData.getFrameHeight() / (float) texture.getHeight());
     }
 
-    public Texture getTexture() {
-        return texture;
-    }
-
-    public VertexArraysObject getVao() {
-        return vao;
-    }
-
     public float getWidth() {
         return texture.getWidth();
     }
@@ -64,13 +62,9 @@ public class Sprite extends Resource {
         return vec2(getWidth(), getHeight());
     }
 
-    public Vector2f getOffsetToSpriteCenter() {
-        return offsetToSpriteCenter;
-    }
-
     @Override
     public void destroy() {
-        vao.destroy();
+        // нет необходимости
     }
 
     public FramesStrip getFrameStrip(int frameStripNumber) {

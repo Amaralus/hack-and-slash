@@ -8,18 +8,24 @@ import org.lwjgl.BufferUtils;
 
 import static org.lwjgl.opengl.GL20.*;
 
-public class Shader extends Resource {
+public class Shader implements Resource<String> {
 
+    private final String resourceId;
     private final int program;
 
-    public Shader(String resourceName, int shaderProgramId) {
-        super(resourceName);
+    public Shader(String resourceId, int shaderProgramId) {
+        this.resourceId = resourceId;
         program = shaderProgramId;
     }
 
     @Override
     public void destroy() {
         glDeleteProgram(program);
+    }
+
+    @Override
+    public String getResourceId() {
+        return resourceId;
     }
 
     public void use() {

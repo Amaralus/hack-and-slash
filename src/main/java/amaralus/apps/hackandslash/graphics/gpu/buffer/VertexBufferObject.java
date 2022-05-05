@@ -2,6 +2,7 @@ package amaralus.apps.hackandslash.graphics.gpu.buffer;
 
 import amaralus.apps.hackandslash.graphics.gpu.Bindable;
 import amaralus.apps.hackandslash.resources.Resource;
+import lombok.Getter;
 
 import java.nio.Buffer;
 import java.util.ArrayList;
@@ -11,8 +12,10 @@ import static org.lwjgl.opengl.GL15.*;
 import static org.lwjgl.opengl.GL20.glEnableVertexAttribArray;
 import static org.lwjgl.opengl.GL20.glVertexAttribPointer;
 
-public abstract class VertexBufferObject<B extends Buffer> extends Resource implements Bindable {
+public abstract class VertexBufferObject<B extends Buffer> implements Resource<String>, Bindable {
 
+    @Getter
+    private final String resourceId;
     private final int id;
     private final int size;
     private final int dataTypeBytes;
@@ -22,8 +25,8 @@ public abstract class VertexBufferObject<B extends Buffer> extends Resource impl
 
     private List<DataFormat> dataFormats;
 
-    private VertexBufferObject(String resourceName, BufferType type, BufferUsage usage, int size, int dataTypeBytes) {
-        super(resourceName);
+    private VertexBufferObject(String resourceId, BufferType type, BufferUsage usage, int size, int dataTypeBytes) {
+        this.resourceId = resourceId;
         id = glGenBuffers();
         dataFormats = new ArrayList<>();
         this.type = type;

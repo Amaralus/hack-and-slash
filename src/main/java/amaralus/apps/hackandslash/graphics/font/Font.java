@@ -8,21 +8,22 @@ import org.lwjgl.stb.STBTTBakedChar;
 import org.lwjgl.stb.STBTTFontinfo;
 
 @Getter
-public class Font extends Resource {
+public class Font implements Resource<String> {
 
+    private final String resourceId;
     private final STBTTFontinfo fontInfo;
     private final STBTTBakedChar.Buffer bakedChars;
     private final FontVerticalMetrics verticalMetrics;
     private final Texture texture;
     private final VertexArraysObject vao;
 
-    public Font(String resourceName,
+    public Font(String resourceId,
                 STBTTFontinfo fontInfo,
                 STBTTBakedChar.Buffer bakedChars,
                 FontVerticalMetrics verticalMetrics,
                 Texture texture,
                 VertexArraysObject vao) {
-        super(resourceName);
+        this.resourceId = resourceId;
         this.fontInfo = fontInfo;
         this.bakedChars = bakedChars;
         this.verticalMetrics = verticalMetrics;

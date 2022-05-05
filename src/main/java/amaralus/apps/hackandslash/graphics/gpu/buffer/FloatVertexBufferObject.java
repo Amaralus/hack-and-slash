@@ -8,8 +8,8 @@ import static org.lwjgl.opengl.GL15.glBufferSubData;
 
 public class FloatVertexBufferObject extends VertexBufferObject<FloatBuffer> {
 
-    public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, float[] floats) {
-        this(resourceName, type, usage, bufferOf(floats));
+    public FloatVertexBufferObject(String resourceId, BufferType type, BufferUsage usage, float[] floats) {
+        this(resourceId, type, usage, bufferOf(floats));
     }
 
     public FloatVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, FloatBuffer buffer) {

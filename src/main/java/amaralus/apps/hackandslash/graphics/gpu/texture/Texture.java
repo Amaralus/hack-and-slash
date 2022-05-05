@@ -5,14 +5,15 @@ import amaralus.apps.hackandslash.resources.Resource;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class Texture extends Resource implements Bindable {
+public class Texture implements Resource<String>, Bindable {
 
+    private final String resourceId;
     private final int id;
     private final int width;
     private final int height;
 
-    public Texture(String resourceName, int id, int width, int height) {
-        super(resourceName);
+    public Texture(String resourceId, int id, int width, int height) {
+        this.resourceId = resourceId;
         this.id = id;
         this.width = width;
         this.height = height;
@@ -36,6 +37,11 @@ public class Texture extends Resource implements Bindable {
     @Override
     public int id() {
         return id;
+    }
+
+    @Override
+    public String getResourceId() {
+        return resourceId;
     }
 
     public int getWidth() {

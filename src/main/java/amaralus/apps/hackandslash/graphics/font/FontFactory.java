@@ -1,12 +1,12 @@
 package amaralus.apps.hackandslash.graphics.font;
 
-import amaralus.apps.hackandslash.graphics.gpu.buffer.IntVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.repository.VaoRepository;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.repository.VboRepository;
 import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.graphics.gpu.texture.TextureFactory;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.data.ImageData;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.lwjgl.BufferUtils;
@@ -34,7 +34,9 @@ public class FontFactory {
     private static final int BACKED_CHARACTERS_BUFFER_CAPACITY = 4096;
     private static final float FONT_HEIGHT_IN_PIXELS = 32;
 
-    private final ResourceManager resourceManager;
+    private final FontRepository fontRepository;
+    private final VaoRepository vaoRepository;
+    private final VboRepository vboRepository;
     private final FileLoadService fileLoadService;
     private final TextureFactory textureFactory;
 
@@ -52,7 +54,7 @@ public class FontFactory {
         var vao = createVao(fontName);
 
         var font = new Font(fontName, fontInfo, bakedChars, metrics, texture, vao);
-        resourceManager.addResource(font);
+        fontRepository.save(font);
     }
 
     private STBTTFontinfo initFontInfo(ByteBuffer fontData) {
@@ -73,13 +75,13 @@ public class FontFactory {
 
     private VertexArraysObject createVao(String fontName) {
         return newVao()
-                .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))
+                .buffer(vboRepository.get("defaultTextureEbo"))
                 .buffer(floatBuffer(allocate(16))
                         .type(ARRAY_BUFFER)
                         .usage(DYNAMIC_DRAW)
-                        .saveAsVbo(fontName, resourceManager)
+                        .saveAsVbo(fontName, vboRepository)
                         .dataFormat(0, 4, 4, 0, Float.TYPE))
-                .saveAsVao(fontName, resourceManager)
+                .saveAsVao(fontName, vaoRepository)
                 .build();
     }
 }

@@ -8,8 +8,8 @@ import static org.lwjgl.opengl.GL15.glBufferSubData;
 
 public class IntVertexBufferObject extends VertexBufferObject<IntBuffer> {
 
-    public IntVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, int[] ints) {
-        this(resourceName, type, usage, bufferOf(ints));
+    public IntVertexBufferObject(String resourceId, BufferType type, BufferUsage usage, int[] ints) {
+        this(resourceId, type, usage, bufferOf(ints));
     }
 
     public IntVertexBufferObject(String resourceName, BufferType type, BufferUsage usage, IntBuffer buffer) {

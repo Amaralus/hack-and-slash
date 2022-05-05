@@ -1,16 +1,21 @@
 package amaralus.apps.hackandslash.resources;
 
 import amaralus.apps.hackandslash.graphics.Color;
-import amaralus.apps.hackandslash.graphics.gpu.buffer.IntVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexBufferObject;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.repository.VaoRepository;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.repository.VboRepository;
 import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderFactory;
+import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.graphics.gpu.texture.Texture;
 import amaralus.apps.hackandslash.graphics.primitives.Line;
 import amaralus.apps.hackandslash.graphics.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.sprites.Sprite;
+import amaralus.apps.hackandslash.graphics.sprites.repository.SpriteRepository;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.data.SpriteSheetData;
+import amaralus.apps.hackandslash.graphics.gpu.texture.repository.TextureRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.joml.Vector2f;
 import org.joml.Vector4f;
@@ -27,23 +32,20 @@ import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 
 @Service
 @Slf4j
+@RequiredArgsConstructor
 public class ResourceFactory {
 
     private final FileLoadService fileLoadService;
-    private final ResourceManager resourceManager;
     private final ShaderFactory shaderFactory;
-
-    public ResourceFactory(FileLoadService fileLoadService,
-                           ResourceManager resourceManager,
-                           ShaderFactory shaderFactory) {
-        this.fileLoadService = fileLoadService;
-        this.resourceManager = resourceManager;
-        this.shaderFactory = shaderFactory;
-    }
+    private final ShaderRepository shaderRepository;
+    private final TextureRepository textureRepository;
+    private final VaoRepository vaoRepository;
+    private final VboRepository vboRepository;
+    private final SpriteRepository spriteRepository;
 
     public void produceShader(String shaderName) {
         var shader = shaderFactory.produce(shaderName);
-        resourceManager.addResource(shader);
+        shaderRepository.save(shader);
     }
 
     public Line produceLine(String name, Color color, Vector2f start, Vector2f end) {
@@ -59,7 +61,7 @@ public class ResourceFactory {
         return newVao()
                 .buffer(primitiveBuffer(name, vectors))
                 .buffer(colorBuffer(name, color, vectors.length))
-                .saveAsVao(name, resourceManager)
+                .saveAsVao(name, vaoRepository)
                 .build();
     }
 
@@ -67,7 +69,7 @@ public class ResourceFactory {
         return floatBuffer(toArray(vectors))
                 .type(ARRAY_BUFFER)
                 .usage(DYNAMIC_DRAW)
-                .saveAsVbo(name, resourceManager)
+                .saveAsVbo(name, vboRepository)
                 .dataFormat(0, 2, 2, 0, Float.TYPE)
                 .build();
     }
@@ -80,27 +82,27 @@ public class ResourceFactory {
         return floatBuffer(toArray(colors))
                 .type(ARRAY_BUFFER)
                 .usage(DYNAMIC_DRAW)
-                .saveAsVbo(name + "Color", resourceManager)
+                .saveAsVbo(name + "Color", vboRepository)
                 .dataFormat(1, 4, 4, 0, Float.TYPE)
                 .build();
     }
 
     public void produceSprite(String spriteName) {
-        var texture = resourceManager.getResource(spriteName, Texture.class);
+        var texture = textureRepository.get(spriteName);
         var spriteSheetData = fileLoadService.loadFromJson("sprites/data/" + spriteName + ".json", SpriteSheetData.class);
 
         var vao = newVao()
-                .buffer(resourceManager.getResource("defaultTextureEbo", IntVertexBufferObject.class))
+                .buffer(vboRepository.get("defaultTextureEbo"))
                 .buffer(floatBuffer(textureData(texture, spriteSheetData))
                         .type(ARRAY_BUFFER)
                         .usage(STATIC_DRAW)
-                        .saveAsVbo(spriteName, resourceManager)
+                        .saveAsVbo(spriteName, vboRepository)
                         .dataFormat(0, 2, 2, 0, Float.TYPE))
-                .saveAsVao(spriteName, resourceManager)
+                .saveAsVao(spriteName, vaoRepository)
                 .build();
 
         var sprite = new Sprite(spriteName, texture, vao, spriteSheetData);
-        resourceManager.addResource(sprite);
+        spriteRepository.save(sprite);
     }
 
     private float[] textureData(Texture texture, SpriteSheetData spriteSheetData) {
@@ -112,7 +114,7 @@ public class ResourceFactory {
         intBuffer(0, 1, 3, 1, 2, 3)
                 .type(ELEMENT_ARRAY_BUFFER)
                 .usage(STATIC_DRAW)
-                .saveAsEbo("defaultTexture", resourceManager)
+                .saveAsEbo("defaultTexture", vboRepository)
                 .build();
     }
 }
