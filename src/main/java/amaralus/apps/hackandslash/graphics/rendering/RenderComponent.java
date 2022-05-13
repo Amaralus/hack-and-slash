@@ -5,6 +5,8 @@ import amaralus.apps.hackandslash.common.Updatable;
 
 public interface RenderComponent extends Updatable, Nullable {
 
+    RenderComponent NULL = new RenderComponent.Null();
+
     default <C extends RenderComponent> C wrapTo(Class<C> clazz) {
         return clazz.cast(this);
     }
@@ -18,7 +20,7 @@ public interface RenderComponent extends Updatable, Nullable {
         FONT
     }
 
-    final class NullRenderComponent implements RenderComponent {
+    final class Null implements RenderComponent {
 
         @Override
         public boolean isNull() {

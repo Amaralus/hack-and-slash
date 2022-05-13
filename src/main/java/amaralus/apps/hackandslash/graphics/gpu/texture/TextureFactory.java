@@ -1,8 +1,8 @@
 package amaralus.apps.hackandslash.graphics.gpu.texture;
 
+import amaralus.apps.hackandslash.graphics.gpu.texture.repository.TextureRepository;
 import amaralus.apps.hackandslash.io.FileLoadService;
 import amaralus.apps.hackandslash.io.data.ImageData;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ import static amaralus.apps.hackandslash.graphics.gpu.texture.TextureWrapMode.RE
 @Slf4j
 public class TextureFactory {
 
-    private final ResourceManager resourceManager;
+    private final TextureRepository textureRepository;
     private final FileLoadService fileLoadService;
 
     public void produceSpriteTexture(String textureName) {
@@ -36,7 +36,7 @@ public class TextureFactory {
                 .param(MAG_FILTER, NEAREST)
                 .produce();
 
-        resourceManager.addResource(texture);
+        textureRepository.save(texture);
     }
 
     public Texture produceFontTexture(String textureName, ImageData imageData) {
@@ -52,7 +52,7 @@ public class TextureFactory {
                 .param(MAG_FILTER, LINEAR)
                 .produce();
 
-        resourceManager.addResource(texture);
+        textureRepository.save(texture);
         return texture;
     }
 

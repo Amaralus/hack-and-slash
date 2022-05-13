@@ -1,11 +1,11 @@
 package amaralus.apps.hackandslash.graphics.rendering;
 
 import amaralus.apps.hackandslash.graphics.gpu.shader.Shader;
+import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.graphics.primitives.Line;
 import amaralus.apps.hackandslash.graphics.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.primitives.Triangle;
 import amaralus.apps.hackandslash.graphics.scene.Camera;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
@@ -18,8 +18,8 @@ public class PrimitiveRenderer {
 
     private final Shader primitiveShader;
 
-    public PrimitiveRenderer(ResourceManager resourceManager) {
-        primitiveShader = resourceManager.getResource("primitive", Shader.class);
+    public PrimitiveRenderer(ShaderRepository shaderRepository) {
+        primitiveShader = shaderRepository.get("primitive");
     }
 
     public void render(Camera camera, Primitive primitive, Vector2f position) {

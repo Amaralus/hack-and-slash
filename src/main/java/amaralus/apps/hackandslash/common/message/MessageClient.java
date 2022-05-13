@@ -2,75 +2,23 @@ package amaralus.apps.hackandslash.common.message;
 
 import amaralus.apps.hackandslash.common.Destroyable;
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Queue;
-import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
+public interface MessageClient extends Destroyable {
 
-public class MessageClient implements Destroyable {
+    long getId();
 
-    private final long id;
-    private final MessageBroker broker;
-    private final Queue<Request> messageQueue = new ConcurrentLinkedQueue<>();
-    private final Set<String> topics = new HashSet<>();
+    void send(long receiver, Object payload);
 
-    public MessageClient(long id, MessageBroker broker) {
-        this.id = id;
-        this.broker = broker;
-    }
+    void send(String topicName, Object payload);
 
-    @Override
-    public void destroy() {
-        messageQueue.clear();
-        topics.forEach(topic -> broker.unsubscribe(topic, id));
-        broker.deleteClient(id);
-    }
+    void send(SystemTopic systemTopic, Object payload);
 
-    public Optional<Object> getNextMessage() {
-        return Optional.ofNullable(messageQueue.poll())
-                .map(Request::payload);
-    }
+    void receive(Request request);
 
-    public void send(long receiver, Object payload) {
-        broker.send(receiver, new Request(id, payload));
-    }
+    void subscribe(String topicName);
 
-    public void send(String topicName, Object payload) {
-        broker.send(topicName, new Request(id, payload));
-    }
+    void subscribe(SystemTopic systemTopic);
 
-    public void send(SystemTopic systemTopic, Object payload) {
-        send(systemTopic.getName(), payload);
-    }
+    void unsubscribe(String topicName);
 
-    public void receive(Request request) {
-        messageQueue.offer(request);
-    }
-
-    public void subscribe(String topicName) {
-        broker.subscribe(topicName, id);
-        topics.add(topicName);
-    }
-
-    public void subscribe(SystemTopic systemTopic) {
-        subscribe(systemTopic.getName());
-    }
-
-    public void unsubscribe(String topicName) {
-        broker.unsubscribe(topicName, id);
-        topics.remove(topicName);
-    }
-
-    public void unsubscribe(SystemTopic systemTopic) {
-        unsubscribe(systemTopic.getName());
-    }
-
-    void removeSubscription(String topicName) {
-        topics.remove(topicName);
-    }
-
-    public long getId() {
-        return id;
-    }
+    void unsubscribe(SystemTopic systemTopic);
 }

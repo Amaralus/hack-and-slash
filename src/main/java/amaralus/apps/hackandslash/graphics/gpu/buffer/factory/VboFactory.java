@@ -1,7 +1,7 @@
 package amaralus.apps.hackandslash.graphics.gpu.buffer.factory;
 
 import amaralus.apps.hackandslash.graphics.gpu.buffer.*;
-import amaralus.apps.hackandslash.resources.ResourceManager;
+import amaralus.apps.hackandslash.graphics.gpu.buffer.repository.VboRepository;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
@@ -17,7 +17,7 @@ public class VboFactory {
     private IntBuffer intBuffer;
     private FloatBuffer floatBuffer;
 
-    private ResourceManager resourceManager;
+    private VboRepository vboRepository;
     private String resourceName;
 
     private final List<VertexBufferObject.DataFormat> dataFormats = new ArrayList<>();
@@ -61,17 +61,17 @@ public class VboFactory {
         return this;
     }
 
-    public VboFactory saveAsVbo(String name, ResourceManager resourceManager) {
-        return saveAs(name + "Vbo", resourceManager);
+    public VboFactory saveAsVbo(String name, VboRepository vboRepository) {
+        return saveAs(name + "Vbo", vboRepository);
     }
 
-    public VboFactory saveAsEbo(String name, ResourceManager resourceManager) {
-        return saveAs(name + "Ebo", resourceManager);
+    public VboFactory saveAsEbo(String name, VboRepository vboRepository) {
+        return saveAs(name + "Ebo", vboRepository);
     }
 
-    public VboFactory saveAs(String name, ResourceManager resourceManager) {
+    public VboFactory saveAs(String name, VboRepository vboRepository) {
         this.resourceName = name;
-        this.resourceManager = resourceManager;
+        this.vboRepository = vboRepository;
         return this;
     }
 
@@ -82,7 +82,7 @@ public class VboFactory {
 
         buffer.setDataFormats(dataFormats);
 
-        if (resourceManager != null) resourceManager.addResource(buffer);
+        if (vboRepository != null) vboRepository.save(buffer);
         return buffer;
     }
 }

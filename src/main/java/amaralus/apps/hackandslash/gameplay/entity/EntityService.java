@@ -30,7 +30,7 @@ public class EntityService {
     }
 
     public void registerEntity(Entity entity, Node targetNode, EntityStatus targetStatus) {
-        entity.setMessageClient(messageBroker.createClient());
+        entity.setMessageClient(messageBroker.createQueueClient());
         allEntities.add(entity);
         newEntities.add(new RegisteredInfo(entity, targetNode, targetStatus));
         log.debug("Новая сущность id={} зарегистрирована, clientId={}", entity.getEntityId(), entity.getMessageClient().getId());
@@ -62,6 +62,7 @@ public class EntityService {
             entity.getMessageClient().destroy();
             if (entity.getStateSystem() != null)
                 entity.getStateSystem().destroy();
+            entity.getPhysicalComponent().destroy();
 
             log.debug("Удалена сущность id={}", entity.getEntityId());
         }

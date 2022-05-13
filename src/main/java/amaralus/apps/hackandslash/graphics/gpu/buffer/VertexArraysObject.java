@@ -2,19 +2,22 @@ package amaralus.apps.hackandslash.graphics.gpu.buffer;
 
 import amaralus.apps.hackandslash.graphics.gpu.Bindable;
 import amaralus.apps.hackandslash.resources.Resource;
+import lombok.Getter;
 
 import java.util.List;
 
 import static org.lwjgl.opengl.GL30.*;
 
-public class VertexArraysObject extends Resource implements Bindable {
+public class VertexArraysObject implements Bindable, Resource<String> {
 
     private final int id;
+    @Getter
+    private final String resourceId;
 
     private List<VertexBufferObject> buffers;
 
-    private VertexArraysObject(String resourceName) {
-        super(resourceName);
+    private VertexArraysObject(String resourceId) {
+        this.resourceId = resourceId;
         id = glGenVertexArrays();
     }
 

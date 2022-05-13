@@ -6,7 +6,6 @@ import amaralus.apps.hackandslash.graphics.font.FontVerticalMetrics;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.shader.Shader;
 import amaralus.apps.hackandslash.graphics.scene.Camera;
-import amaralus.apps.hackandslash.resources.ResourceManager;
 import org.joml.Vector2f;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.system.MemoryStack;
@@ -26,8 +25,8 @@ public class FontRenderer {
     private final Shader fontShader;
     private boolean kerningEnabled = false;
 
-    public FontRenderer(ResourceManager resourceManager) {
-        fontShader = resourceManager.getResource("font", Shader.class);
+    public FontRenderer(Shader fontShader) {
+        this.fontShader = fontShader;
     }
 
     public void renderText(Camera camera, FontRenderComponent renderComponent, Vector2f textPosition) {

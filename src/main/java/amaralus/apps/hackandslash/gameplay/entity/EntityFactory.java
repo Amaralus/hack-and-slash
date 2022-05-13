@@ -7,8 +7,9 @@ import amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy;
 import amaralus.apps.hackandslash.graphics.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
+import amaralus.apps.hackandslash.graphics.sprites.repository.SpriteRepository;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import amaralus.apps.hackandslash.resources.ResourceManager;
+import lombok.RequiredArgsConstructor;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
@@ -17,17 +18,12 @@ import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SIN
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Component
+@RequiredArgsConstructor
 public class EntityFactory {
 
-    private final ResourceManager resourceManager;
+    private final SpriteRepository spriteRepository;
     private final ResourceFactory resourceFactory;
     private final EntityService entityService;
-
-    public EntityFactory(ResourceManager resourceManager, ResourceFactory resourceFactory, EntityService entityService) {
-        this.resourceManager = resourceManager;
-        this.resourceFactory = resourceFactory;
-        this.entityService = entityService;
-    }
 
     public EntityBuilder entity() {
         return new EntityBuilder();
@@ -43,7 +39,7 @@ public class EntityFactory {
 
     public class EntityBuilder {
 
-        private RenderComponent renderComponent = new RenderComponent.NullRenderComponent();
+        private RenderComponent renderComponent = RenderComponent.NULL;
         private Vector2f startPosition = vec2();
         private NodeRemovingStrategy nodeRemovingStrategy = SINGLE;
         private float movementSpeed = 100f;
@@ -51,9 +47,11 @@ public class EntityFactory {
         private EntityStatus entityStatus = UPDATING;
 
         public Entity produce() {
-            var entity = new Entity(renderComponent, startPosition);
+            var entity = new Entity();
+            entity.getPhysicalComponent().setPosition(startPosition);
             entity.getPhysicalComponent().setSpeed(movementSpeed);
             entity.setRemovingStrategy(nodeRemovingStrategy);
+            entity.setRenderComponent(renderComponent);
             return entity;
         }
 
@@ -128,7 +126,7 @@ public class EntityFactory {
         }
 
         private Sprite getSprite(String spriteName) {
-            return resourceManager.getResource(spriteName, Sprite.class);
+            return spriteRepository.get(spriteName);
         }
     }
 
