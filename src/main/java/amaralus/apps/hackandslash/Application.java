@@ -23,7 +23,7 @@ public class Application {
     public void run() {
         log.info("Запуск Hack and Slash");
 
-        try (var errorCallback = GLFWErrorCallback.createPrint(System.err).set()) {
+        try (var ignored = GLFWErrorCallback.createPrint(System.err).set()) {
 
             if (!glfwInit()) throw new IllegalStateException("Невозможно инициализировать GLFW!");
 

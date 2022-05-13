@@ -17,7 +17,7 @@ public class BotFactory {
                 .state("movement")
                 .action(new MovementState())
                 .state("transform-target")
-                .action(new TransfomTargetState())
+                .action(new TransformTargetState())
 //                .state("transformation")
 //                .action()
                 .produce();
