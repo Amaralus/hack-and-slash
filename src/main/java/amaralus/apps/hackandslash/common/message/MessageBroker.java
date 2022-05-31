@@ -1,6 +1,6 @@
 package amaralus.apps.hackandslash.common.message;
 
-import amaralus.apps.hackandslash.common.TaskManager;
+import amaralus.apps.hackandslash.reactive.TaskManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
