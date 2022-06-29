@@ -13,13 +13,6 @@ public interface RenderComponent extends Updatable, Nullable {
 
     RenderComponentType getRenderComponentType();
 
-    enum RenderComponentType {
-        NULL,
-        SPRITE,
-        PRIMITIVE,
-        FONT
-    }
-
     final class Null implements RenderComponent {
 
         @Override

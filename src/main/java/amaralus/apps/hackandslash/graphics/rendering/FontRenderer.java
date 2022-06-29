@@ -5,14 +5,17 @@ import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
 import amaralus.apps.hackandslash.graphics.font.FontVerticalMetrics;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.gpu.shader.Shader;
+import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.scene.Camera;
 import org.joml.Vector2f;
 import org.lwjgl.stb.STBTTAlignedQuad;
 import org.lwjgl.system.MemoryStack;
+import org.springframework.stereotype.Component;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
+import static amaralus.apps.hackandslash.graphics.rendering.RenderComponentType.FONT;
 import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.copy;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
@@ -24,20 +27,25 @@ import static org.lwjgl.stb.STBTruetype.stbtt_GetBakedQuad;
 import static org.lwjgl.stb.STBTruetype.stbtt_GetCodepointKernAdvance;
 import static org.lwjgl.system.MemoryStack.stackPush;
 
-public class FontRenderer {
+@Component
+public class FontRenderer implements Renderer {
 
     private final Shader fontShader;
     private boolean kerningEnabled = false;
 
-    public FontRenderer(Shader fontShader) {
-        this.fontShader = fontShader;
+    public FontRenderer(ShaderRepository shaderRepository) {
+        this.fontShader = shaderRepository.get("font");
     }
 
-    public void renderText(Camera camera, FontRenderComponent renderComponent, Vector2f textPosition) {
-        var font = renderComponent.getFont();
+    public void render(Camera camera, RenderComponent renderComponent, Vector2f textPosition) {
+        if (!(renderComponent instanceof FontRenderComponent))
+            throw new IllegalArgumentException("expected: FontRenderComponent, was: " + renderComponent.getClass().getSimpleName());
+        var fontRenderComponent = (FontRenderComponent) renderComponent;
+
+        var font = fontRenderComponent.getFont();
 
         fontShader.use();
-        fontShader.setVec3("fontColor", renderComponent.getColor().rgb());
+        fontShader.setVec3("fontColor", fontRenderComponent.getColor().rgb());
         fontShader.setMat4("projection", camera.getProjection());
         var model = mat4().translate(vec3(copy(textPosition).sub(camera.getLeftTopPosition()), 0f));
         fontShader.setMat4("model", model);
@@ -46,9 +54,14 @@ public class FontRenderer {
         vao.bind();
         font.getTexture().bind();
 
-        renderText(font, renderComponent.getText(), textPosition);
+        renderText(font, fontRenderComponent.getText(), textPosition);
 
         vao.unbind();
+    }
+
+    @Override
+    public RenderComponentType getRenderComponentType() {
+        return FONT;
     }
 
     private void renderText(Font font, String text, Vector2f textPosition) {

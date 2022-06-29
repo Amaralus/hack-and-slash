@@ -1,13 +1,14 @@
 package amaralus.apps.hackandslash.graphics.sprites;
 
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
+import amaralus.apps.hackandslash.graphics.rendering.RenderComponentType;
 import org.joml.Vector2f;
 
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-import static amaralus.apps.hackandslash.graphics.rendering.RenderComponent.RenderComponentType.SPRITE;
+import static amaralus.apps.hackandslash.graphics.rendering.RenderComponentType.SPRITE;
 
 public class SpriteRenderComponent implements RenderComponent {
 

@@ -4,8 +4,9 @@ import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.FloatVertexBufferObject;
 import amaralus.apps.hackandslash.graphics.gpu.buffer.VertexArraysObject;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
+import amaralus.apps.hackandslash.graphics.rendering.RenderComponentType;
 
-import static amaralus.apps.hackandslash.graphics.rendering.RenderComponent.RenderComponentType.PRIMITIVE;
+import static amaralus.apps.hackandslash.graphics.rendering.RenderComponentType.PRIMITIVE;
 import static amaralus.apps.hackandslash.utils.BufferUtil.bufferOf;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.toArray;
 

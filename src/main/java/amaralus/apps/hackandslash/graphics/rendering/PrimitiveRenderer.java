@@ -9,6 +9,7 @@ import amaralus.apps.hackandslash.scene.Camera;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
+import static amaralus.apps.hackandslash.graphics.rendering.RenderComponentType.PRIMITIVE;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
 import static org.lwjgl.opengl.GL11.GL_LINES;
@@ -16,7 +17,7 @@ import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
 import static org.lwjgl.opengl.GL11.glDrawArrays;
 
 @Component
-public class PrimitiveRenderer {
+public class PrimitiveRenderer implements Renderer {
 
     private final Shader primitiveShader;
 
@@ -24,7 +25,11 @@ public class PrimitiveRenderer {
         primitiveShader = shaderRepository.get("primitive");
     }
 
-    public void render(Camera camera, Primitive primitive, Vector2f position) {
+    @Override
+    public void render(Camera camera, RenderComponent renderComponent, Vector2f position) {
+        if (!(renderComponent instanceof Primitive))
+            throw new IllegalArgumentException("expected: Primitive, was: " + renderComponent.getClass().getSimpleName());
+        var primitive = (Primitive) renderComponent;
 
         primitiveShader.use();
         primitiveShader.setMat4("model", mat4().translate(vec3(camera.getEntityCamPos(position), 1f)));
@@ -38,6 +43,11 @@ public class PrimitiveRenderer {
             renderTriangle();
 
         primitive.getVao().unbind();
+    }
+
+    @Override
+    public RenderComponentType getRenderComponentType() {
+        return PRIMITIVE;
     }
 
     private void renderLine() {

@@ -5,6 +5,8 @@ import lombok.Getter;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
+import static amaralus.apps.hackandslash.graphics.Color.WHITE;
+
 @Service
 public class SceneManager {
 
@@ -14,6 +16,7 @@ public class SceneManager {
 
     public SceneManager(Window window) {
         activeScene = new Scene(window.getWidth(), window.getHeight());
+        activeScene.setBackgroundColor(WHITE);
         this.window = window;
     }
 

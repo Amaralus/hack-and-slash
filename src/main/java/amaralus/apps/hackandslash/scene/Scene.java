@@ -1,11 +1,18 @@
 package amaralus.apps.hackandslash.scene;
 
+import amaralus.apps.hackandslash.graphics.Color;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Scene extends Node {
 
+    @Getter
     private final Camera camera;
+    @Getter @Setter
+    private Color backgroundColor;
 
     public Scene(float width, float height) {
         camera = new Camera(width, height);
@@ -29,9 +36,5 @@ public class Scene extends Node {
         layers.get(parentNode.getNodeLayerNumber()).addNodes(children);
         for (var child : children)
             fillLayers(layers, child);
-    }
-
-    public Camera getCamera() {
-        return camera;
     }
 }

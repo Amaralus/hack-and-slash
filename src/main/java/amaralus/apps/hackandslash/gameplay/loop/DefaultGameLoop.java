@@ -2,7 +2,7 @@ package amaralus.apps.hackandslash.gameplay.loop;
 
 import amaralus.apps.hackandslash.gameplay.UpdateService;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.rendering.RendererService;
+import amaralus.apps.hackandslash.graphics.rendering.RenderingService;
 import amaralus.apps.hackandslash.io.events.InputHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -12,13 +12,13 @@ import org.springframework.stereotype.Component;
 public class DefaultGameLoop extends GameLoop {
 
     private final InputHandler inputHandler;
-    private final RendererService rendererService;
+    private final RenderingService renderingService;
     private final UpdateService updateService;
 
-    public DefaultGameLoop(Window window, InputHandler inputHandler, UpdateService updateService, RendererService rendererService) {
+    public DefaultGameLoop(Window window, InputHandler inputHandler, UpdateService updateService, RenderingService renderingService) {
         super(window, 60);
         this.inputHandler = inputHandler;
-        this.rendererService = rendererService;
+        this.renderingService = renderingService;
         this.updateService = updateService;
     }
 
@@ -44,6 +44,6 @@ public class DefaultGameLoop extends GameLoop {
 
     @Override
     public void render(double timeShift) {
-        rendererService.render();
+        renderingService.render();
     }
 }

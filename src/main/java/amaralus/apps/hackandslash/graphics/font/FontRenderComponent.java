@@ -2,11 +2,12 @@ package amaralus.apps.hackandslash.graphics.font;
 
 import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
+import amaralus.apps.hackandslash.graphics.rendering.RenderComponentType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
-import static amaralus.apps.hackandslash.graphics.rendering.RenderComponent.RenderComponentType.FONT;
+import static amaralus.apps.hackandslash.graphics.rendering.RenderComponentType.FONT;
 
 @Getter
 @Setter
