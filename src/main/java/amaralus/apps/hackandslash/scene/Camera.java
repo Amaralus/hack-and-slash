@@ -1,9 +1,11 @@
-package amaralus.apps.hackandslash.graphics.scene;
+package amaralus.apps.hackandslash.scene;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
-import static amaralus.apps.hackandslash.utils.VectMatrUtil.*;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.copy;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
+import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 public class Camera extends Node {
 

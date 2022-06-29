@@ -6,12 +6,15 @@ import amaralus.apps.hackandslash.graphics.Window;
 import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
 import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.graphics.primitives.Primitive;
-import amaralus.apps.hackandslash.graphics.scene.Scene;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
+import amaralus.apps.hackandslash.scene.Scene;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_COLOR_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+import static org.lwjgl.opengl.GL11.glClear;
+import static org.lwjgl.opengl.GL11.glClearColor;
 
 @Service
 public class RendererService {

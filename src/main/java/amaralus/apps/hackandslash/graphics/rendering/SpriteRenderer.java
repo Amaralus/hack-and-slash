@@ -1,15 +1,17 @@
 package amaralus.apps.hackandslash.graphics.rendering;
 
 import amaralus.apps.hackandslash.graphics.gpu.shader.Shader;
-import amaralus.apps.hackandslash.graphics.scene.Camera;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
+import amaralus.apps.hackandslash.scene.Camera;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
 import static org.joml.Math.toRadians;
-import static org.lwjgl.opengl.GL15.*;
+import static org.lwjgl.opengl.GL15.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL15.GL_UNSIGNED_INT;
+import static org.lwjgl.opengl.GL15.glDrawElements;
 
 public class SpriteRenderer {
 

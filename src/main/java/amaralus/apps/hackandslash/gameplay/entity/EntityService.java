@@ -3,15 +3,20 @@ package amaralus.apps.hackandslash.gameplay.entity;
 import amaralus.apps.hackandslash.common.message.MessageBroker;
 import amaralus.apps.hackandslash.gameplay.UpdateService;
 import amaralus.apps.hackandslash.graphics.rendering.RendererService;
-import amaralus.apps.hackandslash.graphics.scene.Node;
+import amaralus.apps.hackandslash.scene.Node;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
-import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SINGLE;
+import static amaralus.apps.hackandslash.scene.NodeRemovingStrategy.SINGLE;
 
 @Service
 @Slf4j

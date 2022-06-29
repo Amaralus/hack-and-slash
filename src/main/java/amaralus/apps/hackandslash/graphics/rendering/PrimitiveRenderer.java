@@ -5,13 +5,15 @@ import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.graphics.primitives.Line;
 import amaralus.apps.hackandslash.graphics.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.primitives.Triangle;
-import amaralus.apps.hackandslash.graphics.scene.Camera;
+import amaralus.apps.hackandslash.scene.Camera;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.mat4;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec3;
-import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL11.GL_LINES;
+import static org.lwjgl.opengl.GL11.GL_TRIANGLES;
+import static org.lwjgl.opengl.GL11.glDrawArrays;
 
 @Component
 public class PrimitiveRenderer {

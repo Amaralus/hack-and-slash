@@ -3,7 +3,7 @@ package amaralus.apps.hackandslash.physics;
 import amaralus.apps.hackandslash.common.Destroyable;
 import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.gameplay.entity.Entity;
-import amaralus.apps.hackandslash.graphics.scene.Node;
+import amaralus.apps.hackandslash.scene.Node;
 import org.joml.Vector2f;
 
 import static amaralus.apps.hackandslash.physics.PhysicService.checkGlobalBorderCrossing;

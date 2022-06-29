@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.graphics.scene;
+package amaralus.apps.hackandslash.scene;
 
 import java.util.ArrayList;
 import java.util.List;

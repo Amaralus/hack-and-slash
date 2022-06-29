@@ -4,8 +4,8 @@ import amaralus.apps.hackandslash.common.Updatable;
 import amaralus.apps.hackandslash.common.message.QueueMessageClient;
 import amaralus.apps.hackandslash.gameplay.state.StateSystem;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
-import amaralus.apps.hackandslash.graphics.scene.Node;
 import amaralus.apps.hackandslash.physics.PhysicalComponent;
+import amaralus.apps.hackandslash.scene.Node;
 
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
@@ -14,7 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.NEW;
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.REMOVE;
-import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.CASCADE;
+import static amaralus.apps.hackandslash.scene.NodeRemovingStrategy.CASCADE;
 
 public class Entity extends Node implements Updatable {
 

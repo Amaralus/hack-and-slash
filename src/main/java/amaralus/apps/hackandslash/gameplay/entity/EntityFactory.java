@@ -2,19 +2,19 @@ package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.graphics.Color;
 import amaralus.apps.hackandslash.graphics.rendering.RenderComponent;
-import amaralus.apps.hackandslash.graphics.scene.Node;
-import amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy;
 import amaralus.apps.hackandslash.graphics.sprites.Animation;
 import amaralus.apps.hackandslash.graphics.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.sprites.repository.SpriteRepository;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
+import amaralus.apps.hackandslash.scene.Node;
+import amaralus.apps.hackandslash.scene.NodeRemovingStrategy;
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.UPDATING;
-import static amaralus.apps.hackandslash.graphics.scene.NodeRemovingStrategy.SINGLE;
+import static amaralus.apps.hackandslash.scene.NodeRemovingStrategy.SINGLE;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Component
