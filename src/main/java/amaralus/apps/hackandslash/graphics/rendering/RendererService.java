@@ -7,7 +7,7 @@ import amaralus.apps.hackandslash.graphics.font.FontRenderComponent;
 import amaralus.apps.hackandslash.graphics.gpu.shader.ShaderRepository;
 import amaralus.apps.hackandslash.graphics.primitives.Primitive;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
-import amaralus.apps.hackandslash.scene.Scene;
+import amaralus.apps.hackandslash.scene.SceneManager;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Service;
 
@@ -23,22 +23,21 @@ public class RendererService {
     private final SpriteRenderer spriteRenderer;
     private final PrimitiveRenderer primitiveRenderer;
     private final FontRenderer fontRenderer;
+    private final SceneManager sceneManager;
 
-    private final Scene activeScene;
 
-    public RendererService(Window window, PrimitiveRenderer primitiveRenderer, ShaderRepository shaderRepository) {
+    public RendererService(Window window, PrimitiveRenderer primitiveRenderer, ShaderRepository shaderRepository, SceneManager sceneManager) {
         this.window = window;
-        activeScene = new Scene(window.getWidth(), window.getHeight());
-
         spriteRenderer = new SpriteRenderer(shaderRepository.get("texture"));
         this.primitiveRenderer = primitiveRenderer;
         fontRenderer = new FontRenderer(shaderRepository.get("font"));
+        this.sceneManager = sceneManager;
     }
 
     public void render() {
         clear();
 
-        var sceneLayers = activeScene.buildSceneGraphLayers();
+        var sceneLayers = sceneManager.getActiveScene().buildSceneGraphLayers();
 
         for (int i = sceneLayers.size() - 1; i >= 0; i--)
             for (var node : sceneLayers.get(i).getNodes())
@@ -52,16 +51,11 @@ public class RendererService {
         window.swapBuffers();
     }
 
-    // todo перенести в сцену
-    public Vector2f getGlobalCursorPosition() {
-        return getActiveScene().getCamera().getWordPosOfScreenPos(window.getCursorPosition());
-    }
-
     private void doRender(RenderComponent renderComponent, Vector2f globalPosition) {
         if (renderComponent.isNull())
             return;
 
-        var camera = activeScene.getCamera();
+        var camera = sceneManager.getActiveScene().getCamera();
 
         switch (renderComponent.getRenderComponentType()) {
             case PRIMITIVE:
@@ -81,9 +75,5 @@ public class RendererService {
         var background = Color.WHITE;
         glClearColor(background.r(), background.g(), background.b(), background.a());
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    }
-
-    public Scene getActiveScene() {
-        return activeScene;
     }
 }

@@ -2,8 +2,8 @@ package amaralus.apps.hackandslash.gameplay.entity;
 
 import amaralus.apps.hackandslash.common.message.MessageBroker;
 import amaralus.apps.hackandslash.gameplay.UpdateService;
-import amaralus.apps.hackandslash.graphics.rendering.RendererService;
 import amaralus.apps.hackandslash.scene.Node;
+import amaralus.apps.hackandslash.scene.SceneManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,14 +23,14 @@ import static amaralus.apps.hackandslash.scene.NodeRemovingStrategy.SINGLE;
 public class EntityService {
 
     private UpdateService updateService;
-    private final RendererService rendererService;
+    private final SceneManager sceneManager;
     private final MessageBroker messageBroker;
 
     private final Set<Entity> allEntities = new HashSet<>();
     private final List<RegisteredInfo> newEntities = new ArrayList<>();
 
-    public EntityService(RendererService rendererService, MessageBroker messageBroker) {
-        this.rendererService = rendererService;
+    public EntityService(SceneManager sceneManager, MessageBroker messageBroker) {
+        this.sceneManager = sceneManager;
         this.messageBroker = messageBroker;
     }
 
@@ -80,7 +80,7 @@ public class EntityService {
         entity.setStatus(registeredInfo.targetStatus);
 
         if (registeredInfo.targetNode == null)
-            rendererService.getActiveScene().addChildren(entity);
+            sceneManager.getActiveScene().addChildren(entity);
         else
             registeredInfo.targetNode.addChildren(entity);
 

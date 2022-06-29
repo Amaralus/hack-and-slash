@@ -4,14 +4,19 @@ import amaralus.apps.hackandslash.gameplay.entity.Entity;
 import amaralus.apps.hackandslash.gameplay.entity.EntityFactory;
 import amaralus.apps.hackandslash.gameplay.loop.GameLoop;
 import amaralus.apps.hackandslash.graphics.Window;
-import amaralus.apps.hackandslash.graphics.rendering.RendererService;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.io.events.InputHandler;
+import amaralus.apps.hackandslash.scene.SceneManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.*;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.DIG1;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.DIG2;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.DIG3;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.DIG4;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.DIG5;
+import static amaralus.apps.hackandslash.io.events.keyboard.KeyCode.ESCAPE;
 import static amaralus.apps.hackandslash.io.events.mouse.MouseButton.MOUSE_BUTTON_LEFT;
 
 @Service
@@ -23,7 +28,7 @@ public class GameplayManager {
     private final InputHandler inputHandler;
     private final EntityFactory entityFactory;
     private final GameLoop gameLoop;
-    private final RendererService rendererService;
+    private final SceneManager sceneManager;
 
     private int currentFrame = 0;
 
@@ -48,7 +53,7 @@ public class GameplayManager {
                 .renderComponent(entityFactory.spriteRenderComponent()
                         .spriteName("stoneScissorsPaperLizardSpock")
                         .produce())
-                .position(rendererService.getGlobalCursorPosition())
+                .position(sceneManager.getGlobalCursorPosition())
                 .movementSpeed(200)
                 .register();
 
