@@ -1,4 +1,4 @@
-package amaralus.apps.hackandslash.scene;
+package amaralus.apps.hackandslash.scene.graph;
 
 public enum NodeRemovingStrategy {
     SINGLE,

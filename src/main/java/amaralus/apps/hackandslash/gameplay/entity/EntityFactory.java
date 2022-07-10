@@ -7,14 +7,14 @@ import amaralus.apps.hackandslash.graphics.sprites.Sprite;
 import amaralus.apps.hackandslash.graphics.sprites.SpriteRenderComponent;
 import amaralus.apps.hackandslash.graphics.sprites.repository.SpriteRepository;
 import amaralus.apps.hackandslash.resources.ResourceFactory;
-import amaralus.apps.hackandslash.scene.Node;
-import amaralus.apps.hackandslash.scene.NodeRemovingStrategy;
+import amaralus.apps.hackandslash.scene.graph.Node;
+import amaralus.apps.hackandslash.scene.graph.NodeRemovingStrategy;
 import lombok.RequiredArgsConstructor;
 import org.joml.Vector2f;
 import org.springframework.stereotype.Component;
 
 import static amaralus.apps.hackandslash.gameplay.entity.EntityStatus.UPDATING;
-import static amaralus.apps.hackandslash.scene.NodeRemovingStrategy.SINGLE;
+import static amaralus.apps.hackandslash.scene.graph.NodeRemovingStrategy.SINGLE;
 import static amaralus.apps.hackandslash.utils.VectMatrUtil.vec2;
 
 @Component

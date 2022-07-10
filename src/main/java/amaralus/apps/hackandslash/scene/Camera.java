@@ -1,5 +1,6 @@
 package amaralus.apps.hackandslash.scene;
 
+import amaralus.apps.hackandslash.scene.graph.Node;
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 

@@ -1,6 +1,7 @@
 package amaralus.apps.hackandslash.scene;
 
 import amaralus.apps.hackandslash.graphics.Color;
+import amaralus.apps.hackandslash.scene.graph.SceneGraph;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,9 +1,9 @@
-package amaralus.apps.hackandslash.scene;
+package amaralus.apps.hackandslash.scene.graph;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static amaralus.apps.hackandslash.scene.NodeRemovingStrategy.SINGLE;
+import static amaralus.apps.hackandslash.scene.graph.NodeRemovingStrategy.SINGLE;
 
 public abstract class Node {
 
