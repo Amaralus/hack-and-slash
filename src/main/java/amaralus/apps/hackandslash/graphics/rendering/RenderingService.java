@@ -20,9 +20,7 @@ public class RenderingService {
     private final SceneManager sceneManager;
     private final Map<RenderComponentType, Renderer> renderers;
 
-    public RenderingService(Window window,
-                            SceneManager sceneManager,
-                            Map<RenderComponentType, Renderer> renderers) {
+    public RenderingService(Window window, SceneManager sceneManager, Map<RenderComponentType, Renderer> renderers) {
         this.window = window;
         this.sceneManager = sceneManager;
         this.renderers = renderers;
@@ -31,7 +29,7 @@ public class RenderingService {
     public void render() {
         clear();
 
-        var sceneLayers = sceneManager.getActiveScene().buildSceneGraphLayers();
+        var sceneLayers = sceneManager.getActiveScene().getSceneGraph().buildSceneGraphLayers();
 
         for (int i = sceneLayers.size() - 1; i >= 0; i--)
             for (var node : sceneLayers.get(i).getNodes())

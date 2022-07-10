@@ -4,37 +4,22 @@ import amaralus.apps.hackandslash.graphics.Color;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-public class Scene extends Node {
+public class Scene {
 
     @Getter
+    private final String name;
+    @Getter
     private final Camera camera;
+    @Getter
+    private final SceneGraph sceneGraph;
     @Getter @Setter
     private Color backgroundColor;
 
-    public Scene(float width, float height) {
+    public Scene(String name, float width, float height) {
+        this.name = name;
         camera = new Camera(width, height);
         camera.setScale(0.5f);
-        addChildren(camera);
-    }
-
-    public List<SceneGraphLayer> buildSceneGraphLayers() {
-        var layers = new ArrayList<SceneGraphLayer>();
-        fillLayers(layers, this);
-        return layers;
-    }
-
-    private void fillLayers(List<SceneGraphLayer> layers, Node parentNode) {
-        if (parentNode.getChildren().isEmpty())
-            return;
-        else if (layers.size() == parentNode.getNodeLayerNumber())
-            layers.add(new SceneGraphLayer());
-
-        var children = parentNode.getChildren();
-        layers.get(parentNode.getNodeLayerNumber()).addNodes(children);
-        for (var child : children)
-            fillLayers(layers, child);
+        sceneGraph = new SceneGraph();
+        sceneGraph.addChildren(camera);
     }
 }

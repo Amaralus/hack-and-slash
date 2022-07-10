@@ -15,7 +15,7 @@ public class SceneManager {
     private final Scene activeScene;
 
     public SceneManager(Window window) {
-        activeScene = new Scene(window.getWidth(), window.getHeight());
+        activeScene = new Scene("default", window.getWidth(), window.getHeight());
         activeScene.setBackgroundColor(WHITE);
         this.window = window;
     }

@@ -80,7 +80,7 @@ public class EntityService {
         entity.setStatus(registeredInfo.targetStatus);
 
         if (registeredInfo.targetNode == null)
-            sceneManager.getActiveScene().addChildren(entity);
+            sceneManager.getActiveScene().getSceneGraph().addChildren(entity);
         else
             registeredInfo.targetNode.addChildren(entity);
 
